@@ -1,0 +1,11 @@
+/home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Infrastructure/bin/Debug/net10.0/ShopApp.Infrastructure.deps.json
+/home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Infrastructure/bin/Debug/net10.0/ShopApp.Infrastructure.dll
+/home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Infrastructure/bin/Debug/net10.0/ShopApp.Infrastructure.pdb
+/home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Infrastructure/obj/Debug/net10.0/ShopApp.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+/home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Infrastructure/obj/Debug/net10.0/ShopApp.Infrastructure.AssemblyInfoInputs.cache
+/home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Infrastructure/obj/Debug/net10.0/ShopApp.Infrastructure.AssemblyInfo.cs
+/home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Infrastructure/obj/Debug/net10.0/ShopApp.Infrastructure.csproj.CoreCompileInputs.cache
+/home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Infrastructure/obj/Debug/net10.0/ShopApp.Infrastructure.dll
+/home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Infrastructure/obj/Debug/net10.0/refint/ShopApp.Infrastructure.dll
+/home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Infrastructure/obj/Debug/net10.0/ShopApp.Infrastructure.pdb
+/home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Infrastructure/obj/Debug/net10.0/ref/ShopApp.Infrastructure.dll
