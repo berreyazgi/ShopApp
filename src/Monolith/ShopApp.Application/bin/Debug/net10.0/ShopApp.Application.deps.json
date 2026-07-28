@@ -7,14 +7,30 @@
   "targets": {
     ".NETCoreApp,Version=v10.0": {
       "ShopApp.Application/1.0.0": {
+        "dependencies": {
+          "ShopApp.Domain": "1.0.0"
+        },
         "runtime": {
           "ShopApp.Application.dll": {}
+        }
+      },
+      "ShopApp.Domain/1.0.0": {
+        "runtime": {
+          "ShopApp.Domain.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
         }
       }
     }
   },
   "libraries": {
     "ShopApp.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ShopApp.Domain/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

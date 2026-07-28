@@ -5,6 +5,7 @@
 /home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Domain/obj/Debug/net10.0/ShopApp.Domain.AssemblyInfoInputs.cache
 /home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Domain/obj/Debug/net10.0/ShopApp.Domain.AssemblyInfo.cs
 /home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Domain/obj/Debug/net10.0/ShopApp.Domain.csproj.CoreCompileInputs.cache
+/home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Domain/obj/Debug/net10.0/ShopApp.Domain.sourcelink.json
 /home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Domain/obj/Debug/net10.0/ShopApp.Domain.dll
 /home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Domain/obj/Debug/net10.0/refint/ShopApp.Domain.dll
 /home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Domain/obj/Debug/net10.0/ShopApp.Domain.pdb

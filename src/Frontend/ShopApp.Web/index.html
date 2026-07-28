@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ShopApp – Türkiye'nin en modern e-ticaret deneyimi. Ayakkabı, giyim, spor ve daha fazlası.">
+  <meta name="theme-color" content="#ffffff">
+  <title>ShopApp – Alışverişin Yeni Adresi</title>
+
+  <!-- Global Styles -->
+  <link rel="stylesheet" href="src/styles/reset.css">
+  <link rel="stylesheet" href="src/styles/tokens.css">
+  <link rel="stylesheet" href="src/styles/typography.css">
+  <link rel="stylesheet" href="src/styles/utilities.css">
+  <link rel="stylesheet" href="src/styles/global.css">
+
+  <!-- Shared Component Styles -->
+  <link rel="stylesheet" href="src/shared/components/Header/Header.css">
+  <link rel="stylesheet" href="src/shared/components/Button/Button.css">
+
+  <!-- Feature Styles (loaded eagerly for the initial page) -->
+  <link rel="stylesheet" href="src/features/home/styles/home.css">
+</head>
+<body>
+  <div id="app" role="application" aria-label="ShopApp">
+    <!-- The Header component will be rendered here -->
+    <header id="app-header"></header>
+
+    <!-- SPA router outlet — pages render here -->
+    <main id="router-outlet" role="main" aria-live="polite"></main>
+
+    <!-- Footer placeholder -->
+    <footer id="app-footer"></footer>
+  </div>
+
+  <!-- App bootstrap — ES module entry point -->
+  <script type="module" src="src/app/bootstrap.js"></script>
+</body>
+</html>

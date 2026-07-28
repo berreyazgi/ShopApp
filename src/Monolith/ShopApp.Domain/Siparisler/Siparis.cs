@@ -1,0 +1,90 @@
+using src.Monolith.ShopApp.Domain.Common;
+
+namespace src.Monolith.ShopApp.Domain.Siparisler;
+
+public class Siparis : BaseEntity
+{
+    public string MusteriId { get; private set; } = null!;
+
+    public string SiparisNumarasi { get; private set; } = null!;
+
+    public SiparisDurum Status { get; private set; } = SiparisDurum.BekleyenOdeme;
+
+    public decimal AraToplam { get; private set; }
+
+    public decimal IndirimOrani{ get; private set; }
+
+    public decimal KargoFiyat { get; private set; }
+
+    public decimal TotalAmount { get; private set; }
+
+    public ICollection<SiparisUrunleri> Urunler { get; private set; }
+        = new List<SiparisUrunleri>();
+
+    private Siparis()
+    {
+    }
+
+    public Siparis(
+        string musteriId,
+        string SiparisNumarasi)
+    {
+        MusteriId = musteriId;
+       SiparisNumarasi = SiparisNumarasi;
+    }
+
+    public void AddItem(
+        Guid UrunCesidId,
+        string UrunIsmi,
+        string sku,
+        int miktar,
+        decimal unitPrice,
+        decimal indirimOrani= 0)
+    {
+        SiparisUrunleri item = new(Id, UrunCesidId, UrunIsmi, sku, miktar, unitPrice, indirimOrani);
+
+        Urunler.Add(item);
+
+        RecalculateTotals();
+    }
+
+    public void SetKargoFiyat(decimal KargoFiyat)
+    {
+        if (KargoFiyat < 0)
+            throw new ArgumentOutOfRangeException(
+                nameof(KargoFiyat));
+
+        KargoFiyat = KargoFiyat;
+        RecalculateTotals();
+    }
+
+    public void MarkAsPaid()
+    {
+        Status = SiparisDurum.Odenmis;
+        MarkAsUpdated();
+    }
+
+    public void Cancel()
+    {
+        if (Status is SiparisDurum.Gönderildi
+            or SiparisDurum.TeslimEdildi)
+        {
+            throw new InvalidOperationException(
+                "Kargoya verilmiş veya teslim edilmiş sipariş iptal edilemez.");
+        }
+
+        Status = SiparisDurum.IptalEdildi;
+        MarkAsUpdated();
+    }
+
+    private void RecalculateTotals()
+    {
+        AraToplam = Urunler.Sum(x => x.BirimFiyat* x.Miktar);
+
+        IndirimOrani= Urunler.Sum(x => x.IndirimOrani);
+
+        TotalAmount = AraToplam - IndirimOrani + KargoFiyat;
+
+        MarkAsUpdated();
+    }
+}

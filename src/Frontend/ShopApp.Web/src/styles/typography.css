@@ -1,0 +1,117 @@
+/* ============================================================
+   typography.css – Global Typography Styles
+   ============================================================ */
+
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--text-base);
+  font-weight: var(--font-regular);
+  line-height: var(--leading-normal);
+  color: var(--color-primary);
+  letter-spacing: var(--tracking-snug);
+}
+
+/* ── Display headings ── */
+.display-xl {
+  font-size: var(--text-6xl);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+.display-lg {
+  font-size: var(--text-5xl);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+.display-md {
+  font-size: var(--text-4xl);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+/* ── Headings ── */
+h1, .h1 {
+  font-size: var(--text-5xl);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+h2, .h2 {
+  font-size: var(--text-4xl);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+}
+
+h3, .h3 {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-snug);
+}
+
+h4, .h4 {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-snug);
+}
+
+h5, .h5 {
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-normal);
+}
+
+h6, .h6 {
+  font-size: var(--text-lg);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-normal);
+}
+
+/* ── Body text ── */
+.text-lg   { font-size: var(--text-lg);   }
+.text-base { font-size: var(--text-base); }
+.text-sm   { font-size: var(--text-sm);   }
+.text-xs   { font-size: var(--text-xs);   }
+
+/* ── Weight utilities ── */
+.font-light     { font-weight: var(--font-light);     }
+.font-regular   { font-weight: var(--font-regular);   }
+.font-medium    { font-weight: var(--font-medium);    }
+.font-semibold  { font-weight: var(--font-semibold);  }
+.font-bold      { font-weight: var(--font-bold);      }
+.font-extrabold { font-weight: var(--font-extrabold); }
+
+/* ── Color utilities ── */
+.text-primary   { color: var(--color-primary);   }
+.text-secondary { color: var(--color-secondary); }
+.text-accent    { color: var(--color-accent);    }
+.text-white     { color: var(--color-white);     }
+.text-error     { color: var(--color-error);     }
+.text-success   { color: var(--color-success);   }
+
+/* ── Tracking ── */
+.tracking-tight  { letter-spacing: var(--tracking-tight);  }
+.tracking-snug   { letter-spacing: var(--tracking-snug);   }
+.tracking-normal { letter-spacing: var(--tracking-normal); }
+.tracking-wide   { letter-spacing: var(--tracking-wide);   }
+.tracking-wider  { letter-spacing: var(--tracking-wider);  }
+
+/* ── Alignment ── */
+.text-left   { text-align: left;   }
+.text-center { text-align: center; }
+.text-right  { text-align: right;  }
+
+/* ── Eyebrow / label text ── */
+.eyebrow {
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+}
