@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "9liseYUrhf4=",
+  "dgSpecHash": "ebyvwtNhSt4=",
   "success": true,
   "projectFilePath": "/home/bryz/Documents/ShopApp/src/Monolith/ShopApp.Api/ShopApp.Api.csproj",
   "expectedPackageFiles": [
@@ -22,12 +22,12 @@
     "/home/bryz/.nuget/packages/microsoft.entityframeworkcore.design/10.0.10/microsoft.entityframeworkcore.design.10.0.10.nupkg.sha512",
     "/home/bryz/.nuget/packages/microsoft.entityframeworkcore.relational/10.0.10/microsoft.entityframeworkcore.relational.10.0.10.nupkg.sha512",
     "/home/bryz/.nuget/packages/microsoft.extensions.dependencymodel/10.0.10/microsoft.extensions.dependencymodel.10.0.10.nupkg.sha512",
-    "/home/bryz/.nuget/packages/microsoft.identitymodel.abstractions/8.19.2/microsoft.identitymodel.abstractions.8.19.2.nupkg.sha512",
-    "/home/bryz/.nuget/packages/microsoft.identitymodel.jsonwebtokens/8.19.2/microsoft.identitymodel.jsonwebtokens.8.19.2.nupkg.sha512",
-    "/home/bryz/.nuget/packages/microsoft.identitymodel.logging/8.19.2/microsoft.identitymodel.logging.8.19.2.nupkg.sha512",
+    "/home/bryz/.nuget/packages/microsoft.identitymodel.abstractions/8.22.0/microsoft.identitymodel.abstractions.8.22.0.nupkg.sha512",
+    "/home/bryz/.nuget/packages/microsoft.identitymodel.jsonwebtokens/8.22.0/microsoft.identitymodel.jsonwebtokens.8.22.0.nupkg.sha512",
+    "/home/bryz/.nuget/packages/microsoft.identitymodel.logging/8.22.0/microsoft.identitymodel.logging.8.22.0.nupkg.sha512",
     "/home/bryz/.nuget/packages/microsoft.identitymodel.protocols/8.19.2/microsoft.identitymodel.protocols.8.19.2.nupkg.sha512",
     "/home/bryz/.nuget/packages/microsoft.identitymodel.protocols.openidconnect/8.19.2/microsoft.identitymodel.protocols.openidconnect.8.19.2.nupkg.sha512",
-    "/home/bryz/.nuget/packages/microsoft.identitymodel.tokens/8.19.2/microsoft.identitymodel.tokens.8.19.2.nupkg.sha512",
+    "/home/bryz/.nuget/packages/microsoft.identitymodel.tokens/8.22.0/microsoft.identitymodel.tokens.8.22.0.nupkg.sha512",
     "/home/bryz/.nuget/packages/microsoft.openapi/2.7.5/microsoft.openapi.2.7.5.nupkg.sha512",
     "/home/bryz/.nuget/packages/microsoft.visualstudio.solutionpersistence/1.0.52/microsoft.visualstudio.solutionpersistence.1.0.52.nupkg.sha512",
     "/home/bryz/.nuget/packages/mono.texttemplating/3.0.0/mono.texttemplating.3.0.0.nupkg.sha512",
@@ -41,7 +41,7 @@
     "/home/bryz/.nuget/packages/system.composition.hosting/9.0.0/system.composition.hosting.9.0.0.nupkg.sha512",
     "/home/bryz/.nuget/packages/system.composition.runtime/9.0.0/system.composition.runtime.9.0.0.nupkg.sha512",
     "/home/bryz/.nuget/packages/system.composition.typedparts/9.0.0/system.composition.typedparts.9.0.0.nupkg.sha512",
-    "/home/bryz/.nuget/packages/system.identitymodel.tokens.jwt/8.19.2/system.identitymodel.tokens.jwt.8.19.2.nupkg.sha512"
+    "/home/bryz/.nuget/packages/system.identitymodel.tokens.jwt/8.22.0/system.identitymodel.tokens.jwt.8.22.0.nupkg.sha512"
   ],
   "logs": []
 }

@@ -11,12 +11,22 @@
 
 export const endpoints = {
   // ── Identity / Auth ──────────────────────────────────────────────────────
+  //
+  // ARCHITECTURE NOTE:
+  //  Initially points to the Modular Monolith API (ShopApp.Api).
+  //  When identity is extracted to a microservice, only the base URL in
+  //  appConfig.js changes. These path strings remain the same.
+  //  The frontend components must never be changed during that transition.
+  //
   auth: {
     login:          () => '/api/identity/auth/login',
     register:       () => '/api/identity/auth/register',
     logout:         () => '/api/identity/auth/logout',
     refreshToken:   () => '/api/identity/auth/refresh',
     me:             () => '/api/identity/users/me',
+    forgotPassword: () => '/api/identity/auth/forgot-password',
+    resetPassword:  () => '/api/identity/auth/reset-password',
+    verifyEmail:    () => '/api/identity/auth/verify-email',
   },
 
   // ── Catalog / Products ───────────────────────────────────────────────────

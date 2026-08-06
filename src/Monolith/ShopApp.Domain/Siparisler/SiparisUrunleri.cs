@@ -1,20 +1,23 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using src.Monolith.ShopApp.Domain.Common;
 
 namespace src.Monolith.ShopApp.Domain.Siparisler;
 
 public class SiparisUrunleri : BaseEntity
 {
+    [ForeignKey("Siparis")]
     public Guid SiparisId { get; private set; }
 
-    public Guid UrunCesidId { get; private set; }
+    public Guid UrunTurId { get; private set; }
 
     public string UrunIsmi { get; private set; } = null!;
+    public string? UrunAciklamasi { get; private set; }
 
-    public string Sku { get; private set; } = null!;
+    public string? StokTakipNumarasi { get; private set; } 
 
-    public int Miktar { get; private set; }
+    public int UrunMiktar { get; private set; }
 
-    public decimal BirimFiyat { get; private set; }
+    public decimal UrunBirimFiyat { get; private set; }
 
     public decimal IndirimOrani { get; private set; }
 
@@ -28,35 +31,35 @@ public class SiparisUrunleri : BaseEntity
 
     internal SiparisUrunleri(
         Guid SiparisId,
-        Guid UrunCesidId,
+        Guid UrunTurId,
         string UrunIsmi,
-        string sku,
-        int Miktar,
-        decimal BirimFiyat,
+        string StokTakipNumarasi,
+        int UrunMiktar,
+        decimal UrunBirimFiyat,
         decimal IndirimOrani)
     {
-        if (Miktar <= 0)
+        if (UrunMiktar <= 0)
             throw new ArgumentOutOfRangeException(
-                nameof(Miktar));
+                nameof(UrunMiktar));
 
-        if (BirimFiyat < 0)
+        if (UrunBirimFiyat < 0)
             throw new ArgumentOutOfRangeException(
-                nameof(BirimFiyat));
+                nameof(UrunBirimFiyat));
 
         if (IndirimOrani < 0)
             throw new ArgumentOutOfRangeException(
                 nameof(IndirimOrani));
 
         SiparisId = SiparisId;
-        UrunCesidId = UrunCesidId;
+        UrunTurId = UrunTurId;
         UrunIsmi = UrunIsmi;
-        Sku = sku;
-        Miktar = Miktar;
-        BirimFiyat = BirimFiyat;
+        StokTakipNumarasi = StokTakipNumarasi;
+        UrunMiktar = UrunMiktar;
+        UrunBirimFiyat = UrunBirimFiyat;
         IndirimOrani = IndirimOrani;
 
         ToplamFiyat =
-            BirimFiyat * Miktar -
+            UrunBirimFiyat * UrunMiktar -
             IndirimOrani;
     }
 }

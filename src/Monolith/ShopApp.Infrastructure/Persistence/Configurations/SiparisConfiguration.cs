@@ -28,12 +28,20 @@ public class SiparisConfiguration : IEntityTypeConfiguration<Siparis>
         builder.Property(x => x.KargoFiyat)
             .IsRequired();
 
-        builder.Property(x => x.TotalAmount)
+        builder.Property(x => x.ToplamFiyat)
             .IsRequired();
 
         builder.HasMany(x => x.Urunler)
             .WithOne(x => x.Siparis)
             .HasForeignKey(x => x.SiparisId);
+
+                 
+     builder.Property(x => x.Status) // Entity'nizdeki property adı (Enum olan)
+            .HasConversion(
+                v => (int)v,          // Enum değerini DB'ye int (1, 2, 3) olarak yazar
+                v => (SiparisDurum)v  // DB'deki int değeri koda Enum olarak okur
+            )
+            .HasColumnName("DurumId");
     }
 
 }

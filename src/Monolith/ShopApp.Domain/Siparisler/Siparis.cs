@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using src.Monolith.ShopApp.Domain.Common;
 
 namespace src.Monolith.ShopApp.Domain.Siparisler;
 
 public class Siparis : BaseEntity
 {
+    [ForeignKey("Musteri")]
     public string MusteriId { get; private set; } = null!;
 
     public string SiparisNumarasi { get; private set; } = null!;
@@ -16,7 +18,7 @@ public class Siparis : BaseEntity
 
     public decimal KargoFiyat { get; private set; }
 
-    public decimal TotalAmount { get; private set; }
+    public decimal ToplamFiyat { get; private set; }
 
     public ICollection<SiparisUrunleri> Urunler { get; private set; }
         = new List<SiparisUrunleri>();
@@ -79,11 +81,11 @@ public class Siparis : BaseEntity
 
     private void RecalculateTotals()
     {
-        AraToplam = Urunler.Sum(x => x.BirimFiyat* x.Miktar);
+        AraToplam = Urunler.Sum(x => x.UrunBirimFiyat* x.UrunMiktar);
 
         IndirimOrani= Urunler.Sum(x => x.IndirimOrani);
 
-        TotalAmount = AraToplam - IndirimOrani + KargoFiyat;
+        ToplamFiyat = AraToplam - IndirimOrani + KargoFiyat;
 
         MarkAsUpdated();
     }

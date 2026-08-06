@@ -5,7 +5,7 @@ services:
       dockerfile: src/Monolith/ShopApp.Api/Dockerfile
 
     ports:
-      - "5433:5432"
+      - "5000:5000"
 
     environment:
       ASPNETCORE_ENVIRONMENT: Development
@@ -17,15 +17,15 @@ services:
         condition: service_healthy
 
   db:
-    image: postgres:18
+
+    image: postgres:17
+    ports:
+      - "5432:5432"
 
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres456
       POSTGRES_DB: postgres
-
-    ports:
-      - "5432:5432"
 
     volumes:
       - db_data:/var/lib/postgresql

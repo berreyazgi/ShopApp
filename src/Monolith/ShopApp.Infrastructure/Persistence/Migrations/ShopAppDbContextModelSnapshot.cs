@@ -22,10 +22,11 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -48,7 +49,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.ToTable("Roles", "identity");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -62,9 +63,8 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("text");
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -73,7 +73,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.ToTable("RoleClaims", "identity");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -87,9 +87,8 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -98,7 +97,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.ToTable("UserClaims", "identity");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text");
@@ -109,9 +108,8 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -120,13 +118,13 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.ToTable("UserLogins", "identity");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("text");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -135,10 +133,10 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.ToTable("UserRoles", "identity");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text");
@@ -156,8 +154,9 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("ShopApp.Infrastructure.Identity.ApplicationUser", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
@@ -255,12 +254,14 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Ilce")
-                        .IsRequired()
+                    b.Property<int>("Ilce")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("MusteriId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("OlusturanKullaniciId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("OlusturmaTarihi")
@@ -272,20 +273,18 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .HasColumnType("character(5)")
                         .IsFixedLength();
 
-                    b.Property<string>("Sehir")
-                        .IsRequired()
+                    b.Property<int>("Sehir")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("integer");
 
                     b.Property<string>("TamAdres")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<string>("Ulke")
-                        .IsRequired()
+                    b.Property<int>("Ulke")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -318,6 +317,9 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("OlusturanKullaniciId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("OlusturmaTarihi")
                         .HasColumnType("timestamp with time zone");
 
@@ -333,12 +335,16 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<int>("Durum")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("DurumId");
 
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("MusteriId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("OlusturanKullaniciId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("OlusturmaTarihi")
@@ -349,17 +355,37 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.ToTable("Sepetler", "sales");
                 });
 
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.SepetDurumLookup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Ad")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SepetDurumlar");
+                });
+
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.SepetUrunleri", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<decimal>("BirimFiyatSnapshot")
+                    b.Property<decimal>("FiyatGecmis")
                         .HasColumnType("numeric");
 
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("OlusturanKullaniciId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("OlusturmaTarihi")
                         .HasColumnType("timestamp with time zone");
@@ -370,11 +396,11 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<int>("UrunAdet")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("UrunCesidId")
-                        .HasColumnType("uuid");
-
                     b.Property<int>("UrunMiktar")
                         .HasColumnType("integer");
+
+                    b.Property<Guid>("UrunTurId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -405,6 +431,9 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("OlusturanKullaniciId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("OlusturmaTarihi")
                         .HasColumnType("timestamp with time zone");
 
@@ -413,14 +442,32 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("DurumId");
 
-                    b.Property<decimal>("TotalAmount")
+                    b.Property<decimal>("ToplamFiyat")
                         .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
                     b.ToTable("Siparisler", "sales");
+                });
+
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.SiparisDurumLookup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Ad")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SiparisDurumlar");
                 });
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.SiparisUrunleri", b =>
@@ -429,17 +476,14 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<decimal>("BirimFiyat")
-                        .HasColumnType("numeric");
-
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<decimal>("IndirimOrani")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("Miktar")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("OlusturanKullaniciId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("OlusturmaTarihi")
                         .HasColumnType("timestamp with time zone");
@@ -447,7 +491,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("SiparisId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Sku")
+                    b.Property<string>("StokTakipNumarasi")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
@@ -455,13 +499,22 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("ToplamFiyat")
                         .HasColumnType("numeric");
 
-                    b.Property<Guid>("UrunCesidId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("UrunAciklamasi")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("UrunBirimFiyat")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("UrunIsmi")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
+
+                    b.Property<int>("UrunMiktar")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UrunTurId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -470,16 +523,16 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.ToTable("SiparisUrunleri", "sales");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.HasOne("ShopApp.Infrastructure.Identity.ApplicationUser", null)
                         .WithMany()
@@ -488,7 +541,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.HasOne("ShopApp.Infrastructure.Identity.ApplicationUser", null)
                         .WithMany()
@@ -497,9 +550,9 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -512,7 +565,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.HasOne("ShopApp.Infrastructure.Identity.ApplicationUser", null)
                         .WithMany()

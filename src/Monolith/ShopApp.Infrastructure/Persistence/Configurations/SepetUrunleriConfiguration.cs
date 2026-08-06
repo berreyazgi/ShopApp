@@ -13,7 +13,7 @@ public class SepetUrunleriConfiguration : IEntityTypeConfiguration<SepetUrunleri
         builder.Property(x => x.SepetId)
             .IsRequired();
 
-        builder.Property(x => x.UrunCesidId)
+        builder.Property(x => x.UrunTurId)
             .IsRequired();
 
         builder.Property(x => x.UrunMiktar)
@@ -22,7 +22,7 @@ public class SepetUrunleriConfiguration : IEntityTypeConfiguration<SepetUrunleri
         builder.Property(x => x.UrunAdet)
             .IsRequired();
 
-        builder.Property(x => x.BirimFiyatSnapshot)
+        builder.Property(x => x.FiyatGecmis)
             .IsRequired();
     }
 }

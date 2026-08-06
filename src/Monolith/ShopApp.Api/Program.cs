@@ -1,6 +1,5 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ShopApp.Infrastructure.Identity;
+using ShopApp.Infrastructure;
 using ShopApp.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,25 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Services
 // -------------------------------------------------------
 
-// Database — PostgreSQL via EF Core
-builder.Services.AddDbContext<ShopAppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// ASP.NET Core Identity
-builder.Services
-    .AddIdentity<ApplicationUser, IdentityRole>(options =>
-    {
-        options.Password.RequireDigit           = true;
-        options.Password.RequiredLength         = 8;
-        options.Password.RequireNonAlphanumeric = false;
-        options.Password.RequireUppercase       = false;
-        options.Password.RequireLowercase       = false;
-    })
-    .AddEntityFrameworkStores<ShopAppDbContext>()
-    .AddDefaultTokenProviders();
+// All infrastructure: DbContext, Identity, JWT Auth, IJwtTokenGenerator
+builder.Services.AddInfrastructure(builder.Configuration);
 
 // Controllers
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 
 // OpenAPI / Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -35,7 +21,7 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-//localization
+// Localization
 var supportedCultures = new[] { "tr-TR" };
 var localizationOptions = new RequestLocalizationOptions()
     .SetDefaultCulture(supportedCultures[0])
@@ -44,16 +30,15 @@ var localizationOptions = new RequestLocalizationOptions()
 
 app.UseRequestLocalization(localizationOptions);
 
-if (app.Environment.IsDevelopment())
+// Apply pending EF Core migrations on startup
+using (var scope = app.Services.CreateScope())
 {
-    using IServiceScope scope = app.Services.CreateScope();
-
     try
     {
-        ShopAppDbContext dbContext =
-            scope.ServiceProvider.GetRequiredService<ShopAppDbContext>();
-
-        dbContext.Database.Migrate();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ShopAppDbContext>();
+        dbContext.Database.Migrate(
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Guid>>
+        );
     }
     catch (Exception ex)
     {
@@ -67,12 +52,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-// Apply pending EF Core migrations on startup (convenient for Docker/dev)
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ShopAppDbContext>();
-    db.Database.Migrate();
-}
 
 app.Run();

@@ -21,6 +21,13 @@ body {
   padding-top: var(--header-height);
 }
 
+/* Auth pages hide the site header via JS (AuthLayout.js) and
+   remove the router-outlet top padding via the auth-layout class. */
+.auth-layout {
+  margin-top: calc(-1 * var(--header-height));
+}
+
+
 /* ── Scrollbar (webkit) ── */
 ::-webkit-scrollbar {
   width: 6px;

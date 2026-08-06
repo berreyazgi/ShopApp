@@ -1,0 +1,96 @@
+/* ============================================================
+   Alert.css – Alert Component Styles
+   ============================================================ */
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-normal);
+  border: 1px solid transparent;
+  animation: alertSlideIn var(--transition-base) ease forwards;
+}
+
+.alert[hidden] {
+  display: none;
+}
+
+@keyframes alertSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Icon ── */
+.alert__icon {
+  font-size: var(--text-base);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── Message ── */
+.alert__message {
+  flex: 1;
+}
+
+/* ── Dismiss button ── */
+.alert__dismiss {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--text-xl);
+  line-height: 1;
+  padding: 0;
+  color: inherit;
+  opacity: 0.6;
+  flex-shrink: 0;
+  transition: opacity var(--transition-fast);
+}
+.alert__dismiss:hover { opacity: 1; }
+.alert__dismiss:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── Variants ── */
+
+.alert--error {
+  background: #fef2f2;
+  color: var(--color-auth-error, #b42318);
+  border-color: #fecaca;
+}
+
+.alert--success {
+  background: #f0fdf4;
+  color: var(--color-auth-success, #067647);
+  border-color: #bbf7d0;
+}
+
+.alert--info {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.alert--warning {
+  background: #fffbeb;
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .alert {
+    animation: none;
+  }
+}

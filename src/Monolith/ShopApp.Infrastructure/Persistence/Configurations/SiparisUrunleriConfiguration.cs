@@ -13,21 +13,21 @@ public class SiparisUrunleriConfiguration : IEntityTypeConfiguration<SiparisUrun
         builder.Property(x => x.SiparisId)
             .IsRequired();
 
-        builder.Property(x => x.UrunCesidId)
+        builder.Property(x => x.UrunTurId)
             .IsRequired();
 
         builder.Property(x => x.UrunIsmi)
             .IsRequired()
             .HasMaxLength(500);
 
-        builder.Property(x => x.Sku)
+        builder.Property(x => x.StokTakipNumarasi)
             .IsRequired()
             .HasMaxLength(500);
 
-        builder.Property(x => x.Miktar)
+        builder.Property(x => x.UrunMiktar)
             .IsRequired();
 
-        builder.Property(x => x.BirimFiyat)
+        builder.Property(x => x.UrunBirimFiyat)
             .IsRequired();
 
         builder.Property(x => x.IndirimOrani)
