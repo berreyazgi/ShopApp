@@ -18,86 +18,96 @@ public class AuthService : IAuthService
         RoleManager<IdentityRole<Guid>> roleManager,
         IJwtTokenGenerator jwtTokenGenerator)
     {
-        _userManager      = userManager;
-        _roleManager      = roleManager;
+        _userManager = userManager;
+        _roleManager = roleManager;
         _jwtTokenGenerator = jwtTokenGenerator;
     }
 
-//login logic flow 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
     {
-        //Find user by email using UserManager.FindByEmailAsync
-       var user=await _userManager.FindByEmailAsync(request.Email);
-       if(user==null)
-       {
-        throw new InvalidOperationException("User not found");
-       }
-       //check password using UserManager.CheckPasswordAsync
-       var result=await _userManager.CheckPasswordAsync(user,request.Sifre);
-       if(!result)
-       {
-        throw new InvalidOperationException("Invalid password");
-       }
-       //generate token using IJwtTokenGenerator.GenerateToken
-       var token=_jwtTokenGenerator.GenerateToken(user.Id.ToString(),user.Email!,request.Sifre);
+        var user = await _userManager.FindByEmailAsync(request.Email)
+            ?? throw new UnauthorizedAccessException("E-posta adresi veya şifre hatalı.");
 
-       //return the AuthResponse
-       return new AuthResponse
-       {
-        Token=token,
-        Email=user.Email!,
-        Ad=user.Ad,
-        Soyad=user.Soyad,
-        Role=user.Role
-       };
+        var isPasswordValid = await _userManager.CheckPasswordAsync(user, request.Sifre);
+        if (!isPasswordValid)
+            throw new UnauthorizedAccessException("E-posta adresi veya şifre hatalı.");
+
+        var roles = await _userManager.GetRolesAsync(user);
+        var token = _jwtTokenGenerator.GenerateToken(
+            user.Id.ToString(),
+            user.Email!,
+            roles);
+
+        return new AuthResponse
+        {
+            Token  = token,
+            Email  = user.Email!,
+            Ad     = user.Ad,
+            Soyad  = user.Soyad,
+            Role   = roles.ToList()
+        };
     }
 
-//register logic flow kısmı
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
     {
-        // Kullanıcı var mı?
         var existingUser = await _userManager.FindByEmailAsync(request.Email);
         if (existingUser != null)
+        {
             throw new InvalidOperationException("User with this email already exists.");
+        }
 
-        // Yeni kullanıcı oluştur
         var newUser = new ApplicationUser
         {
-            UserName         = request.Email,
-            Email            = request.Email,
-            Ad               = request.Ad,
-            Soyad            = request.Soyad,
-            durum            = "Active",
-            OlusturmaTarihi  = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
+            UserName = request.Email,
+            Email = request.Email,
+            Ad = request.Ad,
+            Soyad = request.Soyad,
+            durum = "Active",
+            OlusturmaTarihi = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
             GuncellemeTarihi = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
         };
 
-        //Call UserManager.CreateAsync(user, password)
-        var result = await _userManager.CreateAsync(newUser, request.Sifre);
-        if (!result.Succeeded)
-            throw new InvalidOperationException("Failed to create user.");
+        var createResult = await _userManager.CreateAsync(newUser, request.Sifre);
+        if (!createResult.Succeeded)
+        {
+            throw new InvalidOperationException(
+                $"Failed to create user: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
+        }
 
-        
-    
+        const string defaultRole = "User";
+        if (!await _roleManager.RoleExistsAsync(defaultRole))
+        {
+            var roleResult = await _roleManager.CreateAsync(new IdentityRole<Guid>(defaultRole));
+            if (!roleResult.Succeeded)
+            {
+                throw new InvalidOperationException(
+                    $"Failed to create role '{defaultRole}': {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+            }
+        }
 
-//4. If roles exist (e.g. `"Customer"`), assign them with `UserManager.AddToRoleAsync`
-        var roles = new List<string> { "Musteri" }; // Varsayılan olarak "Musteri" rolü
-        await _userManager.AddToRolesAsync(newUser, roles);
+        var addRoleResult = await _userManager.AddToRoleAsync(newUser, defaultRole);
+        if (!addRoleResult.Succeeded)
+        {
+            throw new InvalidOperationException(
+                $"Failed to add role '{defaultRole}': {string.Join(", ", addRoleResult.Errors.Select(e => e.Description))}");
+        }
 
- //5. Generate a token with `IJwtTokenGenerator.GenerateToken`
+        var roles = await _userManager.GetRolesAsync(newUser);
         var token = _jwtTokenGenerator.GenerateToken(
             newUser.Id.ToString(),
             newUser.Email!,
             roles);
 
- //6. Return the `AuthResponse`
         return new AuthResponse
         {
             Token = token,
             Email = newUser.Email!,
-            Ad    = newUser.Ad,
+            Ad = newUser.Ad,
             Soyad = newUser.Soyad,
-            Role  = roles
+            Role = roles.ToList()
         };
     }
+
 }
+
+
