@@ -9,7 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 using ShopApp.Infrastructure.Authentication;
 using ShopApp.Infrastructure.Identity;
 using ShopApp.Infrastructure.Persistence;
-using src.IJwtTokenGenerator.ShopApp.Application.Common.Interfaces;
+using ShopApp.Infrastructure.Services;
+using src.Monolith.ShopApp.Application.Common.Interfaces;
 
 namespace ShopApp.Infrastructure;
 
@@ -90,6 +91,9 @@ public static class DependencyInjection
             var settings = sp.GetRequiredService<IOptions<JwtSettings>>().Value;
             return new JwtTokenGenerator(settings);
         });
+        services.AddScoped<IAuthService, AuthService>(
+
+        );
 
         return services;
     }

@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using ShopApp.Infrastructure.Identity;
-using src.IJwtTokenGenerator.ShopApp.Application.Common.Interfaces;
-using src.Monolith.ShopApp.Application.Auth;
 using src.Monolith.ShopApp.Application.Common.Interfaces;
+using src.Monolith.ShopApp.Application.Auth;
 using src.Monolith.ShopApp.Application.Common.Models;
 
 namespace ShopApp.Infrastructure.Services;
@@ -108,6 +107,10 @@ public class AuthService : IAuthService
         };
     }
 
+    public Task RegisterAsync(Microsoft.AspNetCore.Identity.Data.RegisterRequest request)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 

@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using src.IJwtTokenGenerator.ShopApp.Application.Common.Interfaces;
+using src.Monolith.ShopApp.Application.Common.Interfaces;
 
 namespace ShopApp.Infrastructure.Authentication;
 
