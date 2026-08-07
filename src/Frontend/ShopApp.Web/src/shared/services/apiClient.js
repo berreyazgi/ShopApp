@@ -13,7 +13,6 @@
  */
 
 import { appConfig } from '../../app/appConfig.js';
-import { getAccessToken } from '../utils/storage.js';
 
 // ─── Configuration ─────────────────────────────────────────────────────────
 
@@ -28,11 +27,12 @@ function buildUrl(path) {
   return base ? `${base}${path}` : path;
 }
 
-
-/** Returns the Authorization header if a token is present, otherwise {}. */
+/** Returns the current auth token (to be implemented). */
 function getAuthHeader() {
-  const token = getAccessToken();
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  // TODO: Retrieve JWT from store or localStorage when auth is implemented.
+  // Example: const token = getState().user?.token;
+  // return token ? { Authorization: `Bearer ${token}` } : {};
+  return {};
 }
 
 // ─── Core request ──────────────────────────────────────────────────────────

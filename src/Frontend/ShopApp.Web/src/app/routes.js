@@ -97,13 +97,13 @@ export const routes = [
   {
     path: '/siparisler',
     title: 'Siparişlerim',
-    requiresAuth: true,
+    // requiresAuth: true,   ← Uncomment when auth is implemented.
     page: () => import('../features/orders/pages/OrderListPage.js'),
   },
   {
     path: '/profil',
     title: 'Profilim',
-    requiresAuth: true,
+    // requiresAuth: true,   ← Uncomment when auth is implemented.
     page: () => import('../features/profile/pages/ProfilePage.js'),
   },
 
