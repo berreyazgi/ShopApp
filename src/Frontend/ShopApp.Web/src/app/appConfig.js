@@ -22,7 +22,8 @@ export const appConfig = {
    * Microservice phase: fill individual service URLs or keep using gateway.
    */
   api: {
-    gatewayBaseUrl: '',
+    // Monolith API — http profile on port 5048 (see launchSettings.json)
+    gatewayBaseUrl: 'http://localhost:5048',
     services: {
       identity:     '',
       catalog:      '',

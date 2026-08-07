@@ -34,37 +34,29 @@
  *  - The refresh token must be managed by the backend as an HttpOnly cookie.
  */
 
-// ─── Access Token ──────────────────────────────────────────────────────────
+// ─── Access Token (In-memory — Option A) ───────────────────────────────────
+//
+// The token lives in this module-scoped variable.
+// It survives SPA navigation but NOT page refresh (intentional — secure by design).
+// On refresh, bootstrap.js calls getCurrentUser() to restore state silently.
+
+/** @type {string|null} */
+let inMemoryToken = null;
 
 /**
- * Persists the access token using the configured storage strategy.
- *
- * @param {string} _token - The JWT access token received from the backend.
+ * Persists the access token in memory.
+ * @param {string} token - The JWT access token received from the backend.
  */
-export function saveAccessToken(_token) {
-  // TODO: Implement token storage strategy during backend integration.
-  //
-  // Recommended (Option A — in-memory):
-  //   inMemoryToken = token;
-  //
-  // Alternative (Option B — sessionStorage):
-  //   sessionStorage.setItem('access_token', token);
-  //
-  // NOT RECOMMENDED (Option C — localStorage):
-  //   localStorage.setItem('access_token', token);
-  //   ⚠ Vulnerable to XSS token theft.
+export function saveAccessToken(token) {
+  inMemoryToken = token;
 }
 
 /**
  * Retrieves the stored access token.
- * Returns null until a storage strategy is configured.
- *
  * @returns {string|null}
  */
 export function getAccessToken() {
-  // TODO: Read from the configured storage strategy.
-  // Recommended: return inMemoryToken;
-  return null;
+  return inMemoryToken;
 }
 
 /**
@@ -72,8 +64,7 @@ export function getAccessToken() {
  * Call on logout.
  */
 export function removeAccessToken() {
-  // TODO: Clear the configured token storage.
-  // Recommended: inMemoryToken = null;
+  inMemoryToken = null;
 }
 
 // ─── Preferences (non-sensitive) ──────────────────────────────────────────

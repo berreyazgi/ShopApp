@@ -12,6 +12,7 @@
  */
 
 import { routes, notFoundRoute } from './routes.js';
+import { isAuthenticated } from '../features/auth/state/authStore.js';
 
 /** @type {HTMLElement} The router outlet where pages are rendered. */
 let outlet = null;
@@ -77,6 +78,19 @@ async function render(pathname) {
 
   const matched = matchRoute(pathname);
   const { route, params } = matched ?? { route: notFoundRoute, params: {} };
+
+  // ── Auth guard ──────────────────────────────────────────────────────────
+  // guestOnly: redirect logged-in users away (e.g. /giris → home)
+  if (route.guestOnly && isAuthenticated()) {
+    navigate('/');
+    return;
+  }
+  // requiresAuth: redirect anonymous users to login
+  if (route.requiresAuth && !isAuthenticated()) {
+    navigate('/giris');
+    return;
+  }
+  // ────────────────────────────────────────────────────────────────────────
 
   // Update the browser tab title
   document.title = route.title
