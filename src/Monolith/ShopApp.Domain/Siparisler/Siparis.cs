@@ -11,7 +11,7 @@ public class Siparis : BaseEntity
     public string SiparisNumarasi { get; private set; } = null!;
 
     public SiparisDurum Status { get; private set; } = SiparisDurum.BekleyenOdeme;
-
+ 
     public decimal AraToplam { get; private set; }
 
     public decimal IndirimOrani{ get; private set; }

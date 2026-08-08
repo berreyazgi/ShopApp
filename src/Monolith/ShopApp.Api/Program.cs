@@ -11,14 +11,13 @@ var builder = WebApplication.CreateBuilder(args);
 // -------------------------------------------------------
 // Set the URL for the application to listen on for port error
 builder.WebHost.UseUrls("http://localhost:5050");
-
 // Infrastructure: Database, Identity, JWT — all wired in DependencyInjection.cs
 builder.Services.AddInfrastructure(builder.Configuration);
 
-
+// Auth application service
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-// CORS
+// CORS — must be registered before builder.Build()
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -74,6 +73,7 @@ builder.Services.AddSwaggerGen(options =>
         { jwtScheme, Array.Empty<string>() },
     });
 });
+
 var app = builder.Build();
 
 // -------------------------------------------------------
