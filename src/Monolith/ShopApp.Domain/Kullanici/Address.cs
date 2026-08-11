@@ -11,13 +11,13 @@ public class Address : BaseEntity
     public string? AddressBilgisi { get; private set; }
     public int Ulke { get; private set; }
     public int Sehir { get; private set; }
-    public string PostaKodu { get; private set; } = null!;
+    public int PostaKodu { get; private set; }
     public int Ilce { get; private set; } 
     public string TamAdres { get; private set; } = null!;
 
     public Musteri Musteri { get; private set; } = null!;
 
-    private Address( Guid MusteriId, int Ulke, int Sehir, int Ilce, string TamAdres, string PostaKodu, string AddressBilgisi)
+    private Address( Guid MusteriId, int Ulke, int Sehir, int Ilce, string TamAdres, int PostaKodu, string AddressBilgisi)
     {
         this.MusteriId = MusteriId;
         this.Ulke = Ulke;

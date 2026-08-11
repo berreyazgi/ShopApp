@@ -10,8 +10,8 @@ public class Siparis : BaseEntity
 
     public string SiparisNumarasi { get; private set; } = null!;
 
-    public SiparisDurum Status { get; private set; } = SiparisDurum.BekleyenOdeme;
-
+    public SiparisDurumLookup Status { get; private set; } = null!;
+ 
     public decimal AraToplam { get; private set; }
 
     public decimal IndirimOrani{ get; private set; }
@@ -32,7 +32,7 @@ public class Siparis : BaseEntity
         string SiparisNumarasi)
     {
         MusteriId = musteriId;
-       SiparisNumarasi = SiparisNumarasi;
+       this.SiparisNumarasi = SiparisNumarasi;
     }
 
     public void AddItem(
@@ -56,7 +56,7 @@ public class Siparis : BaseEntity
             throw new ArgumentOutOfRangeException(
                 nameof(KargoFiyat));
 
-        KargoFiyat = KargoFiyat;
+        this.KargoFiyat = KargoFiyat;
         RecalculateTotals();
     }
 

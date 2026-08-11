@@ -41,18 +41,12 @@
  *
  * @param {string} _token - The JWT access token received from the backend.
  */
-export function saveAccessToken(_token) {
-  // TODO: Implement token storage strategy during backend integration.
-  //
-  // Recommended (Option A — in-memory):
-  //   inMemoryToken = token;
-  //
-  // Alternative (Option B — sessionStorage):
-  //   sessionStorage.setItem('access_token', token);
-  //
-  // NOT RECOMMENDED (Option C — localStorage):
-  //   localStorage.setItem('access_token', token);
-  //   ⚠ Vulnerable to XSS token theft.
+export function saveAccessToken(token) {
+  try {
+    sessionStorage.setItem('shopapp_access_token', token);
+  } catch {
+    // Storage not available (private browsing or restricted).
+  }
 }
 
 /**
@@ -62,9 +56,11 @@ export function saveAccessToken(_token) {
  * @returns {string|null}
  */
 export function getAccessToken() {
-  // TODO: Read from the configured storage strategy.
-  // Recommended: return inMemoryToken;
-  return null;
+  try {
+    return sessionStorage.getItem('shopapp_access_token');
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -72,8 +68,11 @@ export function getAccessToken() {
  * Call on logout.
  */
 export function removeAccessToken() {
-  // TODO: Clear the configured token storage.
-  // Recommended: inMemoryToken = null;
+  try {
+    sessionStorage.removeItem('shopapp_access_token');
+  } catch {
+    // Silently ignore.
+  }
 }
 
 // ─── Preferences (non-sensitive) ──────────────────────────────────────────

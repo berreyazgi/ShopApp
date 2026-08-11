@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using src.Monolith.ShopApp.Application.Auth;
-using src.Monolith.ShopApp.Application.Common.Interfaces;
+using ShopApp.Application.Auth;
+using ShopApp.Application.Abstractions;
 
 namespace src.Monolith.ShopApp.Api.Controller;
 

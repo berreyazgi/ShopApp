@@ -1,4 +1,4 @@
-namespace src.Monolith.ShopApp.Application.Common.Models;
+namespace ShopApp.Application.Auth;
 
 public class AuthResponse
 {

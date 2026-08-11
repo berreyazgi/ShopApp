@@ -19,14 +19,14 @@ export const endpoints = {
   //  The frontend components must never be changed during that transition.
   //
   auth: {
-    login:          () => '/api/identity/auth/login',
-    register:       () => '/api/identity/auth/register',
-    logout:         () => '/api/identity/auth/logout',
-    refreshToken:   () => '/api/identity/auth/refresh',
-    me:             () => '/api/identity/users/me',
-    forgotPassword: () => '/api/identity/auth/forgot-password',
-    resetPassword:  () => '/api/identity/auth/reset-password',
-    verifyEmail:    () => '/api/identity/auth/verify-email',
+    login:          () => '/api/auth/login',
+    register:       () => '/api/auth/register',
+    logout:         () => '/api/auth/logout',
+    refreshToken:   () => '/api/auth/refresh',
+    me:             () => '/api/auth/me',
+    forgotPassword: () => '/api/auth/forgot-password',
+    resetPassword:  () => '/api/auth/reset-password',
+    verifyEmail:    () => '/api/auth/verify-email',
   },
 
   // ── Catalog / Products ───────────────────────────────────────────────────

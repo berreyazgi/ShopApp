@@ -50,13 +50,13 @@ public class SiparisUrunleri : BaseEntity
             throw new ArgumentOutOfRangeException(
                 nameof(IndirimOrani));
 
-        SiparisId = SiparisId;
-        UrunTurId = UrunTurId;
-        UrunIsmi = UrunIsmi;
-        StokTakipNumarasi = StokTakipNumarasi;
-        UrunMiktar = UrunMiktar;
-        UrunBirimFiyat = UrunBirimFiyat;
-        IndirimOrani = IndirimOrani;
+        this.SiparisId = SiparisId;
+        this.UrunTurId = UrunTurId;
+        this.UrunIsmi = UrunIsmi;
+        this.StokTakipNumarasi = StokTakipNumarasi;
+        this.UrunMiktar = UrunMiktar;
+        this.UrunBirimFiyat = UrunBirimFiyat;
+        this.IndirimOrani = IndirimOrani;
 
         ToplamFiyat =
             UrunBirimFiyat * UrunMiktar -

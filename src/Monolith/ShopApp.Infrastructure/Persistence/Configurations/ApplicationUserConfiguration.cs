@@ -19,7 +19,7 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
             .IsRequired()
             .HasMaxLength(500);
 
-        builder.Property(x => x.durum)
+        builder.Property(x => x.Durum)
             .IsRequired()
             .HasDefaultValue(true);
 
@@ -27,6 +27,6 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
             .IsRequired();
 
         builder.Property(x => x.GuncellemeTarihi)
-            .IsRequired(false);
+            .IsRequired();
     }
 }
