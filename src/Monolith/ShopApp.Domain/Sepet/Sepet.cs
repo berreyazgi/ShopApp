@@ -8,7 +8,8 @@ public class Sepet : BaseEntity
     [ForeignKey("Musteri")]
     public Guid MusteriId { get; private set; }
 
-    public SepetDurum Durum { get; private set; } = SepetDurum.Aktif;
+    public SepetDurumLookup Durum { get; private set; } = null!;
 
-    public ICollection<SepetUrunleri> Urunleri { get; private set; } = new List<SepetUrunleri>();
+    public ICollection<SepetUrunleri> Urunler { get; private set; } = [];
+    
 }

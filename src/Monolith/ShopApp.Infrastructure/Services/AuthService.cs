@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using ShopApp.Infrastructure.Identity;
-using src.Monolith.ShopApp.Application.Common.Interfaces;
-using src.Monolith.ShopApp.Application.Auth;
-using src.Monolith.ShopApp.Application.Common.Models;
+using ShopApp.Application.Abstractions;
+using ShopApp.Application.Auth;
 
 namespace ShopApp.Infrastructure.Services;
 
@@ -54,6 +53,7 @@ public class AuthService : IAuthService
         {
             throw new InvalidOperationException("User with this email already exists.");
         }
+        var now = DateTime.UtcNow;
 
         var newUser = new ApplicationUser
         {
@@ -61,9 +61,10 @@ public class AuthService : IAuthService
             Email = request.Email,
             Ad = request.Ad,
             Soyad = request.Soyad,
-            durum = "Active",
-            OlusturmaTarihi = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
-            GuncellemeTarihi = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
+            Durum = "Active",
+            
+            OlusturmaTarihi = now,
+            GuncellemeTarihi = now,
         };
 
         var createResult = await _userManager.CreateAsync(newUser, request.Sifre);
@@ -96,7 +97,7 @@ public class AuthService : IAuthService
             newUser.Id.ToString(),
             newUser.Email!,
             roles);
-
+        
         return new AuthResponse
         {
             Token = token,

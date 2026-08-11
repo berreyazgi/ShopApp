@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using ShopApp.Infrastructure;
 using ShopApp.Infrastructure.Services;
-using src.Monolith.ShopApp.Application.Common.Interfaces;
+using ShopApp.Application.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -5,10 +5,7 @@ public class SiparisDurumLookup
     public int Id { get; set; }
 
     /// <summary>Okunabilir durum adı (örn. "Bekleyen Ödeme", "Teslim Edildi").</summary>
-    public string Ad { get; set; } = null!;
+    public string DurumIsmi { get; set; } = null!;
 
-    public static explicit operator int(SiparisDurumLookup v)
-    {
-        throw new NotImplementedException();
-    }
+ 
 }

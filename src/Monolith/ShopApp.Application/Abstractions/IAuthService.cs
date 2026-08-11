@@ -1,7 +1,6 @@
-using src.Monolith.ShopApp.Application.Auth;
-using src.Monolith.ShopApp.Application.Common.Models;
+using ShopApp.Application.Auth;
 
-namespace src.Monolith.ShopApp.Application.Common.Interfaces;
+namespace ShopApp.Application.Abstractions;
 
 public interface IAuthService
 {

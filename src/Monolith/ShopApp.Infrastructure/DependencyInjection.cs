@@ -10,7 +10,7 @@ using ShopApp.Infrastructure.Authentication;
 using ShopApp.Infrastructure.Identity;
 using ShopApp.Infrastructure.Persistence;
 using ShopApp.Infrastructure.Services;
-using src.Monolith.ShopApp.Application.Common.Interfaces;
+using ShopApp.Application.Abstractions;
 
 namespace ShopApp.Infrastructure;
 

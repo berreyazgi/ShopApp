@@ -1,4 +1,4 @@
-namespace src.Monolith.ShopApp.Application.Common.Interfaces;
+namespace ShopApp.Application.Abstractions;
 
 public interface IIdentityService
 {

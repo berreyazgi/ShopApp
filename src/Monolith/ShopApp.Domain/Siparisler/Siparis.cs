@@ -10,7 +10,7 @@ public class Siparis : BaseEntity
 
     public string SiparisNumarasi { get; private set; } = null!;
 
-    public SiparisDurum Status { get; private set; } = SiparisDurum.BekleyenOdeme;
+    public SiparisDurumLookup Status { get; private set; } = null!;
  
     public decimal AraToplam { get; private set; }
 

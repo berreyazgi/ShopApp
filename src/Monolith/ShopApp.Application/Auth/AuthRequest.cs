@@ -1,4 +1,4 @@
-namespace src.Monolith.ShopApp.Application.Auth;
+namespace ShopApp.Application.Auth;
 
 public class AuthRequest
 {
