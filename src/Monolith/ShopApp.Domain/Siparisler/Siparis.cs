@@ -1,20 +1,25 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using src.Monolith.ShopApp.Domain.Common;
 
 namespace src.Monolith.ShopApp.Domain.Siparisler;
 
+[Table("Siparisler", Schema = "sales")]
 public class Siparis : BaseEntity
 {
-    [ForeignKey("Musteri")]
+    [Required]
     public string MusteriId { get; private set; } = null!;
 
+    [Required]
     public string SiparisNumarasi { get; private set; } = null!;
 
-    public SiparisDurumLookup Status { get; private set; } = null!;
+    public int DurumId { get; private set; }
+
+    public SiparisDurumLookup Durum { get; private set; } = null!;
  
     public decimal AraToplam { get; private set; }
 
-    public decimal IndirimOrani{ get; private set; }
+    public decimal IndirimOrani { get; private set; }
 
     public decimal KargoFiyat { get; private set; }
 
@@ -22,11 +27,7 @@ public class Siparis : BaseEntity
 
     public ICollection<SiparisUrunleri> Urunler { get; private set; }
         = new List<SiparisUrunleri>();
-
-    private Siparis()
-    {
-    }
-
+    
     public Siparis(
         string musteriId,
         string SiparisNumarasi)
@@ -58,25 +59,6 @@ public class Siparis : BaseEntity
 
         this.KargoFiyat = KargoFiyat;
         RecalculateTotals();
-    }
-
-    public void MarkAsPaid()
-    {
-        Status = SiparisDurum.Odenmis;
-        MarkAsUpdated();
-    }
-
-    public void Cancel()
-    {
-        if (Status is SiparisDurum.Gönderildi
-            or SiparisDurum.TeslimEdildi)
-        {
-            throw new InvalidOperationException(
-                "Kargoya verilmiş veya teslim edilmiş sipariş iptal edilemez.");
-        }
-
-        Status = SiparisDurum.IptalEdildi;
-        MarkAsUpdated();
     }
 
     private void RecalculateTotals()

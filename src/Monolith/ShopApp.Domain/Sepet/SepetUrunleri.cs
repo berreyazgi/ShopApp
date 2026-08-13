@@ -3,12 +3,12 @@ using src.Monolith.ShopApp.Domain.Common;
 
 namespace src.Monolith.ShopApp.Domain.Sepet;
 
+[Table("SepetUrunleri", Schema = "sales")]
 public class SepetUrunleri : BaseEntity
 {
-    [ForeignKey("Sepet")]
     public Guid SepetId { get; private set; }
 
-    public Guid UrunTurId{ get; private set; }
+    public Guid UrunTurId { get; private set; }
 
     public int UrunMiktar { get; private set; }
 

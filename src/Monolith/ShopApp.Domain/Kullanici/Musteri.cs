@@ -4,10 +4,17 @@ namespace src.Monolith.ShopApp.Domain.Kullanici;
 
 public class Musteri : BaseEntity
 {
-    
-    public string? Cinsiyet { get; set; }
-    public string? DogumTarihi { get; set; }
-    public string Email { get; set; } = null!;
+    public Guid KullaniciId { get; private set; }
 
-    
-}   
+    public bool? Cinsiyet { get; set; }
+
+    private Musteri()
+    {
+    }
+
+    public static Musteri Olustur(Guid kullaniciId) => new()
+    {
+        KullaniciId = kullaniciId,
+        OlusturanKullaniciId = kullaniciId
+    };
+}

@@ -1,0 +1,6 @@
+@KargoServis_HostAddress = http://localhost:5270
+
+GET {{KargoServis_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,83 +1,76 @@
 /**
- * apiClient.js
- * Centralized HTTP client.
- *
- * All network requests in the app must go through this module.
- * Components and pages never use fetch() directly.
- *
- * This abstraction means:
- *  - Auth headers can be injected in one place
- *  - Error handling is consistent
- *  - The backend URL can change without touching component code
- *  - The client can be swapped (e.g. for axios) without UI changes
+ * Centralized HTTP client. Feature services are the only callers of this module.
  */
-
 import { appConfig } from '../../app/appConfig.js';
-import { getAccessToken } from '../utils/storage.js';
-
-// ─── Configuration ─────────────────────────────────────────────────────────
+import { getAccessToken, removeAccessToken } from '../utils/storage.js';
 
 const DEFAULT_HEADERS = {
+  Accept: 'application/json',
   'Content-Type': 'application/json',
-  'Accept':       'application/json',
 };
 
-/** Resolves a full URL from a relative path. */
-function buildUrl(path) {
-  const base = appConfig.api.gatewayBaseUrl;
-  return base ? `${base}${path}` : path;
+let unauthorizedHandler = null;
+
+export function setUnauthorizedHandler(handler) {
+  unauthorizedHandler = handler;
 }
 
-/** Returns the current auth token injected as a Bearer header. */
+function buildUrl(path, params) {
+  const base = appConfig.api.gatewayBaseUrl.replace(/\/$/, '');
+  const url = new URL(base + path, window.location.origin);
+  Object.entries(params ?? {}).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) url.searchParams.set(key, value);
+  });
+  return url.toString();
+}
+
 function getAuthHeader() {
   const token = getAccessToken();
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  return token ? { Authorization: 'Bearer ' + token } : {};
 }
 
-// ─── Core request ──────────────────────────────────────────────────────────
+async function readBody(response) {
+  const contentType = response.headers.get('content-type') ?? '';
+  if (!contentType.includes('application/json')) return null;
+  return response.json().catch(() => null);
+}
 
-/**
- * @param {string} method
- * @param {string} path
- * @param {{ body?: object, params?: object }} [options]
- * @returns {Promise<any>}
- */
 async function request(method, path, options = {}) {
-  const url  = buildUrl(path);
-  const auth = getAuthHeader();
-
-  const init = {
-    method,
-    headers: { ...DEFAULT_HEADERS, ...auth },
-  };
-
-  if (options.body) {
-    init.body = JSON.stringify(options.body);
+  let response;
+  try {
+    response = await fetch(buildUrl(path, options.params), {
+      method,
+      headers: { ...DEFAULT_HEADERS, ...getAuthHeader(), ...options.headers },
+      body: options.body === undefined ? undefined : JSON.stringify(options.body),
+    });
+  } catch {
+    throw { status: 0, message: 'Ağ bağlantısı kurulamadı. Lütfen tekrar deneyin.' };
   }
 
-  const response = await fetch(url, init);
-
+  const body = await readBody(response);
   if (!response.ok) {
-    const errorBody = await response.json().catch(() => ({}));
-    throw {
-      status:  response.status,
-      message: errorBody.message ?? response.statusText,
-      body:    errorBody,
+    const error = {
+      status: response.status,
+      message: body?.message ?? body?.title ?? response.statusText,
+      validationErrors: body?.errors ?? null,
+      body,
     };
+
+    if (response.status === 401 && !options.skipUnauthorizedHandler) {
+      removeAccessToken();
+      unauthorizedHandler?.(error);
+    }
+
+    throw error;
   }
 
-  // 204 No Content
-  if (response.status === 204) return null;
-
-  return response.json();
+  return response.status === 204 ? null : body;
 }
-
-// ─── Public API ────────────────────────────────────────────────────────────
 
 export const apiClient = {
-  get:    (path, options)         => request('GET',    path, options),
-  post:   (path, body, options)   => request('POST',   path, { ...options, body }),
-  put:    (path, body, options)   => request('PUT',    path, { ...options, body }),
-  patch:  (path, body, options)   => request('PATCH',  path, { ...options, body }),
-  delete: (path, options)         => request('DELETE', path, options),
+  get: (path, options) => request('GET', path, options),
+  post: (path, body, options) => request('POST', path, { ...options, body }),
+  put: (path, body, options) => request('PUT', path, { ...options, body }),
+  patch: (path, body, options) => request('PATCH', path, { ...options, body }),
+  delete: (path, options) => request('DELETE', path, options),
 };

@@ -1,0 +1,12 @@
+{
+  "0": "ShopApp.Application.Auth",
+  "1": "ShopApp.Infrastructure.Persistence.Migrations",
+  "2": "Siparis",
+  "3": "ShopApp.Infrastructure.csproj",
+  "4": "ShopApp.Application.Abstractions",
+  "5": "IEntityTypeConfiguration",
+  "6": "Sepet",
+  "7": "ShopAppDbContext",
+  "8": "Address",
+  "9": "IdentityRoleConfiguration"
+}

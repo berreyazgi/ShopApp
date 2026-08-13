@@ -8,26 +8,13 @@ public class SepetConfiguration : IEntityTypeConfiguration<Sepet>
 {
     public void Configure(EntityTypeBuilder<Sepet> builder)
     {
-            builder.ToTable("Sepetler", "sales");
-            builder.HasKey(x => x.Id);
+        builder.HasMany(x => x.Urunler)
+            .WithOne(x => x.Sepet)
+            .HasForeignKey(x => x.SepetId);
 
-            builder.Property(x => x.MusteriId)
-                .IsRequired();
-
-            builder.Property(x => x.DurumId)
-                .IsRequired();
-
-            builder.HasMany(x => x.Urunleri)
-                .WithOne(x => x.Sepet)
-                .HasForeignKey(x => x.SepetId);
-
-            builder.HasOne(x => x.Durum)
-                .WithMany()
-                .HasForeignKey(x => x.DurumId)
-                .OnDelete(DeleteBehavior.Restrict);
-        
+        builder.HasOne(x => x.Durum)
+            .WithMany()
+            .HasForeignKey(x => x.DurumId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
-        
 }
-
-

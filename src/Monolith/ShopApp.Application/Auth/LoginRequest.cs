@@ -1,8 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace ShopApp.Application.Auth;
 
-public class LoginRequest
+public sealed class LoginRequest
 {
-    public required string Email { get; set;}
-    public required string Sifre { get; set;}
+    [Required, EmailAddress]
+    public required string Email { get; set; }
 
+    [Required, MinLength(1)]
+    public required string Sifre { get; set; }
 }

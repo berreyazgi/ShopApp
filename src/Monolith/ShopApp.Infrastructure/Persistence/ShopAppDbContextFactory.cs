@@ -16,7 +16,7 @@ public class ShopAppDbContextFactory : IDesignTimeDbContextFactory<ShopAppDbCont
         // Use a placeholder connection string for design-time; the real one is
         // supplied at runtime via appsettings / environment variables.
         optionsBuilder.UseNpgsql(
-            "Host=localhost;Port=5432;Database=ShopAppDb;Username=postgres;Password=postgres");
+            "Host=127.0.0.1;Port=5432;Database=ShopAppDb;Username=postgres;Password=postgres456");
 
         return new ShopAppDbContext(optionsBuilder.Options);
     }

@@ -5,7 +5,7 @@
  * This page:
  *  1. Renders the login form with email, password, remember-me, and forgot-password.
  *  2. Runs client-side validation on submit and on blur.
- *  3. Calls authService.login() (stub — no real API call yet).
+ *  3. Calls authService.login() and establishes the authenticated session.
  *  4. Handles loading state, validation errors, and server error display.
  *  5. Includes social login UI placeholders.
  *
@@ -130,22 +130,14 @@ export default function LoginPage() {
       authForm.clearServerError();
 
       try {
-        // 4. Call service stub (no API call yet)
         const result = await login({ email, password });
 
         // 5. Save UI preference
         saveRememberMe(remember);
 
         if (result?.success) {
-          // FUTURE: navigate to originally requested page or home.
-          // TODO: navigate(AUTH_ROUTES.HOME);
-          console.info('[LoginPage] Login success stub. Navigation will be added with backend.');
-        } else {
-          // Stub response is always success: false.
-          // When the real API is connected, this branch handles invalid credentials.
-          authForm.setServerError(
-            'Giriş başarılı olduğunda bu mesaj kaldırılacak. Servis henüz entegre edilmemiştir.'
-          );
+          const returnTo = new URLSearchParams(window.location.search).get('returnTo');
+          navigate(returnTo?.startsWith('/') ? returnTo : AUTH_ROUTES.HOME);
         }
       } catch (err) {
         authForm.setServerError(mapAuthError(err));

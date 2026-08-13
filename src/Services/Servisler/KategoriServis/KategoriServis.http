@@ -1,0 +1,6 @@
+@KategoriServis_HostAddress = http://localhost:5116
+
+GET {{KategoriServis_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

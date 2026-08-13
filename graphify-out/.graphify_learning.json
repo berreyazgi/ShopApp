@@ -1,0 +1,54 @@
+{
+  "generated_at": "2026-08-13T07:33:34.108305+00:00",
+  "nodes": {
+    "shopapp_microservice_database_agent_migrations": {
+      "code_fingerprint": "f421638b20d80d26e69bc8f48e9e7e4d5a8b21b14805ac3f74f82a7c1233d205",
+      "label": "Migrations",
+      "last": "2026-08-13T07:11:23.292690+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-13T07:11:23.292690+00:00",
+          "outcome": "useful",
+          "q": "Where are Entity Framework Core migrations, DbContext, startup database configuration, and connection strings located?"
+        }
+      ],
+      "score": 0.999644179,
+      "source_file": "shopapp_microservice_database_agent.md",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_monolith_shopapp_infrastructure_persistence_shopappdbcontext_shopapp_infrastructure_persistence_shopappdbcontext": {
+      "code_fingerprint": "110aef270b839598849b1b1b38f7e473157ba2af4ea4ae041d2b4319347d11ff",
+      "label": "ShopAppDbContext",
+      "last": "2026-08-13T07:11:23.292690+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-13T07:11:23.292690+00:00",
+          "outcome": "useful",
+          "q": "Where are Entity Framework Core migrations, DbContext, startup database configuration, and connection strings located?"
+        }
+      ],
+      "score": 0.999644179,
+      "source_file": "src/Monolith/ShopApp.Infrastructure/Persistence/ShopAppDbContext.cs",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_monolith_shopapp_infrastructure_shopapp_infrastructure": {
+      "code_fingerprint": "1797aa8792094668d035af549d9303cf3ef79ac29f8e0ab804d22a8e72835dab",
+      "label": "ShopApp.Infrastructure.csproj",
+      "last": "2026-08-13T07:11:23.292690+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-13T07:11:23.292690+00:00",
+          "outcome": "useful",
+          "q": "Where are Entity Framework Core migrations, DbContext, startup database configuration, and connection strings located?"
+        }
+      ],
+      "score": 0.999644179,
+      "source_file": "src/Monolith/ShopApp.Infrastructure/ShopApp.Infrastructure.csproj",
+      "status": "tentative",
+      "uses": 1
+    }
+  },
+  "version": 1
+}

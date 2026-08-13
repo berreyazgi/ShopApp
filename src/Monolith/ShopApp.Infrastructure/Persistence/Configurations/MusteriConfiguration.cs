@@ -1,27 +1,26 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using ShopApp.Infrastructure.Identity;
 using src.Monolith.ShopApp.Domain.Kullanici;
 
 namespace ShopApp.Infrastructure.Persistence.Configurations;
 
 public class MusteriConfiguration : IEntityTypeConfiguration<Musteri>
 {
-    public void Configure(
-        EntityTypeBuilder<Musteri> builder)
+    public void Configure(EntityTypeBuilder<Musteri> builder)
     {
-        builder.ToTable("Musteriler", "identity");
+        builder.ToTable("Musteriler", "kimlik");
 
-        builder.Property(x => x.Cinsiyet)
-            .IsRequired()
-            .HasMaxLength(500);
+        builder.Property(x => x.KullaniciId)
+            .HasColumnName("KullaniciId")
+            .IsRequired();
 
-        builder.Property(x => x.DogumTarihi)
-            .IsRequired()
-            .HasMaxLength(500);
+        builder.HasIndex(x => x.KullaniciId)
+            .IsUnique();
 
-        builder.Property(x => x.Email)
-            .IsRequired()
-            .HasMaxLength(500);
+        builder.HasOne<KayitliKullanici>()
+            .WithOne()
+            .HasForeignKey<Musteri>(x => x.KullaniciId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
-
 }

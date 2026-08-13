@@ -1,19 +1,23 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using src.Monolith.ShopApp.Domain.Common;
 
 namespace src.Monolith.ShopApp.Domain.Siparisler;
 
+[Table("SiparisUrunleri", Schema = "sales")]
 public class SiparisUrunleri : BaseEntity
 {
-    [ForeignKey("Siparis")]
     public Guid SiparisId { get; private set; }
 
     public Guid UrunTurId { get; private set; }
 
+    [Required]
+    [MaxLength(500)]
     public string UrunIsmi { get; private set; } = null!;
     public string? UrunAciklamasi { get; private set; }
 
-    public string? StokTakipNumarasi { get; private set; } 
+    [MaxLength(500)]
+    public string? StokTakipNumarasi { get; private set; }
 
     public int UrunMiktar { get; private set; }
 

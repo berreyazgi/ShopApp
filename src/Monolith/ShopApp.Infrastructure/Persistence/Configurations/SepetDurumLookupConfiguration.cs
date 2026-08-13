@@ -9,14 +9,6 @@ public class SepetDurumLookupConfiguration : IEntityTypeConfiguration<SepetDurum
     public void Configure(
         EntityTypeBuilder<SepetDurumLookup> builder)
     {
-        builder.ToTable("SepetDurumlari", "sales");
-
-        builder.HasKey(x => x.Id);
-
-        builder.Property(x => x.DurumIsmi)
-            .HasMaxLength(50)
-            .IsRequired();
-
         builder.HasData(
             new SepetDurumLookup
             {

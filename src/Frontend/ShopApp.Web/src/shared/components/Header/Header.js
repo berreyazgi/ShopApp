@@ -15,6 +15,8 @@
 import { createIcon }  from '../Icon/Icon.js';
 import { subscribe }   from '../../state/store.js';
 import { navigate }    from '../../../app/router.js';
+import { logout }      from '../../../features/auth/services/authService.js';
+import { getState as getAuthState, subscribe as subscribeAuth } from '../../../features/auth/state/authStore.js';
 
 // ─── Navigation Items ──────────────────────────────────────────────────────
 
@@ -81,12 +83,7 @@ export function createHeader() {
 
         <!-- Actions -->
         <div class="header-actions">
-          <button class="header-action-btn" aria-label="Profil" id="btn-profile">
-            <span class="action-icon"></span>
-          </button>
-          <button class="header-action-btn" aria-label="Favoriler" id="btn-favorites">
-            <span class="action-icon"></span>
-          </button>
+          <div class="header-auth-actions" id="header-auth-actions"></div>
           <button class="header-action-btn header-action-btn--cart" aria-label="Sepet" id="btn-cart">
             <span class="action-icon"></span>
             <span class="cart-badge" aria-live="polite" aria-label="Sepet: 0 ürün">0</span>
@@ -121,8 +118,32 @@ export function createHeader() {
 
     // Inject icons after rendering
     injectIcons();
+    renderAuthActions();
 
     cartBadgeEl = element.querySelector('.cart-badge');
+  }
+
+  function renderAuthActions() {
+    const actions = element.querySelector('#header-auth-actions');
+    if (!actions) return;
+
+    const authState = getAuthState();
+    const isAdmin = authState.user?.roles?.includes('Admin');
+    if (authState.status !== 'authenticated') {
+      actions.innerHTML = '<a class="header-auth-link" href="/giris">Giriş Yap</a><a class="header-auth-link header-auth-link--primary" href="/kayit">Kayıt Ol</a>';
+      return;
+    }
+
+    actions.innerHTML =
+      '<a class="header-auth-link" href="/profil">Profil</a>' +
+      '<a class="header-auth-link" href="/siparisler">Siparişler</a>' +
+      (isAdmin ? '<a class="header-auth-link" href="/admin">Yönetim</a>' : '') +
+      '<button class="header-auth-link" type="button" id="btn-logout">Çıkış Yap</button>';
+
+    actions.querySelector('#btn-logout')?.addEventListener('click', async () => {
+      await logout();
+      navigate('/');
+    });
   }
 
   function injectIcons() {
@@ -133,8 +154,6 @@ export function createHeader() {
 
     inject('.header-brand__icon', 'logo', 28);
     inject('.header-nav__dropdown-icon', 'chevron-down', 14);
-    inject('#btn-profile .action-icon', 'user', 20);
-    inject('#btn-favorites .action-icon', 'heart', 20);
     inject('#btn-cart .action-icon', 'cart', 20);
     inject('#btn-mobile-menu .action-icon', 'menu', 22);
     inject('.header-search__icon', 'search', 16);
@@ -201,12 +220,6 @@ export function createHeader() {
     const onCartClick = () => navigate('/sepet');
     cartBtn?.addEventListener('click', onCartClick);
     cleanupFns.push(() => cartBtn?.removeEventListener('click', onCartClick));
-
-    // Profile button
-    const profileBtn = element.querySelector('#btn-profile');
-    const onProfileClick = () => navigate('/giris');
-    profileBtn?.addEventListener('click', onProfileClick);
-    cleanupFns.push(() => profileBtn?.removeEventListener('click', onProfileClick));
   }
 
   // ── Store subscription ───────────────────────────────────────────────────
@@ -222,7 +235,9 @@ export function createHeader() {
     cleanupFns.push(unsubscribe);
   }
 
-  // ── Lifecycle ────────────────────────────────────────────────────────────
+  function subscribeToAuth() {
+    cleanupFns.push(subscribeAuth(renderAuthActions));
+  }
 
   function destroy() {
     cleanupFns.forEach((fn) => fn());
@@ -232,6 +247,7 @@ export function createHeader() {
   render();
   bindEvents();
   subscribeToStore();
+  subscribeToAuth();
 
   return { element, destroy };
 }
