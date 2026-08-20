@@ -7,8 +7,9 @@ namespace StokServis.Domain.Entities;
 [Table("StokKalemleri", Schema = "stok")]
 public class StokUrunleri : BaseEntity
 {
-    // KategoriServis içerisindeki UrunTipi'ne referans
-    public Guid UrunTipiId { get; set; }
+    // KategoriServis içerisindeki UrunTur'e referans
+    [Column("UrunTipiId")]
+    public Guid UrunTurId { get; set; }
 
     [ForeignKey("DepoId")]
     [Required]

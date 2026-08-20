@@ -87,6 +87,7 @@ public static class DependencyInjection
             new JwtTokenGenerator(sp.GetRequiredService<IOptions<JwtSettings>>().Value));
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<ISepetRepository, SepetRepository>();
 
         return services;
     }

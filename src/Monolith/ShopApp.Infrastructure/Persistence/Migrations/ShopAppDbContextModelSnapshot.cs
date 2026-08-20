@@ -434,7 +434,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.SepetUrunleri", b =>
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Entities.SepetUrunu", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -686,7 +686,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Navigation("Durum");
                 });
 
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.SepetUrunleri", b =>
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Entities.SepetUrunu", b =>
                 {
                     b.HasOne("src.Monolith.ShopApp.Domain.Sepet.Sepet", "Sepet")
                         .WithMany("Urunler")

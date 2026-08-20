@@ -9,16 +9,13 @@ public class Kategori : BaseEntity
 {
     [Required]
     [MaxLength(200)]
-    public string Ad { get; set; } = null!;
+    public string KategoriIsim { get; set; } = null!;
 
-    [Required]
-    [MaxLength(220)]
-    public string Slug { get; set; } = null!;
+    [ForeignKey(nameof(UstKategoriId))]
+    public Guid? UstKategoriId { get; set; }
 
     [MaxLength(2000)]
-    public string? Aciklama { get; set; }
-
-    public Guid? UstKategoriId { get; set; }
+    public string? KategoriAciklamasi { get; set; }
 
     [MaxLength(1000)]
     public string? GorselUrl { get; set; }

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ShopApp.Application.Auth;
+namespace ShopApp.Application.Authentication;
 
 public sealed class LoginRequest
 {

@@ -36,14 +36,14 @@ public class StokUrunleriConfiguration : IEntityTypeConfiguration<StokUrunleri>
     {
         b.ToTable("StokKalemleri", "stok", t =>
         {
-            t.HasCheckConstraint("CK_StokKalemleri_Miktar", "\"Miktar\" >= 0");
+            t.HasCheckConstraint("CK_StokKalemleri_Miktar", "\"StokUrunMiktar\" >= 0");
             t.HasCheckConstraint("CK_StokKalemleri_RezerveMiktar",
-                "\"RezerveMiktar\" >= 0 AND \"RezerveMiktar\" <= \"Miktar\"");
+                "\"RezerveMiktar\" >= 0 AND \"RezerveMiktar\" <= \"StokUrunMiktar\"");
         });
 
-        b.HasIndex(x => new { x.UrunTipiId, x.DepoId }).IsUnique();
+        b.HasIndex(x => new { x.UrunTurId, x.DepoId }).IsUnique();
 
-        b.HasIndex(x => x.UrunTipiId);
+        b.HasIndex(x => x.UrunTurId);
 
         b.HasMany(x => x.Hareketler)
             .WithOne(x => x.StokUrunleri)

@@ -7,7 +7,8 @@ namespace KategoriServis.Domain.Entities;
 [Table("UrunOzellikleri", Schema = "katalog")]
 public class UrunOzelligi : BaseEntity
 {
-    public Guid UrunTipiId { get; set; }
+    [Column("UrunTipiId")]
+    public Guid UrunTurId { get; set; }
 
     [Required]
     [MaxLength(200)]
@@ -18,12 +19,12 @@ public class UrunOzelligi : BaseEntity
     public string OzellikDegeri { get; set; } = null!;
 
     // Navigation property
-    public UrunTipi UrunTipi { get; set; } = null!;
+    public UrunTur UrunTur { get; set; } = null!;
 
-    public UrunOzelligi(string ozellikAdi, string ozellikDegeri, Guid urunTipiId)
+    public UrunOzelligi(string ozellikAdi, string ozellikDegeri, Guid urunTurId)
     {
         OzellikAdi = ozellikAdi;
         OzellikDegeri = ozellikDegeri;
-        UrunTipiId = urunTipiId;
+        UrunTurId = urunTurId;
     }
 }

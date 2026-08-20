@@ -1,5 +1,5 @@
 using ShopApp.Application.Abstractions;
-using ShopApp.Application.Auth;
+using ShopApp.Application.Authentication;
 
 namespace ShopApp.Application.Services;
 

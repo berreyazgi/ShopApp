@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using src.Monolith.ShopApp.Domain.Common;
 
-namespace src.Monolith.ShopApp.Domain.Sepet;
+namespace src.Monolith.ShopApp.Domain.Sepet.Entities;
 
 [Table("Sepetler", Schema = "sales")]
 public class Sepet : BaseEntity
@@ -16,5 +16,16 @@ public class Sepet : BaseEntity
     
     public SepetDurumLookup Durum { get; private set; }
 
-    public ICollection<SepetUrunleri> Urunler { get; private set; } = [];
+    public ICollection<SepetUrunu> Urunler { get; private set; } = [];
+
+    private Sepet()
+    {
+    }
+
+    public static Sepet Olustur(string musteriId, Guid olusturanKullaniciId) => new()
+    {
+        MusteriId = musteriId,
+        DurumId = 1, // Aktif
+        OlusturanKullaniciId = olusturanKullaniciId
+    };
 }

@@ -29,9 +29,8 @@ public class SiparisUrunleri : BaseEntity
 
     public Siparis Siparis { get; private set; } = null!;
 
-    private SiparisUrunleri()
-    {
-    }
+    //encapsulation 
+    private SiparisUrunleri() { }
 
     internal SiparisUrunleri(
         Guid SiparisId,

@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using ShopApp.Application.Abstractions;
-using ShopApp.Application.Auth;
+using ShopApp.Application.Authentication;
 
 namespace ShopApp.Infrastructure.Authentication;
 

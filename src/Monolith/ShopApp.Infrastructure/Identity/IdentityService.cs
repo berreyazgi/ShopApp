@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ShopApp.Infrastructure.Persistence;
 using src.Monolith.ShopApp.Domain.Kullanici;
 using ShopApp.Application.Abstractions;
-using ShopApp.Application.Auth;
+using ShopApp.Application.Authentication;
 
 namespace ShopApp.Infrastructure.Identity;
 

@@ -1,4 +1,4 @@
-namespace ShopApp.Application.Auth;
+namespace ShopApp.Application.Authentication;
 
 public class AuthRequest
 {

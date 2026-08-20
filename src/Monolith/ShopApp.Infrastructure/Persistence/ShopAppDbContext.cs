@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using ShopApp.Infrastructure.Identity;
 using src.Monolith.ShopApp.Domain.Kullanici;
 using src.Monolith.ShopApp.Domain.Sepet;
+using src.Monolith.ShopApp.Domain.Sepet.Entities;
+using SepetUrunuEntity = src.Monolith.ShopApp.Domain.Sepet.Entities.SepetUrunu;
 using src.Monolith.ShopApp.Domain.Siparisler;
 
 namespace ShopApp.Infrastructure.Persistence;
@@ -21,7 +23,7 @@ public class ShopAppDbContext : IdentityDbContext<KayitliKullanici, IdentityRole
 
     // Cart modülü
     public DbSet<Sepet> Carts => Set<Sepet>();
-    public DbSet<SepetUrunleri> CartItems => Set<SepetUrunleri>();
+    public DbSet<SepetUrunuEntity> CartItems => Set<SepetUrunuEntity>();
     public DbSet<SepetDurumLookup> SepetDurumlar => Set<SepetDurumLookup>();
 
     // Order modülü

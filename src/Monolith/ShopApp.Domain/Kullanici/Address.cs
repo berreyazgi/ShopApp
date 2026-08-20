@@ -25,10 +25,9 @@ public class Address : BaseEntity
     public string TamAdres { get; private set; } = null!;
 
     public Musteri Musteri { get; private set; } = null!;
-
-    private Address()
-    {
-    }
+    
+    //efcore için boş bırakılıyor
+    private Address() { }
 
     private Address(Guid musteriId, int ulke, int sehir, int ilce, string tamAdres, string postaKodu, string? adresBilgisi)
     {

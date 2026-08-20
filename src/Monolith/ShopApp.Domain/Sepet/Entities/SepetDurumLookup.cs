@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace src.Monolith.ShopApp.Domain.Sepet;
+namespace src.Monolith.ShopApp.Domain.Sepet.Entities;
 
 [Table("SepetDurumlari", Schema = "sales")]
 public class SepetDurumLookup

@@ -3,7 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShopApp.Application.Abstractions;
-using ShopApp.Application.Auth;
+using ShopApp.Application.Authentication;
 
 namespace src.Monolith.ShopApp.Api.Controller;
 

@@ -5,7 +5,7 @@ using KategoriServis.Domain.Common;
 namespace KategoriServis.Domain.Entities;
 
 [Table("UrunTipleri", Schema = "katalog")]
-public class UrunTipi : BaseEntity
+public class UrunTur : BaseEntity
 {
     public Guid UrunId { get; set; }
 

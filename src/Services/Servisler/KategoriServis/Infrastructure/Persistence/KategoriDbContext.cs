@@ -8,7 +8,7 @@ public class KategoriDbContext(DbContextOptions<KategoriDbContext> options) : Db
 {
     public DbSet<Kategori> Kategoriler => Set<Kategori>();
     public DbSet<Urun> Urunler => Set<Urun>();
-    public DbSet<UrunTipi> UrunTipleri => Set<UrunTipi>();
+    public DbSet<UrunTur> UrunTurleri => Set<UrunTur>();
     public DbSet<UrunOzelligi> UrunOzellikleri => Set<UrunOzelligi>();
     public DbSet<UrunGorseli> UrunGorselleri => Set<UrunGorseli>();
 
@@ -46,7 +46,7 @@ public class UrunConfiguration : IEntityTypeConfiguration<Urun>
 
         b.HasIndex(x => x.KategoriId);
 
-        b.HasMany(x => x.UrunTipleri)
+        b.HasMany(x => x.UrunTurleri)
             .WithOne(x => x.Urun)
             .HasForeignKey(x => x.UrunId)
             .OnDelete(DeleteBehavior.Cascade);
@@ -58,17 +58,17 @@ public class UrunConfiguration : IEntityTypeConfiguration<Urun>
     }
 }
 
-public class UrunTipiConfiguration : IEntityTypeConfiguration<UrunTipi>
+public class UrunTurConfiguration : IEntityTypeConfiguration<UrunTur>
 {
-    public void Configure(EntityTypeBuilder<UrunTipi> b)
+    public void Configure(EntityTypeBuilder<UrunTur> b)
     {
         b.HasIndex(x => x.StokKodu).IsUnique();
 
         b.Property(x => x.FiyatFarki).HasPrecision(18, 2);
 
         b.HasMany(x => x.Ozellikler)
-            .WithOne(x => x.UrunTipi)
-            .HasForeignKey(x => x.UrunTipiId)
+            .WithOne(x => x.UrunTur)
+            .HasForeignKey(x => x.UrunTurId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
@@ -77,7 +77,7 @@ public class UrunOzelligiConfiguration : IEntityTypeConfiguration<UrunOzelligi>
 {
     public void Configure(EntityTypeBuilder<UrunOzelligi> b)
     {
-        b.HasIndex(x => new { x.UrunTipiId, x.OzellikAdi });
+        b.HasIndex(x => new { x.UrunTurId, x.OzellikAdi });
     }
 }
 
