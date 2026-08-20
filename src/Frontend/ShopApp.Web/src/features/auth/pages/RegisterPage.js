@@ -6,7 +6,7 @@
  *  1. Renders the registration form with first/last name, email, password,
  *     confirm-password, password strength indicator, terms & marketing checkboxes.
  *  2. Runs client-side validation on submit and on blur.
- *  3. Calls authService.register() (stub — no real API call yet).
+ *  3. Calls authService.register() and establishes the authenticated session.
  *  4. Handles loading state, validation errors, and server error display.
  *
  * SPA lifecycle contract:
@@ -241,7 +241,6 @@ export default function RegisterPage() {
       authForm.clearServerError();
 
       try {
-        // 4. Call service stub (no API call yet)
         const result = await register({
           firstName,
           lastName,
@@ -251,13 +250,7 @@ export default function RegisterPage() {
         });
 
         if (result?.success) {
-          // FUTURE: navigate to home or email verification page.
-          // TODO: navigate(AUTH_ROUTES.HOME);
-          console.info('[RegisterPage] Register success stub. Navigation will be added with backend.');
-        } else {
-          authForm.setServerError(
-            'Kayıt başarılı olduğunda bu mesaj kaldırılacak. Servis henüz entegre edilmemiştir.'
-          );
+          navigate(AUTH_ROUTES.HOME);
         }
       } catch (err) {
         authForm.setServerError(mapAuthError(err));

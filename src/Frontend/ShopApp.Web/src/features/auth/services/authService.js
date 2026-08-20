@@ -9,20 +9,22 @@
  * ARCHITECTURE BOUNDARY:
  *  auth pages → authService → apiClient → backend
  *
+ * CURRENT STATE:
+ *  All methods are stubs. No real API requests are made.
+ *  Integration points are clearly marked with TODO comments.
+ *
+ * FUTURE INTEGRATION — When backend is ready:
+ *  1. Uncomment the apiClient and endpoints imports.
+ *  2. Replace the stub return values with real API calls.
+ *  3. Update mapLoginResponse() when the contract is finalized.
+ *  4. Connect token storage via src/shared/utils/storage.js.
+ *  5. Update authStore via setAuthenticated() / setAnonymous().
+ *
  * BACKEND COMPATIBILITY:
- *  Targets: ShopApp.Api (Modular Monolith) — POST /api/auth/login & /api/auth/register
- *  Future targets: Identity Microservice / API Gateway / BFF
+ *  Initially targets:   ShopApp.Api (Modular Monolith)
+ *  Future targets:      Identity Microservice / API Gateway / BFF
  *  The only file that must change during that transition is this one,
  *  plus appConfig.js and endpoints.js. UI components remain unchanged.
- *
- * BACKEND RESPONSE CONTRACT (ShopApp.Api — AuthResponse):
- *  {
- *    "token":   "eyJ...",
- *    "email":   "user@example.com",
- *    "ad":      "Ahmet",
- *    "soyad":   "Yılmaz",
- *    "role":    ["User"]
- *  }
  *
  * SECURITY NOTE:
  *  This service must never:
@@ -33,36 +35,49 @@
  *   - Contain the JWT secret key
  */
 
-import { apiClient }                               from '../../../shared/services/apiClient.js';
-import { endpoints }                               from '../../../shared/services/endpoints.js';
-import { saveAccessToken, removeAccessToken }      from '../../../shared/utils/storage.js';
-import { setAuthenticated, setAnonymous }          from '../state/authStore.js';
+// TODO: Uncomment when backend integration is configured.
+// import { apiClient } from '../../../shared/services/apiClient.js';
+// import { endpoints } from '../../../shared/services/endpoints.js';
+// import { saveAccessToken, removeAccessToken } from '../../../shared/utils/storage.js';
+// import { setAuthenticated, setAnonymous } from '../state/authStore.js';
 
 // ─── Response Mapping ──────────────────────────────────────────────────────
 
 /**
- * Maps the raw backend login/register response (AuthResponse DTO) to a
- * frontend-friendly shape that is consistent across UI components.
+ * Maps the raw backend login response to a frontend-friendly shape.
  *
- * Backend field → Frontend field:
- *   token  → accessToken
- *   ad     → firstName
- *   soyad  → lastName
- *   role   → roles
+ * IMPORTANT: Adapt this function when the backend response contract
+ * is finalized. Components must never access raw backend fields directly.
  *
- * @param {object} response - Raw backend AuthResponse.
+ * Expected future backend response:
+ * {
+ *   "accessToken": "...",
+ *   "expiresAt": "2026-07-28T12:00:00Z",
+ *   "user": {
+ *     "id": "...",
+ *     "firstName": "...",
+ *     "lastName": "...",
+ *     "email": "...",
+ *     "roles": ["Customer"]
+ *   }
+ * }
+ *
+ * @param {object} response - Raw backend response.
  * @returns {{ accessToken: string, user: object }}
  */
-function mapAuthResponse(response) {
-  return {
-    accessToken: response.token,
-    user: {
-      email:     response.email,
-      firstName: response.ad,
-      lastName:  response.soyad,
-      roles:     response.role ?? [],
-    },
-  };
+function mapLoginResponse(response) {
+  // TODO: Adapt this mapping when the backend response contract is finalized.
+  return response;
+}
+
+/**
+ * Maps the raw backend register response to a frontend-friendly shape.
+ * @param {object} response - Raw backend response.
+ * @returns {{ user: object }}
+ */
+function mapRegisterResponse(response) {
+  // TODO: Adapt this mapping when the backend response contract is finalized.
+  return response;
 }
 
 // ─── Public Service API ────────────────────────────────────────────────────
@@ -70,99 +85,117 @@ function mapAuthResponse(response) {
 /**
  * Authenticates the user with email and password credentials.
  *
- * Sends: { email, sifre } — matches backend LoginRequest DTO.
+ * FUTURE INTEGRATION:
+ *  return apiClient.post(endpoints.auth.login(), credentials)
+ *    .then(mapLoginResponse)
+ *    .then(({ accessToken, user }) => {
+ *      saveAccessToken(accessToken);    // storage.js
+ *      setAuthenticated({ user, accessToken }); // authStore.js
+ *      return { success: true, user };
+ *    });
  *
  * SECURITY NOTE:
- *  Backend validates credentials. Never trust client-side success only.
+ *  Backend must validate credentials. Never trust client-side success only.
  *
  * @param {{ email: string, password: string }} credentials
  * @returns {Promise<{ success: boolean, accessToken: string|null, user: object|null }>}
  */
 export async function login(credentials) {
-  // Map frontend field names to backend DTO field names.
-  const payload = {
-    email: credentials.email,
-    sifre: credentials.password,
+  // TODO: Replace stub with real API call when backend integration is ready.
+  // Future: return apiClient.post(endpoints.auth.login(), credentials).then(mapLoginResponse);
+
+  console.debug('[authService] login() stub called. No API request made.');
+  void credentials; // Suppress unused-variable warning.
+
+  return {
+    success:     false,
+    accessToken: null,
+    user:        null,
   };
-
-  const raw = await apiClient.post(endpoints.auth.login(), payload);
-  const { accessToken, user } = mapAuthResponse(raw);
-
-  saveAccessToken(accessToken);
-  setAuthenticated({ user, accessToken });
-
-  return { success: true, accessToken, user };
 }
 
 /**
  * Registers a new user account.
  *
- * Sends: { ad, soyad, email, sifre } — matches backend RegisterRequest DTO.
+ * FUTURE INTEGRATION:
+ *  return apiClient.post(endpoints.auth.register(), payload)
+ *    .then(mapRegisterResponse)
+ *    .then(({ user }) => {
+ *      setAuthenticated({ user }); // authStore.js
+ *      return { success: true, user };
+ *    });
  *
  * @param {{
- *   firstName:  string,
- *   lastName:   string,
- *   email:      string,
- *   password:   string,
+ *   firstName:       string,
+ *   lastName:        string,
+ *   email:           string,
+ *   password:        string,
+ *   marketingOptIn:  boolean,
  * }} payload
  * @returns {Promise<{ success: boolean, user: object|null }>}
  */
 export async function register(payload) {
-  // Map frontend field names to backend DTO field names.
-  const body = {
-    ad:    payload.firstName,
-    soyad: payload.lastName,
-    email: payload.email,
-    sifre: payload.password,
+  // TODO: Replace stub with real API call when backend integration is ready.
+  // Future: return apiClient.post(endpoints.auth.register(), payload).then(mapRegisterResponse);
+
+  console.debug('[authService] register() stub called. No API request made.');
+  void payload;
+
+  return {
+    success: false,
+    user:    null,
   };
-
-  const raw = await apiClient.post(endpoints.auth.register(), body);
-  const { accessToken, user } = mapAuthResponse(raw);
-
-  saveAccessToken(accessToken);
-  setAuthenticated({ user, accessToken });
-
-  return { success: true, user };
 }
 
 /**
- * Logs out the current user and clears the local session.
+ * Logs out the current user and invalidates the session.
  *
- * NOTE: The backend does not yet expose a logout endpoint.
- * Token removal is client-side only for now.
+ * FUTURE INTEGRATION:
+ *  await apiClient.post(endpoints.auth.logout());
+ *  removeAccessToken();   // storage.js
+ *  setAnonymous();        // authStore.js
  *
  * SECURITY NOTE:
- *  When the backend implements refresh-token invalidation,
- *  add: await apiClient.post(endpoints.auth.logout());
+ *  Backend must invalidate the refresh token on logout.
+ *  Client-side token removal alone is not sufficient.
  */
 export async function logout() {
-  removeAccessToken();
-  setAnonymous();
+  // TODO: Replace stub with real logout flow.
+  // Future: await apiClient.post(endpoints.auth.logout());
+  // Future: removeAccessToken();
+  // Future: setAnonymous();
+
+  console.debug('[authService] logout() stub called. No API request made.');
 }
 
 /**
  * Retrieves the currently authenticated user's profile.
  *
- * NOTE: Backend does not yet expose a /me endpoint.
- * Returns null until implemented.
+ * FUTURE INTEGRATION:
+ *  return apiClient.get(endpoints.auth.me());
  *
  * @returns {Promise<object|null>}
  */
 export async function getCurrentUser() {
+  // TODO: Replace stub with real API call.
   // Future: return apiClient.get(endpoints.auth.me());
+
   return null;
 }
 
 /**
- * Refreshes the access token using a stored refresh token (HttpOnly cookie).
+ * Refreshes the access token using a stored refresh token.
  *
- * NOTE: Backend does not yet expose a refresh endpoint.
- * Returns null until implemented.
+ * FUTURE INTEGRATION:
+ *  The refresh token will be stored in an HttpOnly cookie (backend responsibility).
+ *  The frontend only calls this endpoint; it does not manage the cookie directly.
  *
  * @returns {Promise<string|null>} New access token or null.
  */
 export async function refreshToken() {
+  // TODO: Replace stub with real refresh-token call.
   // Future: return apiClient.post(endpoints.auth.refreshToken());
+
   return null;
 }
 
@@ -174,6 +207,7 @@ export async function refreshToken() {
  * @returns {string}
  */
 export function mapAuthError(error) {
+  // TODO: Expand this mapping as backend error contracts are established.
   const statusMap = {
     401: 'E-posta adresi veya şifre hatalı.',
     403: 'Hesabınız geçici olarak kilitlendi.',

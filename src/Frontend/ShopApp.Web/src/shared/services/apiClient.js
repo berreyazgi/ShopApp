@@ -13,7 +13,21 @@
  */
 
 import { appConfig } from '../../app/appConfig.js';
-import { getAccessToken } from '../utils/storage.js';
+
+// ─── Unauthorized Handler ───────────────────────────────────────────────────
+
+/** @type {(() => void) | null} */
+let unauthorizedHandler = null;
+
+/**
+ * Register a callback to be called when the server returns 401 Unauthorized.
+ * Typically used to log out the user and redirect to login.
+ *
+ * @param {() => void} handler
+ */
+export function setUnauthorizedHandler(handler) {
+  unauthorizedHandler = handler;
+}
 
 // ─── Configuration ─────────────────────────────────────────────────────────
 
@@ -28,10 +42,12 @@ function buildUrl(path) {
   return base ? `${base}${path}` : path;
 }
 
-/** Returns the current auth token injected as a Bearer header. */
+/** Returns the current auth token (to be implemented). */
 function getAuthHeader() {
-  const token = getAccessToken();
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  // TODO: Retrieve JWT from store or localStorage when auth is implemented.
+  // Example: const token = getState().user?.token;
+  // return token ? { Authorization: `Bearer ${token}` } : {};
+  return {};
 }
 
 // ─── Core request ──────────────────────────────────────────────────────────
@@ -57,6 +73,11 @@ async function request(method, path, options = {}) {
 
   const response = await fetch(url, init);
 
+  if (response.status === 401) {
+    if (unauthorizedHandler) unauthorizedHandler();
+    throw { status: 401, message: 'Oturum süresi doldu. Lütfen tekrar giriş yapın.' };
+  }
+
   if (!response.ok) {
     const errorBody = await response.json().catch(() => ({}));
     throw {
@@ -71,6 +92,8 @@ async function request(method, path, options = {}) {
 
   return response.json();
 }
+
+
 
 // ─── Public API ────────────────────────────────────────────────────────────
 

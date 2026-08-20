@@ -1,93 +1,64 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using ShopApp.Infrastructure;
-using ShopApp.Infrastructure.Services;
-using ShopApp.Application.Abstractions;
+using ShopApp.Infrastructure.Identity;
+using ShopApp.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// -------------------------------------------------------
-// Services
-// -------------------------------------------------------
-// Set the URL for the application to listen on for port error
 builder.WebHost.UseUrls("http://localhost:5050");
-// Infrastructure: Database, Identity, JWT — all wired in DependencyInjection.cs
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// Auth application service
-builder.Services.AddScoped<IAuthService, AuthService>();
+var frontendOrigins = builder.Configuration.GetSection("Cors:FrontendOrigins").Get<string[]>()
+    ?.Where(origin => Uri.TryCreate(origin, UriKind.Absolute, out _))
+    .Distinct(StringComparer.OrdinalIgnoreCase)
+    .ToArray() ?? [];
 
-// CORS — must be registered before builder.Build()
+if (frontendOrigins.Length == 0)
+    throw new InvalidOperationException("At least one Cors:FrontendOrigins value must be configured.");
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy
-            .WithOrigins(
-                "http://localhost:3000",
-                "http://localhost:5173",
-                "http://127.0.0.1:3000",
-                "http://127.0.0.1:5173")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
-    });
+    options.AddPolicy("AllowFrontend", policy => policy
+        .WithOrigins(frontendOrigins)
+        .AllowAnyHeader()
+        .AllowAnyMethod());
 });
 
-// Controllers
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
-
-// ── Swagger / OpenAPI with JWT Bearer support ──────────────────────────────
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title       = "ShopApp API",
-        Version     = "v1",
-        Description = "ShopApp Modular Monolith REST API — JWT Bearer authentication required for protected endpoints.",
+        Title = "ShopApp API",
+        Version = "v1",
+        Description = "ShopApp REST API"
     });
 
-    // Define the JWT Bearer security scheme
-    var jwtScheme = new OpenApiSecurityScheme
+    var bearerScheme = new OpenApiSecurityScheme
     {
-        Name         = "Authorization",
-        Description  = "Enter your JWT token in the format: **Bearer {token}**",
-        In           = ParameterLocation.Header,
-        Type         = SecuritySchemeType.Http,
-        Scheme       = "bearer",          // must be lowercase
+        Name = "Authorization",
+        Description = "Bearer {token}",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
         BearerFormat = "JWT",
-        Reference    = new OpenApiReference
-        {
-            Id   = "Bearer",
-            Type = ReferenceType.SecurityScheme,
-        },
+        Reference = new OpenApiReference { Id = "Bearer", Type = ReferenceType.SecurityScheme }
     };
 
-    options.AddSecurityDefinition("Bearer", jwtScheme);
-
-    // Apply the JWT scheme globally to all operations
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        { jwtScheme, Array.Empty<string>() },
-    });
+    options.AddSecurityDefinition("Bearer", bearerScheme);
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement { { bearerScheme, [] } });
 });
 
 var app = builder.Build();
 
-// -------------------------------------------------------
-// Middleware pipeline
-// -------------------------------------------------------
-
-// Localization
 var supportedCultures = new[] { "tr-TR" };
-var localizationOptions = new RequestLocalizationOptions()
+app.UseRequestLocalization(new RequestLocalizationOptions()
     .SetDefaultCulture(supportedCultures[0])
     .AddSupportedCultures(supportedCultures)
-    .AddSupportedUICultures(supportedCultures);
-
-app.UseRequestLocalization(localizationOptions);
+    .AddSupportedUICultures(supportedCultures));
 
 if (app.Environment.IsDevelopment())
 {
@@ -95,35 +66,35 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(ui =>
     {
         ui.SwaggerEndpoint("/swagger/v1/swagger.json", "ShopApp API v1");
-        ui.RoutePrefix = "swagger"; // accessible at http://localhost:5048/swagger
-        ui.DisplayRequestDuration();
-        ui.EnableDeepLinking();
+        ui.RoutePrefix = "swagger";
     });
 }
 
-// Run pending EF Core migrations on startup
 using (var scope = app.Services.CreateScope())
 {
     try
     {
-        var db = scope.ServiceProvider
-            .GetRequiredService<ShopApp.Infrastructure.Persistence.ShopAppDbContext>();
-        db.Database.Migrate();
+        var db = scope.ServiceProvider.GetRequiredService<ShopAppDbContext>();
+        await db.Database.MigrateAsync();
     }
     catch (Exception ex)
     {
-        app.Logger.LogError(ex, "Migration hatası");
+        app.Logger.LogError(ex, "Database migration failed. Existing schema was left unchanged.");
+    }
+
+    try
+    {
+        await IdentityRoleSeeder.SeedAsync(scope.ServiceProvider);
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "Identity role seed failed.");
     }
 }
 
-    app.UseHttpsRedirection();
-
-// CORS middleware — must come before Auth
+app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

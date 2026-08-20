@@ -6,34 +6,22 @@ namespace ShopApp.Infrastructure.Persistence.Configurations;
 
 public class AddressConfiguration : IEntityTypeConfiguration<Address>
 {
- public void Configure(EntityTypeBuilder<Address> builder)
+    public void Configure(EntityTypeBuilder<Address> builder)
     {
-        builder.ToTable("Addresses", "identity");
+        builder.ToTable("Adresler", "kimlik");
 
-        builder.Property(x => x.AddressBilgisi)
-            .IsRequired()
-            .HasMaxLength(500);
-
-        builder.Property(x => x.Ulke)
-            .IsRequired()
-            .HasMaxLength(500);
-
-        builder.Property(x => x.Sehir)
-            .IsRequired()
-            .HasMaxLength(500);
+        builder.Property(x => x.AdresBilgisi)
+            .HasColumnName("AdresBilgisi")
+            .HasMaxLength(5000);
 
         builder.Property(x => x.PostaKodu)
-            .IsRequired()
-            .HasMaxLength(5) 
-            .IsFixedLength();
-        
-        builder.Property(x => x.Ilce)
-            .IsRequired()
-            .HasMaxLength(500);
-            
-        builder.Property(x => x.TamAdres)
-            .IsRequired()
-            .HasMaxLength(500);
-    } 
+            .HasColumnName("PostaKodu")
+            .HasMaxLength(10)
+            .IsRequired();
 
+        builder.HasOne(x => x.Musteri)
+            .WithMany()
+            .HasForeignKey(x => x.MusteriId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
 }

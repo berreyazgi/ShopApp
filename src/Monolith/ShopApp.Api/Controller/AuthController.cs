@@ -1,6 +1,9 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShopApp.Application.Auth;
 using ShopApp.Application.Abstractions;
+using ShopApp.Application.Authentication;
 
 namespace src.Monolith.ShopApp.Api.Controller;
 
@@ -15,47 +18,52 @@ public class AuthController : ControllerBase
         _authService = authService;
     }
 
-    /// <summary>
-    /// Authenticates a user and returns a JWT access token.
-    /// POST /api/auth/login
-    /// </summary>
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    public async Task<ActionResult<AuthResponse>> Login([FromBody] LoginRequest request)
     {
         try
         {
-            var response = await _authService.LoginAsync(request);
-            return Ok(response);
+            return Ok(await _authService.LoginAsync(request));
         }
-        catch (UnauthorizedAccessException ex)
+        catch (UnauthorizedAccessException)
         {
-            return Unauthorized(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { message = "Beklenmeyen bir hata oluştu.", detail = ex.Message });
+            return Unauthorized(new { message = "E-posta adresi veya şifre hatalı." });
         }
     }
 
-    /// <summary>
-    /// Registers a new user account and returns a JWT access token.
-    /// POST /api/auth/register
-    /// </summary>
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+    public async Task<ActionResult<AuthResponse>> Register([FromBody] RegisterRequest request)
     {
         try
         {
-            var response = await _authService.RegisterAsync(request);
-            return Ok(response);
+            return StatusCode(StatusCodes.Status201Created, await _authService.RegisterAsync(request));
+        }
+        catch (AuthenticationValidationException ex)
+        {
+            return BadRequest(new { message = ex.Message, errors = ex.Errors });
         }
         catch (InvalidOperationException ex)
         {
-            return BadRequest(new { message = ex.Message });
+            return Conflict(new { message = ex.Message });
         }
-        catch (Exception ex)
+    }
+
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<ActionResult<CurrentUserResponse>> Me()
+    {
+        var subject = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
+            ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (!Guid.TryParse(subject, out var userId))
+            return Unauthorized(new { message = "Geçersiz erişim belirteci." });
+
+        try
         {
-            return StatusCode(500, new { message = "Beklenmeyen bir hata oluştu.", detail = ex.Message });
+            return Ok(await _authService.GetCurrentUserAsync(userId));
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized(new { message = "Kullanıcı bulunamadı." });
         }
     }
 }

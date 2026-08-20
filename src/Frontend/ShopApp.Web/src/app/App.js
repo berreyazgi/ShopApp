@@ -1,31 +1,20 @@
-/**
- * App.js
- * Application shell — composes the Header and the router outlet.
- * Responsible for the top-level DOM structure.
- */
-
 import { createHeader } from '../shared/components/Header/Header.js';
-import { initRouter }   from './router.js';
-import { initStore }    from '../shared/state/store.js';
+import { setUnauthorizedHandler } from '../shared/services/apiClient.js';
+import { logout, restoreSession } from '../features/auth/services/authService.js';
+import { initRouter, navigate } from './router.js';
+import { initStore } from '../shared/state/store.js';
 
-/**
- * Initialises the entire application.
- * Call once from bootstrap.js.
- */
-export function initApp() {
-  // 1. Initialise the global reactive store
+export async function initApp() {
   initStore();
+  setUnauthorizedHandler(async () => {
+    await logout();
+    if (!['/giris', '/kayit'].includes(window.location.pathname)) navigate('/giris');
+  });
+  await restoreSession();
 
-  // 2. Render the Header into its placeholder element
   const headerEl = document.getElementById('app-header');
-  if (headerEl) {
-    const { element } = createHeader();
-    headerEl.appendChild(element);
-  }
+  if (headerEl) headerEl.appendChild(createHeader().element);
 
-  // 3. Boot the SPA router — all page rendering happens through it
   const outlet = document.getElementById('router-outlet');
-  if (outlet) {
-    initRouter(outlet);
-  }
+  if (outlet) initRouter(outlet);
 }

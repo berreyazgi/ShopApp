@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using src.Monolith.ShopApp.Domain.Sepet;
+using src.Monolith.ShopApp.Domain.Sepet.Entities;
 
 namespace ShopApp.Infrastructure.Persistence.Configurations;
 
@@ -9,14 +10,6 @@ public class SepetDurumLookupConfiguration : IEntityTypeConfiguration<SepetDurum
     public void Configure(
         EntityTypeBuilder<SepetDurumLookup> builder)
     {
-        builder.ToTable("SepetDurumlari", "sales");
-
-        builder.HasKey(x => x.Id);
-
-        builder.Property(x => x.DurumIsmi)
-            .HasMaxLength(50)
-            .IsRequired();
-
         builder.HasData(
             new SepetDurumLookup
             {

@@ -3,62 +3,41 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using ShopApp.Application.Abstractions;
+using ShopApp.Application.Authentication;
 
 namespace ShopApp.Infrastructure.Authentication;
 
-public class JwtTokenGenerator : IJwtTokenGenerator
+public sealed class JwtTokenGenerator : IJwtTokenGenerator
 {
     private readonly JwtSettings _settings;
 
-   public JwtTokenGenerator(JwtSettings settings)
+    public JwtTokenGenerator(JwtSettings settings)
     {
         _settings = settings;
     }
 
- 
-    public string GenerateToken(string userId, string email, IEnumerable<string> roles)
+    public JwtToken GenerateToken(string userId, string email, string name, IEnumerable<string> roles)
     {
+        var expiresAt = DateTime.UtcNow.AddMinutes(_settings.ExpirationInMinutes);
         var claims = new List<Claim>
         {
-            // IdentityUser<Guid>'den gelen ID'yi NameIdentifier olarak ekliyoruz
-            new Claim(ClaimTypes.NameIdentifier, userId),
-            new Claim(ClaimTypes.Email, email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Token benzersizliği için
+            new(JwtRegisteredClaimNames.Sub, userId),
+            new(JwtRegisteredClaimNames.Email, email),
+            new(JwtRegisteredClaimNames.Name, name),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
-        // 2. Kullanıcının rollerini claim olarak ekliyoruz (Örn: Admin, User)
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-        }
+        claims.AddRange(roles.Select(role => new Claim("role", role)));
 
-        // 3. appsettings.json dosyasından Gizli Anahtarı (Secret Key) okuyoruz
-        var secretKey = !string.IsNullOrEmpty(_settings.SecretKey)
-            ? _settings.SecretKey
-            : throw new InvalidOperationException("JWT SecretKey is missing in JwtSettings configuration.");
-            
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.SecretKey));
+        var token = new JwtSecurityToken(
+            issuer: _settings.Issuer,
+            audience: _settings.Audience,
+            claims: claims,
+            notBefore: DateTime.UtcNow,
+            expires: expiresAt,
+            signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256));
 
-        // 4. Token ayarlarını ve süresini yapılandırıyoruz
-        var expiryMinutes = Convert.ToDouble(_settings.ExpirationInMinutes);
-
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddMinutes(expiryMinutes),
-            Issuer = _settings.Issuer,
-            Audience = _settings.Audience,
-            SigningCredentials = credentials
-        };
-
-        // 5. Token'ı üretiyoruz
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-
-        return tokenHandler.WriteToken(token);
+        return new JwtToken(new JwtSecurityTokenHandler().WriteToken(token), expiresAt);
     }
-
-
 }
-

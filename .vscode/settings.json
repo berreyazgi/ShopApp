@@ -1,3 +1,6 @@
 {
-    "dotnet.defaultSolution": "ShopApp.sln"
+    "dotnet.defaultSolution": "ShopApp.sln",
+    "diffEditor.experimental.showMoves": true,
+    "editor.inlineSuggest.edits.showCollapsed": true,
+    "workbench.editor.showTabIndex": true
 }

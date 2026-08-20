@@ -152,7 +152,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.ToTable("UserTokens", "identity");
                 });
 
-            modelBuilder.Entity("ShopApp.Infrastructure.Identity.ApplicationUser", b =>
+            modelBuilder.Entity("ShopApp.Infrastructure.Identity.KayitliKullanici", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -164,7 +164,8 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<string>("Ad")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("Ad");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -172,9 +173,8 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Durum")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("text")
-                        .HasDefaultValue("True");
+                        .HasColumnName("Durum");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -184,7 +184,8 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("GuncellemeTarihi")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("GuncellemeTarihi");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -201,7 +202,8 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.Property<DateTime>("OlusturmaTarihi")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("OlusturmaTarihi");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
@@ -218,7 +220,8 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<string>("Soyad")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("Soyad");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
@@ -226,6 +229,15 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
+
+                    b.Property<string>("YenilemeToken")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("YenilemeToken");
+
+                    b.Property<DateTime?>("YenilemeTokenBitis")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("YenilemeTokenBitis");
 
                     b.HasKey("Id");
 
@@ -245,22 +257,24 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("AddressBilgisi")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                    b.Property<string>("AdresBilgisi")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("AdresBilgisi");
 
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("GuncelleyenKullaniciId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Ilce")
-                        .HasMaxLength(500)
                         .HasColumnType("integer");
 
                     b.Property<Guid>("MusteriId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("OlusturanKullaniciId")
+                    b.Property<Guid>("OlusturanKullaniciId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("OlusturmaTarihi")
@@ -268,28 +282,50 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("PostaKodu")
                         .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("character(5)")
-                        .IsFixedLength();
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("PostaKodu");
 
                     b.Property<int>("Sehir")
-                        .HasMaxLength(500)
                         .HasColumnType("integer");
 
-                    b.Property<string>("TamAdres")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
                     b.Property<int>("Ulke")
-                        .HasMaxLength(500)
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MusteriId");
 
-                    b.ToTable("Addresses", "identity");
+                    b.ToTable("Adresler", "kimlik");
+                });
+
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Kullanici.AdminProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("GuncellemeTarihi")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("GuncelleyenKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("KullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OlusturanKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("OlusturmaTarihi")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("KullaniciId")
+                        .IsUnique();
+
+                    b.ToTable("AdminProfilleri", "kimlik");
                 });
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Kullanici.Musteri", b =>
@@ -298,25 +334,20 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Cinsiyet")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<string>("DogumTarihi")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                    b.Property<bool?>("Cinsiyet")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("OlusturanKullaniciId")
+                    b.Property<Guid?>("GuncelleyenKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("KullaniciId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("KullaniciId");
+
+                    b.Property<Guid>("OlusturanKullaniciId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("OlusturmaTarihi")
@@ -324,7 +355,10 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Musteriler", "identity");
+                    b.HasIndex("KullaniciId")
+                        .IsUnique();
+
+                    b.ToTable("Musteriler", "kimlik");
                 });
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Sepet", b =>
@@ -333,23 +367,29 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Durum")
-                        .HasColumnType("integer")
-                        .HasColumnName("DurumId");
+                    b.Property<int>("DurumId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("MusteriId")
+                    b.Property<Guid?>("GuncelleyenKullaniciId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("OlusturanKullaniciId")
+                    b.Property<string>("MusteriId")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("OlusturanKullaniciId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("OlusturmaTarihi")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DurumId");
 
                     b.ToTable("Sepetler", "sales");
                 });
@@ -362,16 +402,39 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Ad")
+                    b.Property<string>("DurumIsmi")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("SepetDurumlar");
+                    b.ToTable("SepetDurumlari", "sales");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DurumIsmi = "Aktif"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DurumIsmi = "AktifDegil"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DurumIsmi = "Tamamlanmis"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            DurumIsmi = "IptalEdilmis"
+                        });
                 });
 
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.SepetUrunleri", b =>
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Entities.SepetUrunu", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -383,7 +446,10 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("OlusturanKullaniciId")
+                    b.Property<Guid?>("GuncelleyenKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OlusturanKullaniciId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("OlusturmaTarihi")
@@ -417,8 +483,14 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("AraToplam")
                         .HasColumnType("numeric");
 
+                    b.Property<int>("DurumId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("GuncelleyenKullaniciId")
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("IndirimOrani")
                         .HasColumnType("numeric");
@@ -430,7 +502,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("OlusturanKullaniciId")
+                    b.Property<Guid>("OlusturanKullaniciId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("OlusturmaTarihi")
@@ -440,14 +512,12 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("DurumId");
-
                     b.Property<decimal>("ToplamFiyat")
                         .HasColumnType("numeric");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DurumId");
 
                     b.ToTable("Siparisler", "sales");
                 });
@@ -460,13 +530,14 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Ad")
+                    b.Property<string>("DurumIsmi")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("SiparisDurumlar");
+                    b.ToTable("SiparisDurum", "sales");
                 });
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.SiparisUrunleri", b =>
@@ -478,10 +549,13 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("GuncelleyenKullaniciId")
+                        .HasColumnType("uuid");
+
                     b.Property<decimal>("IndirimOrani")
                         .HasColumnType("numeric");
 
-                    b.Property<Guid?>("OlusturanKullaniciId")
+                    b.Property<Guid>("OlusturanKullaniciId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("OlusturmaTarihi")
@@ -491,7 +565,6 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("StokTakipNumarasi")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
@@ -533,7 +606,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("ShopApp.Infrastructure.Identity.ApplicationUser", null)
+                    b.HasOne("ShopApp.Infrastructure.Identity.KayitliKullanici", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -542,7 +615,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("ShopApp.Infrastructure.Identity.ApplicationUser", null)
+                    b.HasOne("ShopApp.Infrastructure.Identity.KayitliKullanici", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -557,7 +630,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ShopApp.Infrastructure.Identity.ApplicationUser", null)
+                    b.HasOne("ShopApp.Infrastructure.Identity.KayitliKullanici", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -566,7 +639,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("ShopApp.Infrastructure.Identity.ApplicationUser", null)
+                    b.HasOne("ShopApp.Infrastructure.Identity.KayitliKullanici", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -584,15 +657,55 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Navigation("Musteri");
                 });
 
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.SepetUrunleri", b =>
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Kullanici.AdminProfile", b =>
+                {
+                    b.HasOne("ShopApp.Infrastructure.Identity.KayitliKullanici", null)
+                        .WithOne()
+                        .HasForeignKey("src.Monolith.ShopApp.Domain.Kullanici.AdminProfile", "KullaniciId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Kullanici.Musteri", b =>
+                {
+                    b.HasOne("ShopApp.Infrastructure.Identity.KayitliKullanici", null)
+                        .WithOne()
+                        .HasForeignKey("src.Monolith.ShopApp.Domain.Kullanici.Musteri", "KullaniciId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Sepet", b =>
+                {
+                    b.HasOne("src.Monolith.ShopApp.Domain.Sepet.SepetDurumLookup", "Durum")
+                        .WithMany()
+                        .HasForeignKey("DurumId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Durum");
+                });
+
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Entities.SepetUrunu", b =>
                 {
                     b.HasOne("src.Monolith.ShopApp.Domain.Sepet.Sepet", "Sepet")
-                        .WithMany("Urunleri")
+                        .WithMany("Urunler")
                         .HasForeignKey("SepetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Sepet");
+                });
+
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.Siparis", b =>
+                {
+                    b.HasOne("src.Monolith.ShopApp.Domain.Siparisler.SiparisDurumLookup", "Durum")
+                        .WithMany()
+                        .HasForeignKey("DurumId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Durum");
                 });
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.SiparisUrunleri", b =>
@@ -608,7 +721,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Sepet", b =>
                 {
-                    b.Navigation("Urunleri");
+                    b.Navigation("Urunler");
                 });
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.Siparis", b =>
