@@ -1,0 +1,13 @@
+{
+  "name": "shopapp-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ShopApp Vanilla JS SPA Frontend",
+  "scripts": {
+    "dev": "npx -y http-server . -p 3000 -c-1 --cors -o",
+    "serve": "npx -y http-server . -p 3000 -c-1 --cors"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

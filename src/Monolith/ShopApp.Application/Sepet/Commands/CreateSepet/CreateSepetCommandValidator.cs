@@ -27,7 +27,6 @@ public class CreateSepetCommandValidator
                 "OlusturanKullaniciId alanı zorunludur.",
                 [nameof(command.OlusturanKullaniciId)]));
         }
-
         return results;
     }
 }

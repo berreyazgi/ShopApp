@@ -18,14 +18,5 @@ public class Sepet : BaseEntity
 
     public ICollection<SepetUrunu> Urunler { get; private set; } = [];
 
-    private Sepet()
-    {
-    }
-
-    public static Sepet Olustur(string musteriId, Guid olusturanKullaniciId) => new()
-    {
-        MusteriId = musteriId,
-        DurumId = 1, // Aktif
-        OlusturanKullaniciId = olusturanKullaniciId
-    };
+    private Sepet(){}
 }

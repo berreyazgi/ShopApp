@@ -9,12 +9,10 @@ public class SepetMapping : Profile
 {
     public SepetMapping()
     {
-        // Sepet -> SepetDto (Query mapping)
         CreateMap<SepetEntity, SepetDto>()
-            .ForMember(dest => dest.DurumIsmi, opt => opt.MapFrom(src => src.Durum != null ? src.Durum.DurumIsmi : null))
-            .ForMember(dest => dest.Urunler, opt => opt.MapFrom(src => src.Urunler));
+            .ForMember(dest => dest.DurumIsmi,
+                opt => opt.MapFrom(src => src.Durum != null ? src.Durum.DurumIsmi : null));
 
-        // SepetUrunu -> SepetUrunDto (Query mapping)
         CreateMap<SepetUrunu, SepetUrunDto>();
     }
 }

@@ -11,4 +11,5 @@ public interface IIdentityService
     Task<IdentityUserInfo> CreateWithRoleAsync(RegisterRequest request, string roleName);
     Task EnsureRoleExistsAsync(string roleName);
     Task AddToRoleAsync(Guid id, string roleName);
+    Guid? GetCurrentUserId();
 }
