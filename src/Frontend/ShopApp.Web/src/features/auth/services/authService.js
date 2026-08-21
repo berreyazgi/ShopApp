@@ -200,6 +200,30 @@ export async function refreshToken() {
 }
 
 /**
+ * Attempts to silently restore a previous session on app startup.
+ *
+ * Called once by App.js before the router initialises.
+ * Uses the refresh-token flow (HttpOnly cookie) to rehydrate the auth state
+ * without requiring the user to log in again.
+ *
+ * FUTURE INTEGRATION:
+ *  const token = await refreshToken();
+ *  if (token) {
+ *    const user = await getCurrentUser();
+ *    if (user) { setAuthenticated({ user, accessToken: token }); return; }
+ *  }
+ *  setAnonymous();
+ *
+ * @returns {Promise<void>}
+ */
+export async function restoreSession() {
+  // TODO: Replace stub with real session restore when backend is integrated.
+  // For now, simply mark the user as anonymous so the router can proceed.
+  const { setAnonymous } = await import('../state/authStore.js');
+  setAnonymous();
+}
+
+/**
  * Maps a backend error response to a user-friendly Turkish message.
  * Pages should call this instead of displaying raw server errors.
  *

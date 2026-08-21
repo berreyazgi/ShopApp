@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Infrastructure.Persistence;
@@ -12,15 +14,24 @@ public sealed class IdentityService : IIdentityService
     private readonly UserManager<KayitliKullanici> _userManager;
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly ShopAppDbContext _dbContext;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public IdentityService(
         UserManager<KayitliKullanici> userManager,
         RoleManager<IdentityRole<Guid>> roleManager,
-        ShopAppDbContext dbContext)
+        ShopAppDbContext dbContext,
+        HttpContextAccessor httpContextAccessor)
     {
         _userManager = userManager;
         _dbContext = dbContext;
         _roleManager = roleManager;
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    public Guid? GetCurrentUserId()
+    {
+        var musteriId = _httpContextAccessor. HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+        return Guid.TryParse(musteriId, out var result) ? result : null;
     }
 
     public async Task<IdentityUserInfo?> FindByEmailAsync(string email)
