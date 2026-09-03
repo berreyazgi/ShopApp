@@ -15,4 +15,17 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Application\Dtos\KargoGonderisiDto\" />
+    <Folder Include="Application\Dtos\SevkiyatDto\" />
+    <Folder Include="Application\Mapping\" />
+    <Folder Include="Application\Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\..\..\..\..\..\.nuget\packages\automapper\16.2.0\lib\net10.0\AutoMapper.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

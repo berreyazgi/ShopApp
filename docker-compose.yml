@@ -10,7 +10,10 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: "http://+:5000"
-      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=postgres;Username=postgres;Password=postgres456"
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=ShopAppDb;Username=postgres;Password=postgres456"
+
+    env_file:
+      - .env
 
     depends_on:
       db:
@@ -20,7 +23,7 @@ services:
 
     image: postgres:17
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
     environment:
       POSTGRES_USER: postgres

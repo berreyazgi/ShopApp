@@ -20,7 +20,7 @@ public sealed class IdentityService : IIdentityService
         UserManager<KayitliKullanici> userManager,
         RoleManager<IdentityRole<Guid>> roleManager,
         ShopAppDbContext dbContext,
-        HttpContextAccessor httpContextAccessor)
+        IHttpContextAccessor httpContextAccessor)
     {
         _userManager = userManager;
         _dbContext = dbContext;

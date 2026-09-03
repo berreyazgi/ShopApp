@@ -16,6 +16,7 @@ and
 angular
 annotations
 anonymous
+answer
 api
 app
 application
@@ -23,6 +24,7 @@ architecture
 are
 asks
 asp
+assign
 ast
 async
 audio
@@ -80,7 +82,6 @@ compact
 compile
 component
 config
-configuraiton
 configuration
 configurations
 configure
@@ -98,6 +99,7 @@ core
 cors
 cost
 create
+created
 creating
 criteria
 cross
@@ -110,6 +112,7 @@ dashboard
 data
 database
 date
+dbcont
 decision
 default
 delete
@@ -135,6 +138,7 @@ email
 empty
 endpoints
 ensure
+ent
 entities
 entity
 enumerable
@@ -201,12 +205,14 @@ guid
 guidance
 guide
 guidelines
+guncellemesi
 handle
 handler
 handling
 hareket
 hareketi
 has
+hash
 header
 headers
 health
@@ -267,6 +273,7 @@ list
 listeners
 loading
 locale
+located
 login
 logout
 lookup
@@ -307,6 +314,7 @@ navigate
 neo
 net
 new
+nodes
 non
 not
 note
@@ -314,11 +322,13 @@ notify
 npgsql
 number
 obsidian
+olustur
 one
 only
 open
 opt
 order
+outcome
 outputs
 ownership
 ozelligi
@@ -342,6 +352,7 @@ principles
 product
 products
 profile
+profiles
 program
 project
 promo
@@ -363,6 +374,7 @@ reference
 references
 register
 registry
+related
 relationship
 relationships
 remember
@@ -395,6 +407,7 @@ routing
 rule
 rules
 save
+scan
 script
 sdk
 secondary
@@ -426,12 +439,15 @@ sln
 snapshot
 social
 something
+source
 spa
 spec
 special
+specific
 sql
 src
 start
+startup
 state
 status
 step
@@ -480,6 +496,7 @@ tracker
 transcribe
 traversal
 truth
+turkche
 type
 unauthorized
 update
@@ -505,6 +522,7 @@ watch
 web
 what
 when
+where
 wiki
 with
 words

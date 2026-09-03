@@ -6,9 +6,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using ShopApp.Application.Abstractions;
-using ShopApp.Application.Services;
+using ShopApp.Application.Services.SepetServices;
+using ShopApp.Application.Services.SepetUrunService;
+using ShopApp.Application.Services.SepetUrunleri;
+using ShopApp.Application.Services.SiparisServices;
+using ShopApp.Application.Services.SiparisUrunServices;
 using ShopApp.Infrastructure.Authentication;
 using ShopApp.Infrastructure.Identity;
 using ShopApp.Infrastructure.Persistence;
@@ -23,6 +29,8 @@ public static class DependencyInjection
     {
         services.AddDbContext<ShopAppDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+        services.AddScoped<IShopAppDbContext>(sp => sp.GetRequiredService<ShopAppDbContext>());
+        services.AddHostedService<InfrastructureInitializer>();
 
         services
             .AddIdentity<KayitliKullanici, IdentityRole<Guid>>(options =>
@@ -86,9 +94,45 @@ public static class DependencyInjection
         services.AddScoped<IJwtTokenGenerator>(sp =>
             new JwtTokenGenerator(sp.GetRequiredService<IOptions<JwtSettings>>().Value));
         services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<ICurrentCustomerContext, CurrentCustomerContext>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ISepetRepository, SepetRepository>();
+        services.AddScoped<ISepetService, SepetService>();
+        services.AddScoped<ISepetUrunService, SepetUrunService>();
+        services.AddScoped<ISiparisService, SiparisService>();
+        services.AddScoped<ISiparisUrunService, SiparisUrunService>();
 
         return services;
     }
+}
+
+internal sealed class InfrastructureInitializer(
+    IServiceProvider serviceProvider,
+    ILogger<InfrastructureInitializer> logger) : IHostedService
+{
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        using var scope = serviceProvider.CreateScope();
+
+        try
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ShopAppDbContext>();
+            await db.Database.MigrateAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Database migration failed. Existing schema was left unchanged.");
+        }
+
+        try
+        {
+            await IdentityRoleSeeder.SeedAsync(scope.ServiceProvider);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Identity role seed failed.");
+        }
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

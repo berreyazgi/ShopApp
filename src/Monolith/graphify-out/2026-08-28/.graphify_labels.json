@@ -1,0 +1,22 @@
+{
+  "0": "ShopApp.Application.Authentication",
+  "1": "Migration",
+  "2": "IIdentityService",
+  "3": "ShopApp.Infrastructure.csproj",
+  "4": "ShopApp.Infrastructure.Persistence",
+  "5": "IEntityTypeConfiguration",
+  "6": "ShopAppDbContext",
+  "7": "KayitliKullanici",
+  "8": "SepetDto",
+  "9": "IdentityService",
+  "10": "IJwtTokenGenerator",
+  "11": "ShopApp.Infrastructure.Persistence.Migrations",
+  "12": "CreateMonolithTables",
+  "13": "DatabaseChanges",
+  "14": "MakeApplicationUserUpdatedAtRequired",
+  "15": "AddMonolithDomainChanges",
+  "16": "TurkcheIdentityVeMusteriGuncellemesi",
+  "17": "IdentityRoleSeeder",
+  "18": "ShopApp.Application.Sepet.Commands.CreateSepet",
+  "19": "ShopAppDbContextModelSnapshot.cs"
+}

@@ -14,13 +14,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72
 		src\NewFile1.txt = src\NewFile1.txt
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{984BB9B3-3FA3-BE33-9484-CAC21695A33C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MicroServices", "MicroServices", "{984BB9B3-3FA3-BE33-9484-CAC21695A33C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Monolith", "Monolith", "{729A333E-ABD6-BEB7-26CA-C39A7539F140}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShopApp.Infrastructure", "src\Monolith\ShopApp.Infrastructure\ShopApp.Infrastructure.csproj", "{5A935F80-2550-47C7-BB86-333ABA5F7EFF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Servisler", "Servisler", "{DC637CAE-D483-3332-7119-DD055F087308}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MicroService", "MicroService", "{DC637CAE-D483-3332-7119-DD055F087308}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KategoriServis", "src\Services\Servisler\KategoriServis\KategoriServis.csproj", "{FCE79DBF-38A3-4FAF-8D77-1E066DC183C8}"
 EndProject

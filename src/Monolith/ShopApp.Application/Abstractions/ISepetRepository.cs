@@ -1,10 +1,10 @@
-using SepetEntity = src.Monolith.ShopApp.Domain.Sepet.Entities.Sepet;
+using src.Monolith.ShopApp.Domain.Sepet.Entities;
 
 namespace ShopApp.Application.Abstractions;
 
 public interface ISepetRepository
 {
     Task<SepetEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task AddAsync(SepetEntity sepet, CancellationToken cancellationToken = default);
-    Task UpdateAsync(SepetEntity sepet, CancellationToken cancellationToken = default);
+    Task AddAsync(SepetEntity sepetEntity, CancellationToken cancellationToken = default);
+    Task UpdateAsync(SepetEntity sepetEntity, CancellationToken cancellationToken = default);
 }

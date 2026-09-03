@@ -49,10 +49,16 @@ export const endpoints = {
   },
 
   // ── Ordering ─────────────────────────────────────────────────────────────
+  //
+  // ARCHITECTURE NOTE:
+  //  These paths match SiparisController in ShopApp.Api which uses
+  //  [Route("api/siparis")]. If the controller route ever changes, update here.
+  //
   ordering: {
-    orders:         () => '/api/ordering/orders',
-    orderById:      (id) => `/api/ordering/orders/${id}`,
-    checkout:       () => '/api/ordering/checkout',
+    orders:       () => '/api/siparis',
+    orderById:    (id) => `/api/siparis/${id}`,
+    orderItems:   (siparisId) => `/api/siparis/${siparisId}/urunler`,
+    orderItemById:(siparisId, urunId) => `/api/siparis/${siparisId}/urunler/${urunId}`,
   },
 
   // ── Payment ──────────────────────────────────────────────────────────────
