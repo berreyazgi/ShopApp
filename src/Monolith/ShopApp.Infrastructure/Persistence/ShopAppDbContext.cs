@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ShopApp.Application.Abstractions;
 using ShopApp.Infrastructure.Identity;
 using src.Monolith.ShopApp.Domain.Kullanici;
-using src.Monolith.ShopApp.Domain.Sepet;
+using src.Monolith.ShopApp.Domain.Sepet.Enums;
 using src.Monolith.ShopApp.Domain.Sepet.Entities;
 using SepetUrunuEntity = src.Monolith.ShopApp.Domain.Sepet.Entities.SepetUrunu;
 using src.Monolith.ShopApp.Domain.Siparisler;

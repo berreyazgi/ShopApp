@@ -1,4 +1,5 @@
 using src.Monolith.ShopApp.Domain.Common;
+using src.Monolith.ShopApp.Domain.Siparisler.Enums;
 
 namespace src.Monolith.ShopApp.Domain.Siparisler;
 

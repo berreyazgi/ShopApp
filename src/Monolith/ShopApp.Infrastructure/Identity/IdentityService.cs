@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Infrastructure.Persistence;
 using src.Monolith.ShopApp.Domain.Kullanici;
-using ShopApp.Application.Abstractions;
+using ShopApp.Application.Authentication.Services;
 using ShopApp.Application.Authentication;
 
 namespace ShopApp.Infrastructure.Identity;

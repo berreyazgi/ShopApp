@@ -2,7 +2,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Application.Abstractions;
-using ShopApp.Application.Dtos.SepetDtos;
+using ShopApp.Application.Sepet.Dtos;
 
 namespace ShopApp.Application.Sepet.Queries;
 

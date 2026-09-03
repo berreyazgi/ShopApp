@@ -2,7 +2,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Application.Abstractions;
-using ShopApp.Application.Dtos.SiparisDtos;
+using ShopApp.Application.Siparis.Dtos;
 
 namespace ShopApp.Application.Siparis.Queries;
 

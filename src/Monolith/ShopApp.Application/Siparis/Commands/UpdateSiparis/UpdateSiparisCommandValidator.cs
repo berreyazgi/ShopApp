@@ -1,5 +1,5 @@
 using FluentValidation;
-using src.Monolith.ShopApp.Domain.Siparisler;
+using src.Monolith.ShopApp.Domain.Siparisler.Enums;
 
 namespace ShopApp.Application.Siparis.Commands.UpdateSiparis;
 

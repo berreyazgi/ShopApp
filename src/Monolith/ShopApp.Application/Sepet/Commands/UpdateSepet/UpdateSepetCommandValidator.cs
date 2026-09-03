@@ -1,5 +1,5 @@
 using FluentValidation;
-using src.Monolith.ShopApp.Domain.Sepet;
+using src.Monolith.ShopApp.Domain.Sepet.Enums;
 
 namespace ShopApp.Application.Sepet.Commands.UpdateSepet;
 

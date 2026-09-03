@@ -1,5 +1,5 @@
 using src.Monolith.ShopApp.Domain.Common;
-using src.Monolith.ShopApp.Domain.Sepet;
+using src.Monolith.ShopApp.Domain.Sepet.Enums;
 
 namespace src.Monolith.ShopApp.Domain.Sepet.Entities;
 

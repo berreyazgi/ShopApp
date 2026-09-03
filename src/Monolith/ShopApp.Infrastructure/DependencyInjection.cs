@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using ShopApp.Application.Abstractions;
+using ShopApp.Application.Authentication.Services;
 using ShopApp.Infrastructure.Authentication;
 using ShopApp.Infrastructure.Identity;
 using ShopApp.Infrastructure.Persistence;

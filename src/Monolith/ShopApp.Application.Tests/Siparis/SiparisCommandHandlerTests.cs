@@ -5,6 +5,7 @@ using ShopApp.Application.Siparis.Commands.DeleteSiparis;
 using ShopApp.Application.Siparis.Commands.UpdateSiparis;
 using ShopApp.Application.Tests.TestSupport;
 using src.Monolith.ShopApp.Domain.Siparisler;
+using src.Monolith.ShopApp.Domain.Siparisler.Enums;
 using Xunit;
 
 namespace ShopApp.Application.Tests.Siparis;

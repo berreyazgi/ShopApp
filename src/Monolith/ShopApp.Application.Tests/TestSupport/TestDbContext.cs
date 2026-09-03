@@ -10,7 +10,7 @@ public sealed class TestDbContext(DbContextOptions<TestDbContext> options) : DbC
     public DbSet<SiparisEntity> Siparisler => Set<SiparisEntity>();
     public DbSet<SepetEntity> Sepetler => Set<SepetEntity>();
     public DbSet<SepetUrunu> SepetUrunleri => Set<SepetUrunu>();
-    public DbSet<SiparisUrunleri> SiparisUrunleri => Set<SiparisUrunleri>();
+    public DbSet<src.Monolith.ShopApp.Domain.Siparisler.SiparisUrunleri> SiparisUrunleri => Set<src.Monolith.ShopApp.Domain.Siparisler.SiparisUrunleri>();
     public DbSet<SiparisDurumLookup> SiparisDurumlar => Set<SiparisDurumLookup>();
 
     public static TestDbContext Create()

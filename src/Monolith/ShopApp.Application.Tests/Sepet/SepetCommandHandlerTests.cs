@@ -4,7 +4,7 @@ using ShopApp.Application.Sepet.Commands.CreateSepet;
 using ShopApp.Application.Sepet.Commands.DeleteSepet;
 using ShopApp.Application.Sepet.Commands.UpdateSepet;
 using ShopApp.Application.Tests.TestSupport;
-using src.Monolith.ShopApp.Domain.Sepet;
+using src.Monolith.ShopApp.Domain.Sepet.Enums;
 using src.Monolith.ShopApp.Domain.Sepet.Entities;
 using Xunit;
 

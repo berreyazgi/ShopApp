@@ -1,6 +1,6 @@
 using AutoMapper;
-using ShopApp.Application.Dtos.SiparisDtos;
-using ShopApp.Application.Dtos.SiparisUrunleriDto;
+using ShopApp.Application.Siparis.Dtos;
+using ShopApp.Application.SiparisUrunleri.Dtos;
 using src.Monolith.ShopApp.Domain.Siparisler;
 
 
@@ -14,8 +14,8 @@ public class SiparisMapping : Profile
             .ForCtorParam(nameof(ResultSiparisDto.DurumIsmi), opt => opt.MapFrom(src => src.Durum.DurumIsmi));
         CreateMap<SiparisEntity, GetByIdSiparisDto>().ReverseMap();
 
-        CreateMap<SiparisUrunleri, ResultSiparisUrunleriDto>();
-        CreateMap<SiparisUrunleri, GetByIdSiparisUrunleriDto>().ReverseMap();
+        CreateMap<src.Monolith.ShopApp.Domain.Siparisler.SiparisUrunleri, ResultSiparisUrunleriDto>();
+        CreateMap<src.Monolith.ShopApp.Domain.Siparisler.SiparisUrunleri, GetByIdSiparisUrunleriDto>().ReverseMap();
 
     }
 }

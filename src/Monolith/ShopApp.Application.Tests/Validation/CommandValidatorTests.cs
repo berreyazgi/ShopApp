@@ -1,7 +1,7 @@
 using FluentValidation.TestHelper;
 using ShopApp.Application.SepetUrunleri.Commands.CreateSepetUrunu;
 using ShopApp.Application.Sepet.Commands.UpdateSepet;
-using ShopApp.Application.SiparisUrunu.Commands.CreateSiparisUrunu;
+using ShopApp.Application.SiparisUrunleri.Commands.CreateSiparisUrunu;
 using ShopApp.Application.Siparis.Commands.UpdateSiparis;
 using Xunit;
 
