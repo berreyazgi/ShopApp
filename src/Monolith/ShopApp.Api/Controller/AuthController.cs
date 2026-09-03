@@ -7,6 +7,7 @@ using ShopApp.Application.Authentication;
 
 namespace src.Monolith.ShopApp.Api.Controller;
 
+[Authorize]
 [ApiController]
 [Route("api/auth")]
 public class AuthController : ControllerBase
@@ -48,6 +49,7 @@ public class AuthController : ControllerBase
         }
     }
 
+    //oturum açmış kullanıcı
     [Authorize]
     [HttpGet("me")]
     public async Task<ActionResult<CurrentUserResponse>> Me()

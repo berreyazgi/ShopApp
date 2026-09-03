@@ -1,13 +1,12 @@
-using MediatR;
-
 namespace ShopApp.Application.Dtos.SepetUrunDtos;
 
 public record ResultSepetUrunDto(
     Guid Id,
-    Guid UrunId,
-    string UrunAdi,
-    int Miktar,
-    decimal BirimFiyat) : IRequest<Guid>
+    Guid SepetId,
+    Guid UrunTurId,
+    int UrunMiktar,
+    int UrunAdet,
+    decimal FiyatGecmis)
 {
-    public decimal ToplamTutar => Miktar * BirimFiyat;
+    public decimal ToplamTutar => UrunAdet * FiyatGecmis;
 }

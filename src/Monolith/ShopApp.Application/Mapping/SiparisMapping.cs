@@ -10,14 +10,11 @@ public class SiparisMapping : Profile
 {
     public SiparisMapping()
     {
-        CreateMap<SiparisEntity,CreateSiparisDto>().ReverseMap();
-        CreateMap<SiparisEntity, ResultSiparisDto>().ReverseMap();
-        CreateMap<SiparisEntity, UpdateSiparisDto>().ReverseMap();
+        CreateMap<SiparisEntity, ResultSiparisDto>()
+            .ForCtorParam(nameof(ResultSiparisDto.DurumIsmi), opt => opt.MapFrom(src => src.Durum.DurumIsmi));
         CreateMap<SiparisEntity, GetByIdSiparisDto>().ReverseMap();
 
-        CreateMap<SiparisUrunleri, CreateSiparisUrunleriDto>().ReverseMap();
-        CreateMap<SiparisUrunleri, ResultSiparisUrunleriDto>().ReverseMap();
-        CreateMap<SiparisUrunleri, UpdateSiparisUrunleriDto>().ReverseMap();
+        CreateMap<SiparisUrunleri, ResultSiparisUrunleriDto>();
         CreateMap<SiparisUrunleri, GetByIdSiparisUrunleriDto>().ReverseMap();
 
     }

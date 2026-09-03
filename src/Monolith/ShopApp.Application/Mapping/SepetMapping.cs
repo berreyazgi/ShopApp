@@ -9,14 +9,10 @@ public class SepetMapping : Profile
 {
     public SepetMapping()
     {
-        CreateMap<SepetEntity,CreateSepetDto>().ReverseMap();
-        CreateMap<SepetEntity, ResultSepetDto>().ReverseMap();
-        CreateMap<SepetEntity, UpdateSepetDto>().ReverseMap();
+        CreateMap<SepetEntity, ResultSepetDto>();
         CreateMap<SepetEntity, GetByIdSepetDto>().ReverseMap();
 
-        CreateMap<SepetUrunu, CreateSepetUrunDto>().ReverseMap();
-        CreateMap<SepetUrunu, ResultSepetUrunDto>().ReverseMap();
-        CreateMap<SepetUrunu, UpdateSepetUrunDto>().ReverseMap();
+        CreateMap<SepetUrunu, ResultSepetUrunDto>();
         CreateMap<SepetUrunu, GetByIdSepetUrunDto>().ReverseMap();
     }
 

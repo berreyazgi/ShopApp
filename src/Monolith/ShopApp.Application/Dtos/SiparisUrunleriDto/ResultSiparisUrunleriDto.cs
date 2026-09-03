@@ -1,14 +1,14 @@
-using MediatR;
-
 namespace ShopApp.Application.Dtos.SiparisUrunleriDto;
 
 public record ResultSiparisUrunleriDto(
     Guid Id,
+    Guid SiparisId,
     Guid UrunTurId,
     string UrunIsmi,
+    string? UrunAciklamasi,
+    string? StokTakipNumarasi,
     int UrunMiktar,
-    decimal UrunBirimFiyat
-    ): IRequest<Guid>
-{
-    public decimal ToplamTutar => UrunMiktar * UrunBirimFiyat;
-}
+    decimal UrunBirimFiyat,
+    decimal IndirimOrani,
+    decimal ToplamFiyat
+);

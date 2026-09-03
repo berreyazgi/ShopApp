@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StokServis", "src\Services\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KargoServis", "src\Services\Servisler\KargoServis\KargoServis.csproj", "{A8C3BABE-5DF7-46E3-8822-7ECFF5FB550F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShopApp.Application.Tests", "src\Monolith\ShopApp.Application.Tests\ShopApp.Application.Tests.csproj", "{45345A00-E338-4789-B3AA-040F4AEF8973}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -122,6 +124,18 @@ Global
 		{A8C3BABE-5DF7-46E3-8822-7ECFF5FB550F}.Release|x64.Build.0 = Release|Any CPU
 		{A8C3BABE-5DF7-46E3-8822-7ECFF5FB550F}.Release|x86.ActiveCfg = Release|Any CPU
 		{A8C3BABE-5DF7-46E3-8822-7ECFF5FB550F}.Release|x86.Build.0 = Release|Any CPU
+		{45345A00-E338-4789-B3AA-040F4AEF8973}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45345A00-E338-4789-B3AA-040F4AEF8973}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45345A00-E338-4789-B3AA-040F4AEF8973}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{45345A00-E338-4789-B3AA-040F4AEF8973}.Debug|x64.Build.0 = Debug|Any CPU
+		{45345A00-E338-4789-B3AA-040F4AEF8973}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{45345A00-E338-4789-B3AA-040F4AEF8973}.Debug|x86.Build.0 = Debug|Any CPU
+		{45345A00-E338-4789-B3AA-040F4AEF8973}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45345A00-E338-4789-B3AA-040F4AEF8973}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45345A00-E338-4789-B3AA-040F4AEF8973}.Release|x64.ActiveCfg = Release|Any CPU
+		{45345A00-E338-4789-B3AA-040F4AEF8973}.Release|x64.Build.0 = Release|Any CPU
+		{45345A00-E338-4789-B3AA-040F4AEF8973}.Release|x86.ActiveCfg = Release|Any CPU
+		{45345A00-E338-4789-B3AA-040F4AEF8973}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -137,5 +151,6 @@ Global
 		{FCE79DBF-38A3-4FAF-8D77-1E066DC183C8} = {DC637CAE-D483-3332-7119-DD055F087308}
 		{A2643240-3C77-42C7-A3C5-059573FEAF14} = {DC637CAE-D483-3332-7119-DD055F087308}
 		{A8C3BABE-5DF7-46E3-8822-7ECFF5FB550F} = {DC637CAE-D483-3332-7119-DD055F087308}
+		{45345A00-E338-4789-B3AA-040F4AEF8973} = {729A333E-ABD6-BEB7-26CA-C39A7539F140}
 	EndGlobalSection
 EndGlobal

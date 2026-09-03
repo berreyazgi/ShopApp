@@ -1,5 +1,3 @@
-using MediatR;
-
 namespace ShopApp.Application.Dtos.SiparisDtos;
 
 public record ResultSiparisDto(
@@ -8,7 +6,7 @@ public record ResultSiparisDto(
     string SiparisNumarasi,
     string DurumIsmi,
     decimal AraToplam,
-    decimal IndirimOrani,
+    decimal IndirimTutari,
     decimal KargoFiyat,
     decimal ToplamFiyat
-):IRequest<ResultSiparisDto>;
+);

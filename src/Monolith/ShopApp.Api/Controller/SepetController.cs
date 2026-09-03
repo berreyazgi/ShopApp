@@ -1,34 +1,42 @@
+using FluentValidation;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShopApp.Application.Dtos.SepetDtos;
 using ShopApp.Application.Dtos.SepetUrunDtos;
-using ShopApp.Application.Services.SepetServices;
-using ShopApp.Application.Services.SepetUrunleri;
+using ShopApp.Application.Sepet.Commands.CreateSepet;
+using ShopApp.Application.Sepet.Commands.DeleteSepet;
+using ShopApp.Application.Sepet.Commands.UpdateSepet;
+using ShopApp.Application.Sepet.Queries;
+using ShopApp.Application.SepetUrunleri.Commands.CreateSepetUrunu;
+using ShopApp.Application.SepetUrunleri.Commands.DeleteSepetUrunu;
+using ShopApp.Application.SepetUrunleri.Commands.UpdateSepetUrunu;
+using ShopApp.Application.SepetUrunleri.Queries;
 
 namespace src.Monolith.ShopApp.Api.Controller;
 
+[Authorize]
 [ApiController]
 [Route("api/sepet")]
 public sealed class SepetController : ControllerBase
 {
-    private readonly ISepetService _sepetService;
-    private readonly ISepetUrunService _sepetUrunService;
+    private readonly IMediator _mediator;
 
-    public SepetController(ISepetService sepetService, ISepetUrunService sepetUrunService)
+    public SepetController(IMediator mediator)
     {
-        _sepetService = sepetService;
-        _sepetUrunService = sepetUrunService;
+        _mediator = mediator;
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<ResultSepetDto>>> GetAll()
-        => Ok(await _sepetService.GetAllSepetAsync());
+    public async Task<ActionResult<List<ResultSepetDto>>> GetAll(CancellationToken cancellationToken)
+        => Ok(await _mediator.Send(new GetMySepetler.GetMySepetlerQuery(), cancellationToken));
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<ResultSepetDto>> GetById(Guid id)
+    public async Task<ActionResult<ResultSepetDto>> GetById(Guid id, CancellationToken cancellationToken)
     {
         try
         {
-            return Ok(await _sepetService.GetSepetByIdAsync(id));
+            return Ok(await _mediator.Send(new GetSepet.GetSepetQuery { Id = id }, cancellationToken));
         }
         catch (KeyNotFoundException exception)
         {
@@ -37,35 +45,39 @@ public sealed class SepetController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateSepetDto dto)
+    public async Task<IActionResult> Create(CancellationToken cancellationToken)
     {
-        var id = await _sepetService.CreateSepetAsync(dto);
+        var id = await _mediator.Send(new CreateSepetCommand(), cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id }, new { id });
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSepetDto dto)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSepetCommand command, CancellationToken cancellationToken)
     {
-        if (dto.Id != id)
+        if (command.Id != id)
             return BadRequest(new { message = "İstek gövdesindeki sepet kimliği rota kimliğiyle eşleşmelidir." });
 
         try
         {
-            await _sepetService.UpdateSepetAsync(dto with { Id = id });
+            await _mediator.Send(command, cancellationToken);
             return NoContent();
         }
         catch (KeyNotFoundException exception)
         {
             return NotFound(new { message = exception.Message });
         }
+        catch (ValidationException exception)
+        {
+            return BadRequest(new { errors = exception.Errors.Select(e => new { field = e.PropertyName, message = e.ErrorMessage }) });
+        }
     }
 
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         try
         {
-            await _sepetService.DeleteSepetAsync(id);
+            await _mediator.Send(new DeleteSepetCommand(id), cancellationToken);
             return NoContent();
         }
         catch (KeyNotFoundException exception)
@@ -75,11 +87,11 @@ public sealed class SepetController : ControllerBase
     }
 
     [HttpGet("{sepetId:guid}/urunler")]
-    public async Task<ActionResult<List<ResultSepetUrunDto>>> GetUrunler(Guid sepetId)
+    public async Task<ActionResult<List<ResultSepetUrunDto>>> GetUrunler(Guid sepetId, CancellationToken cancellationToken)
     {
         try
         {
-            return Ok(await _sepetUrunService.GetBySepetIdAsync(sepetId));
+            return Ok(await _mediator.Send(new GetSepetUrunleri.GetSepetUrunleriQuery(sepetId), cancellationToken));
         }
         catch (KeyNotFoundException exception)
         {
@@ -88,11 +100,11 @@ public sealed class SepetController : ControllerBase
     }
 
     [HttpGet("{sepetId:guid}/urunler/{urunId:guid}")]
-    public async Task<ActionResult<ResultSepetUrunDto>> GetUrunById(Guid sepetId, Guid urunId)
+    public async Task<ActionResult<ResultSepetUrunDto>> GetUrunById(Guid sepetId, Guid urunId, CancellationToken cancellationToken)
     {
         try
         {
-            return Ok(await _sepetUrunService.GetByIdAsync(sepetId, urunId));
+            return Ok(await _mediator.Send(new GetSepetUrunu.GetSepetUrunuQuery(sepetId, urunId), cancellationToken));
         }
         catch (KeyNotFoundException exception)
         {
@@ -101,45 +113,53 @@ public sealed class SepetController : ControllerBase
     }
 
     [HttpPost("{sepetId:guid}/urunler")]
-    public async Task<IActionResult> CreateUrun(Guid sepetId, [FromBody] CreateSepetUrunDto dto)
+    public async Task<IActionResult> CreateUrun(Guid sepetId, [FromBody] CreateSepetUrunuCommand command, CancellationToken cancellationToken)
     {
-        if (dto.SepetId != sepetId)
+        if (command.SepetId != sepetId)
             return BadRequest(new { message = "İstek gövdesindeki sepet kimliği rota kimliğiyle eşleşmelidir." });
 
         try
         {
-            var id = await _sepetUrunService.CreateSepetUrunAsync(sepetId, dto with { SepetId = sepetId });
+            var id = await _mediator.Send(command, cancellationToken);
             return CreatedAtAction(nameof(GetUrunById), new { sepetId, urunId = id }, new { id });
         }
         catch (KeyNotFoundException exception)
         {
             return NotFound(new { message = exception.Message });
         }
+        catch (ValidationException exception)
+        {
+            return BadRequest(new { errors = exception.Errors.Select(e => new { field = e.PropertyName, message = e.ErrorMessage }) });
+        }
     }
 
     [HttpPut("{sepetId:guid}/urunler/{urunId:guid}")]
-    public async Task<IActionResult> UpdateUrun(Guid sepetId, Guid urunId, [FromBody] UpdateSepetUrunDto dto)
+    public async Task<IActionResult> UpdateUrun(Guid sepetId, Guid urunId, [FromBody] UpdateSepetUrunuCommand command, CancellationToken cancellationToken)
     {
-        if (dto.Id != urunId || dto.SepetId != sepetId)
+        if (command.Id != urunId || command.SepetId != sepetId)
             return BadRequest(new { message = "İstek gövdesindeki ürün veya sepet kimliği rota kimliğiyle eşleşmelidir." });
 
         try
         {
-            await _sepetUrunService.UpdateSepetUrunAsync(sepetId, dto with { Id = urunId, SepetId = sepetId });
+            await _mediator.Send(command, cancellationToken);
             return NoContent();
         }
         catch (KeyNotFoundException exception)
         {
             return NotFound(new { message = exception.Message });
         }
+        catch (ValidationException exception)
+        {
+            return BadRequest(new { errors = exception.Errors.Select(e => new { field = e.PropertyName, message = e.ErrorMessage }) });
+        }
     }
 
     [HttpDelete("{sepetId:guid}/urunler/{urunId:guid}")]
-    public async Task<IActionResult> DeleteUrun(Guid sepetId, Guid urunId)
+    public async Task<IActionResult> DeleteUrun(Guid sepetId, Guid urunId, CancellationToken cancellationToken)
     {
         try
         {
-            await _sepetUrunService.DeleteSepetUrunAsync(sepetId, urunId);
+            await _mediator.Send(new DeleteSepetUrunuCommand(sepetId, urunId), cancellationToken);
             return NoContent();
         }
         catch (KeyNotFoundException exception)

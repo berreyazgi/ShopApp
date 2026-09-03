@@ -1,8 +1,8 @@
 using AutoMapper;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using ShopApp.Application.Abstractions;
 using ShopApp.Application.Dtos.SiparisDtos;
-using ShopApp.Application.Services.SiparisServices;
 
 namespace ShopApp.Application.Siparis.Queries;
 
@@ -13,21 +13,30 @@ public class GetSiparis
         public Guid Id { get; set; }
     }
 
-    [Authorize]
     public class GetSiparisQueryHandler : IRequestHandler<GetSiparisQuery, ResultSiparisDto>
     {
-        private readonly ISiparisService _siparisService;
+        private readonly IShopAppDbContext _context;
+        private readonly ICurrentCustomerContext _currentCustomerContext;
         private readonly IMapper _mapper;
 
-        public GetSiparisQueryHandler(ISiparisService siparisService, IMapper mapper)
+        public GetSiparisQueryHandler(IShopAppDbContext context, ICurrentCustomerContext currentCustomerContext, IMapper mapper)
         {
-            _siparisService = siparisService;
+            _context = context;
+            _currentCustomerContext = currentCustomerContext;
             _mapper = mapper;
         }
+
         public async Task<ResultSiparisDto> Handle(GetSiparisQuery request, CancellationToken cancellationToken)
         {
-            var sepet = await _siparisService.GetByIdAsync(request.Id, cancellationToken);
-            return _mapper.Map<ResultSiparisDto>(sepet);
+            var customer = await _currentCustomerContext.GetRequiredAsync(cancellationToken);
+
+            var siparis = await _context.Siparisler
+                .AsNoTracking()
+                .Include(s => s.Durum)
+                .FirstOrDefaultAsync(s => s.Id == request.Id && s.MusteriId == customer.MusteriId, cancellationToken)
+                ?? throw new KeyNotFoundException($"Sipariş '{request.Id}' bulunamadı.");
+
+            return _mapper.Map<ResultSiparisDto>(siparis);
         }
     }
 }

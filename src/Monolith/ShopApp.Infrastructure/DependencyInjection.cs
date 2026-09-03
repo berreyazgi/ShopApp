@@ -10,11 +10,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using ShopApp.Application.Abstractions;
-using ShopApp.Application.Services.SepetServices;
-using ShopApp.Application.Services.SepetUrunService;
-using ShopApp.Application.Services.SepetUrunleri;
-using ShopApp.Application.Services.SiparisServices;
-using ShopApp.Application.Services.SiparisUrunServices;
 using ShopApp.Infrastructure.Authentication;
 using ShopApp.Infrastructure.Identity;
 using ShopApp.Infrastructure.Persistence;
@@ -97,10 +92,9 @@ public static class DependencyInjection
         services.AddScoped<ICurrentCustomerContext, CurrentCustomerContext>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ISepetRepository, SepetRepository>();
-        services.AddScoped<ISepetService, SepetService>();
-        services.AddScoped<ISepetUrunService, SepetUrunService>();
-        services.AddScoped<ISiparisService, SiparisService>();
-        services.AddScoped<ISiparisUrunService, SiparisUrunService>();
+        services.AddScoped<ISepetUrunuRepository, SepetUrunuRepository>();
+        services.AddScoped<ISiparisRepository, SiparisRepository>();
+        services.AddScoped<ISiparisUrunuRepository, SiparisUrunuRepository>();
 
         return services;
     }

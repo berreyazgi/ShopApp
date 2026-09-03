@@ -32,4 +32,10 @@ public class SepetRepository : ISepetRepository
         _context.Carts.Update(sepetEntity);
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task DeleteAsync(SepetEntity sepetEntity, CancellationToken cancellationToken = default)
+    {
+        _context.Carts.Remove(sepetEntity);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }

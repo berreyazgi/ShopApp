@@ -23,4 +23,20 @@ public class SiparisEntity : BaseEntity
 
     public ICollection<SiparisUrunleri> Urunler { get; private set; } = [];
 
+    private SiparisEntity() { }
+
+    public static SiparisEntity Olustur(Guid musteriId, string siparisNumarasi, Guid olusturanKullaniciId) => new()
+    {
+        MusteriId = musteriId,
+        SiparisNumarasi = siparisNumarasi,
+        DurumId = (int)SiparisDurum.BekleyenOdeme,
+        OlusturanKullaniciId = olusturanKullaniciId
+    };
+
+    public void DurumGuncelle(int yeniDurumId, Guid guncelleyenKullaniciId)
+    {
+        DurumId = yeniDurumId;
+        GuncelleyenKullaniciId = guncelleyenKullaniciId;
+        MarkAsUpdated();
+    }
 }

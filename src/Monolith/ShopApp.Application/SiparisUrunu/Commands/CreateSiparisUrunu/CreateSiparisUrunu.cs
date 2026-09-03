@@ -1,0 +1,13 @@
+using MediatR;
+
+namespace ShopApp.Application.SiparisUrunu.Commands.CreateSiparisUrunu;
+
+public sealed record CreateSiparisUrunuCommand(
+    Guid SiparisId,
+    Guid UrunTurId,
+    string UrunIsmi,
+    string? UrunAciklamasi,
+    string? StokTakipNumarasi,
+    int UrunMiktar,
+    decimal UrunBirimFiyat,
+    decimal IndirimOrani) : IRequest<Guid>;
