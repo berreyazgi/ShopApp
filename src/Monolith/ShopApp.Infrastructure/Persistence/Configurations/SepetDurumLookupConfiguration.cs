@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using src.Monolith.ShopApp.Domain.Sepet;
+using src.Monolith.ShopApp.Domain.Sepet.Enums;
 using src.Monolith.ShopApp.Domain.Sepet.Entities;
 
 namespace ShopApp.Infrastructure.Persistence.Configurations;

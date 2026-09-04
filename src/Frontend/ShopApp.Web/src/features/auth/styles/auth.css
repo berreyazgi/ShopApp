@@ -404,6 +404,9 @@
   gap: var(--space-1);
   min-height: 1.2em;
 }
+.form-field__error[hidden] {
+  display: none;
+}
 .form-field__error::before {
   content: '⚠';
   font-size: 0.7em;

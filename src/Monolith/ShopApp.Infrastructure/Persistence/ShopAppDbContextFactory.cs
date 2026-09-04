@@ -1,22 +1,24 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace ShopApp.Infrastructure.Persistence;
 
-/// <summary>
-/// Design-time factory used by EF Core CLI tools (dotnet ef migrations add, etc.)
-/// This bypasses the need to resolve the full DI container at design time.
-/// </summary>
 public class ShopAppDbContextFactory : IDesignTimeDbContextFactory<ShopAppDbContext>
 {
     public ShopAppDbContext CreateDbContext(string[] args)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<ShopAppDbContext>();
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false)
+            .Build();
 
-        // Use a placeholder connection string for design-time; the real one is
-        // supplied at runtime via appsettings / environment variables.
-        optionsBuilder.UseNpgsql(
-            "Host=127.0.0.1;Port=5432;Database=ShopAppDb;Username=postgres;Password=postgres456");
+        var connectionString = configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException(
+                "Connection string 'DefaultConnection' was not found in appsettings.json.");
+
+        var optionsBuilder = new DbContextOptionsBuilder<ShopAppDbContext>();
+        optionsBuilder.UseNpgsql(connectionString);
 
         return new ShopAppDbContext(optionsBuilder.Options);
     }

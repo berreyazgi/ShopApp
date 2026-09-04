@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Infrastructure.Persistence;
 using src.Monolith.ShopApp.Domain.Kullanici;
-using ShopApp.Application.Abstractions;
+using ShopApp.Application.Authentication.Services;
 using ShopApp.Application.Authentication;
 
 namespace ShopApp.Infrastructure.Identity;
@@ -20,7 +20,7 @@ public sealed class IdentityService : IIdentityService
         UserManager<KayitliKullanici> userManager,
         RoleManager<IdentityRole<Guid>> roleManager,
         ShopAppDbContext dbContext,
-        HttpContextAccessor httpContextAccessor)
+        IHttpContextAccessor httpContextAccessor)
     {
         _userManager = userManager;
         _dbContext = dbContext;

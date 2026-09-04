@@ -1,11 +1,8 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using StokServis.Domain.Common;
 using StokServis.Domain.Enums;
 
 namespace StokServis.Domain.Entities;
 
-[Table("StokHareketleri", Schema = "stok")]
 public class StokHareketi : BaseEntity
 {
     public Guid StokKalemiId { get; set; }
@@ -14,7 +11,6 @@ public class StokHareketi : BaseEntity
 
     public int Miktar { get; set; }
 
-    [MaxLength(1000)]
     public string? Aciklama { get; set; }
 
     public Guid? ReferansId { get; set; }

@@ -1,18 +1,25 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace KargoServis.Infrastructure.Persistence;
 
-/// <summary>
-/// Design-time factory used by EF Core CLI tools (dotnet ef migrations add, database update, etc.)
-/// </summary>
 public class KargoDbContextFactory : IDesignTimeDbContextFactory<KargoDbContext>
 {
     public KargoDbContext CreateDbContext(string[] args)
     {
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false)
+            .Build();
+
+        var connectionString = configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException(
+                "Connection string 'DefaultConnection' was not found in appsettings.json.");
+
         var optionsBuilder = new DbContextOptionsBuilder<KargoDbContext>();
-        optionsBuilder.UseNpgsql(
-            "Host=db;Port=5432;Database=ShopAppKargoDB;Username=postgres;Password=postgres456");
+        optionsBuilder.UseNpgsql(connectionString);
+
         return new KargoDbContext(optionsBuilder.Options);
     }
 }

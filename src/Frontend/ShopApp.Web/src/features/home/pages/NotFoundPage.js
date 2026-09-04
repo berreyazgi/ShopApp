@@ -17,7 +17,6 @@ export default function NotFoundPage() {
   });
 
   element.innerHTML = `
-    <p class="not-found-code">404</p>
     <h2>Sayfa Bulunamadı</h2>
     <p>Aradığınız sayfa taşınmış veya kaldırılmış olabilir.</p>
   `;

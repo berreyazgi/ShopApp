@@ -1,7 +1,7 @@
 using AutoMapper;
-using SepetEntity = src.Monolith.ShopApp.Domain.Sepet.Entities.Sepet;
+using ShopApp.Application.Sepet.Dtos;
+using ShopApp.Application.SepetUrunleri.Dtos;
 using src.Monolith.ShopApp.Domain.Sepet.Entities;
-using ShopApp.Application.Sepet.Queries;
 
 namespace ShopApp.Application.Mapping;
 
@@ -9,10 +9,11 @@ public class SepetMapping : Profile
 {
     public SepetMapping()
     {
-        CreateMap<SepetEntity, SepetDto>()
-            .ForMember(dest => dest.DurumIsmi,
-                opt => opt.MapFrom(src => src.Durum != null ? src.Durum.DurumIsmi : null));
+        CreateMap<SepetEntity, ResultSepetDto>();
+        CreateMap<SepetEntity, GetByIdSepetDto>().ReverseMap();
 
-        CreateMap<SepetUrunu, SepetUrunDto>();
+        CreateMap<SepetUrunu, ResultSepetUrunDto>();
+        CreateMap<SepetUrunu, GetByIdSepetUrunDto>().ReverseMap();
     }
+
 }

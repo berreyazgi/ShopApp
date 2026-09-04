@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Application.Abstractions;
-using SepetEntity = src.Monolith.ShopApp.Domain.Sepet.Entities.Sepet;
+using src.Monolith.ShopApp.Domain.Sepet.Entities;
 
 namespace ShopApp.Infrastructure.Persistence;
 
@@ -21,15 +21,21 @@ public class SepetRepository : ISepetRepository
             .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 
-    public async Task AddAsync(SepetEntity sepet, CancellationToken cancellationToken = default)
+    public async Task AddAsync(SepetEntity sepetEntity, CancellationToken cancellationToken = default)
     {
-        await _context.Carts.AddAsync(sepet, cancellationToken);
+        await _context.Carts.AddAsync(sepetEntity, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(SepetEntity sepet, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(SepetEntity sepetEntity, CancellationToken cancellationToken = default)
     {
-        _context.Carts.Update(sepet);
+        _context.Carts.Update(sepetEntity);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteAsync(SepetEntity sepetEntity, CancellationToken cancellationToken = default)
+    {
+        _context.Carts.Remove(sepetEntity);
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

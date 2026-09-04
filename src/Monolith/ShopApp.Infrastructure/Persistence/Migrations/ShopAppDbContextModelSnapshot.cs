@@ -17,7 +17,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.10")
+                .HasAnnotation("ProductVersion", "10.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -361,40 +361,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.ToTable("Musteriler", "kimlik");
                 });
 
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Sepet", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("DurumId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("GuncellemeTarihi")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("GuncelleyenKullaniciId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("MusteriId")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<Guid>("OlusturanKullaniciId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("OlusturmaTarihi")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DurumId");
-
-                    b.ToTable("Sepetler", "sales");
-                });
-
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.SepetDurumLookup", b =>
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Entities.SepetDurumLookup", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -434,6 +401,37 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Entities.SepetEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("DurumId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("GuncellemeTarihi")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("GuncelleyenKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MusteriId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OlusturanKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("OlusturmaTarihi")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DurumId");
+
+                    b.ToTable("Sepetler", "sales");
+                });
+
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Entities.SepetUrunu", b =>
                 {
                     b.Property<Guid>("Id")
@@ -441,7 +439,8 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("FiyatGecmis")
-                        .HasColumnType("numeric");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("timestamp with time zone");
@@ -458,9 +457,6 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("SepetId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("UrunAdet")
-                        .HasColumnType("integer");
-
                     b.Property<int>("UrunMiktar")
                         .HasColumnType("integer");
 
@@ -472,54 +468,6 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.HasIndex("SepetId");
 
                     b.ToTable("SepetUrunleri", "sales");
-                });
-
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.Siparis", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("AraToplam")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("DurumId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("GuncellemeTarihi")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("GuncelleyenKullaniciId")
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("IndirimOrani")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("KargoFiyat")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("MusteriId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("OlusturanKullaniciId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("OlusturmaTarihi")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("SiparisNumarasi")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("ToplamFiyat")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DurumId");
-
-                    b.ToTable("Siparisler", "sales");
                 });
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.SiparisDurumLookup", b =>
@@ -540,6 +488,58 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.ToTable("SiparisDurum", "sales");
                 });
 
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.SiparisEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("AraToplam")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<int>("DurumId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("GuncellemeTarihi")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("GuncelleyenKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("IndirimTutari")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<decimal>("KargoFiyat")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<Guid>("MusteriId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OlusturanKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("OlusturmaTarihi")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SiparisNumarasi")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<decimal>("ToplamFiyat")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DurumId");
+
+                    b.ToTable("Siparisler", "sales");
+                });
+
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.SiparisUrunleri", b =>
                 {
                     b.Property<Guid>("Id")
@@ -553,7 +553,8 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("IndirimOrani")
-                        .HasColumnType("numeric");
+                        .HasPrecision(18, 4)
+                        .HasColumnType("numeric(18,4)");
 
                     b.Property<Guid>("OlusturanKullaniciId")
                         .HasColumnType("uuid");
@@ -569,13 +570,15 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(500)");
 
                     b.Property<decimal>("ToplamFiyat")
-                        .HasColumnType("numeric");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<string>("UrunAciklamasi")
                         .HasColumnType("text");
 
                     b.Property<decimal>("UrunBirimFiyat")
-                        .HasColumnType("numeric");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<string>("UrunIsmi")
                         .IsRequired()
@@ -675,9 +678,9 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Sepet", b =>
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Entities.SepetEntity", b =>
                 {
-                    b.HasOne("src.Monolith.ShopApp.Domain.Sepet.SepetDurumLookup", "Durum")
+                    b.HasOne("src.Monolith.ShopApp.Domain.Sepet.Entities.SepetDurumLookup", "Durum")
                         .WithMany()
                         .HasForeignKey("DurumId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -688,16 +691,16 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Entities.SepetUrunu", b =>
                 {
-                    b.HasOne("src.Monolith.ShopApp.Domain.Sepet.Sepet", "Sepet")
+                    b.HasOne("src.Monolith.ShopApp.Domain.Sepet.Entities.SepetEntity", "SepetEntity")
                         .WithMany("Urunler")
                         .HasForeignKey("SepetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Sepet");
+                    b.Navigation("SepetEntity");
                 });
 
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.Siparis", b =>
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.SiparisEntity", b =>
                 {
                     b.HasOne("src.Monolith.ShopApp.Domain.Siparisler.SiparisDurumLookup", "Durum")
                         .WithMany()
@@ -710,21 +713,21 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.SiparisUrunleri", b =>
                 {
-                    b.HasOne("src.Monolith.ShopApp.Domain.Siparisler.Siparis", "Siparis")
+                    b.HasOne("src.Monolith.ShopApp.Domain.Siparisler.SiparisEntity", "SiparisEntity")
                         .WithMany("Urunler")
                         .HasForeignKey("SiparisId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Siparis");
+                    b.Navigation("SiparisEntity");
                 });
 
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Sepet", b =>
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Entities.SepetEntity", b =>
                 {
                     b.Navigation("Urunler");
                 });
 
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.Siparis", b =>
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.SiparisEntity", b =>
                 {
                     b.Navigation("Urunler");
                 });

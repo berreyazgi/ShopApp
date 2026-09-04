@@ -1,22 +1,16 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using src.Monolith.ShopApp.Domain.Common;
 
 namespace src.Monolith.ShopApp.Domain.Siparisler;
 
-[Table("SiparisUrunleri", Schema = "sales")]
 public class SiparisUrunleri : BaseEntity
 {
     public Guid SiparisId { get; private set; }
 
     public Guid UrunTurId { get; private set; }
 
-    [Required]
-    [MaxLength(500)]
     public string UrunIsmi { get; private set; } = null!;
     public string? UrunAciklamasi { get; private set; }
 
-    [MaxLength(500)]
     public string? StokTakipNumarasi { get; private set; }
 
     public int UrunMiktar { get; private set; }
@@ -27,42 +21,38 @@ public class SiparisUrunleri : BaseEntity
 
     public decimal ToplamFiyat { get; private set; }
 
-    public Siparis Siparis { get; private set; } = null!;
+    public SiparisEntity SiparisEntity { get; private set; } = null!;
 
-    //encapsulation 
     private SiparisUrunleri() { }
 
-    internal SiparisUrunleri(
-        Guid SiparisId,
-        Guid UrunTurId,
-        string UrunIsmi,
-        string StokTakipNumarasi,
-        int UrunMiktar,
-        decimal UrunBirimFiyat,
-        decimal IndirimOrani)
+    public static SiparisUrunleri Olustur(
+        Guid siparisId,
+        Guid urunTurId,
+        string urunIsmi,
+        string? urunAciklamasi,
+        string? stokTakipNumarasi,
+        int urunMiktar,
+        decimal urunBirimFiyat,
+        decimal indirimOrani,
+        Guid olusturanKullaniciId) => new()
     {
-        if (UrunMiktar <= 0)
-            throw new ArgumentOutOfRangeException(
-                nameof(UrunMiktar));
+        SiparisId = siparisId,
+        UrunTurId = urunTurId,
+        UrunIsmi = urunIsmi,
+        UrunAciklamasi = urunAciklamasi,
+        StokTakipNumarasi = stokTakipNumarasi,
+        UrunMiktar = urunMiktar,
+        UrunBirimFiyat = urunBirimFiyat,
+        IndirimOrani = indirimOrani,
+        ToplamFiyat = urunBirimFiyat * urunMiktar * (1 - indirimOrani),
+        OlusturanKullaniciId = olusturanKullaniciId
+    };
 
-        if (UrunBirimFiyat < 0)
-            throw new ArgumentOutOfRangeException(
-                nameof(UrunBirimFiyat));
-
-        if (IndirimOrani < 0)
-            throw new ArgumentOutOfRangeException(
-                nameof(IndirimOrani));
-
-        this.SiparisId = SiparisId;
-        this.UrunTurId = UrunTurId;
-        this.UrunIsmi = UrunIsmi;
-        this.StokTakipNumarasi = StokTakipNumarasi;
-        this.UrunMiktar = UrunMiktar;
-        this.UrunBirimFiyat = UrunBirimFiyat;
-        this.IndirimOrani = IndirimOrani;
-
-        ToplamFiyat =
-            UrunBirimFiyat * UrunMiktar -
-            IndirimOrani;
+    public void MiktarGuncelle(int urunMiktar, Guid guncelleyenKullaniciId)
+    {
+        UrunMiktar = urunMiktar;
+        ToplamFiyat = UrunBirimFiyat * urunMiktar * (1 - IndirimOrani);
+        GuncelleyenKullaniciId = guncelleyenKullaniciId;
+        MarkAsUpdated();
     }
 }

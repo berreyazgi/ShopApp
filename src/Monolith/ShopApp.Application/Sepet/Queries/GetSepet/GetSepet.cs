@@ -1,34 +1,41 @@
 using AutoMapper;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Application.Abstractions;
+using ShopApp.Application.Sepet.Dtos;
 
 namespace ShopApp.Application.Sepet.Queries;
 
 public class GetSepet
 {
-    public class GetSepetQuery : IRequest<SepetDto>
+    public class GetSepetQuery : IRequest<ResultSepetDto>
     {
         public Guid Id { get; set; }
     }
-    
-    [Authorize]
-    public class GetSepetQueryHandler : IRequestHandler<GetSepetQuery, SepetDto>
+
+    public class GetSepetQueryHandler : IRequestHandler<GetSepetQuery, ResultSepetDto>
     {
-        private readonly ISepetRepository _repository;
+        private readonly IShopAppDbContext _context;
+        private readonly ICurrentCustomerContext _currentCustomerContext;
         private readonly IMapper _mapper;
 
-        public GetSepetQueryHandler(ISepetRepository repository, IMapper mapper)
+        public GetSepetQueryHandler(IShopAppDbContext context, ICurrentCustomerContext currentCustomerContext, IMapper mapper)
         {
-            _repository = repository;
+            _context = context;
+            _currentCustomerContext = currentCustomerContext;
             _mapper = mapper;
         }
 
-        public async Task<SepetDto> Handle(GetSepetQuery request, CancellationToken cancellationToken)
+        public async Task<ResultSepetDto> Handle(GetSepetQuery request, CancellationToken cancellationToken)
         {
-            var sepet = await _repository.GetByIdAsync(request.Id, cancellationToken);
-            return _mapper.Map<SepetDto>(sepet);
+            var customer = await _currentCustomerContext.GetRequiredAsync(cancellationToken);
+
+            var sepet = await _context.Sepetler
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.Id == request.Id && s.MusteriId == customer.MusteriId, cancellationToken)
+                ?? throw new KeyNotFoundException($"Sepet '{request.Id}' bulunamadı.");
+
+            return _mapper.Map<ResultSepetDto>(sepet);
         }
     }
 }

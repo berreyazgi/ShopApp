@@ -1,13 +1,20 @@
-using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using MediatR;
 using Microsoft.OpenApi.Models;
+using ShopApp.Api.Behaviors;
+using ShopApp.Application.Abstractions;
 using ShopApp.Infrastructure;
-using ShopApp.Infrastructure.Identity;
-using ShopApp.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls("http://localhost:5050");
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssemblies(
+        typeof(Program).Assembly,
+        typeof(ICurrentCustomerContext).Assembly));
+builder.Services.AddValidatorsFromAssemblies([typeof(Program).Assembly, typeof(ICurrentCustomerContext).Assembly]);
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 var frontendOrigins = builder.Configuration.GetSection("Cors:FrontendOrigins").Get<string[]>()
     ?.Where(origin => Uri.TryCreate(origin, UriKind.Absolute, out _))
@@ -24,6 +31,8 @@ builder.Services.AddCors(options =>
         .AllowAnyHeader()
         .AllowAnyMethod());
 });
+
+builder.Services.AddAutoMapper(cfg => cfg.AddMaps(AppDomain.CurrentDomain.GetAssemblies()));
 
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
@@ -68,28 +77,6 @@ if (app.Environment.IsDevelopment())
         ui.SwaggerEndpoint("/swagger/v1/swagger.json", "ShopApp API v1");
         ui.RoutePrefix = "swagger";
     });
-}
-
-using (var scope = app.Services.CreateScope())
-{
-    try
-    {
-        var db = scope.ServiceProvider.GetRequiredService<ShopAppDbContext>();
-        await db.Database.MigrateAsync();
-    }
-    catch (Exception ex)
-    {
-        app.Logger.LogError(ex, "Database migration failed. Existing schema was left unchanged.");
-    }
-
-    try
-    {
-        await IdentityRoleSeeder.SeedAsync(scope.ServiceProvider);
-    }
-    catch (Exception ex)
-    {
-        app.Logger.LogError(ex, "Identity role seed failed.");
-    }
 }
 
 app.UseHttpsRedirection();

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace KategoriServis.Infrastructure.Persistence;
 
@@ -10,9 +11,18 @@ public class KategoriDbContextFactory : IDesignTimeDbContextFactory<KategoriDbCo
 {
     public KategoriDbContext CreateDbContext(string[] args)
     {
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false)
+            .Build();
+
+        var connectionString = configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException(
+                "Connection string 'DefaultConnection' was not found in appsettings.json.");
+
         var optionsBuilder = new DbContextOptionsBuilder<KategoriDbContext>();
-        optionsBuilder.UseNpgsql(
-            "Host=db;Port=5432;Database=ShopAppKategoriDB;Username=postgres;Password=postgres456");
+        optionsBuilder.UseNpgsql(connectionString);
+
         return new KategoriDbContext(optionsBuilder.Options);
     }
 }

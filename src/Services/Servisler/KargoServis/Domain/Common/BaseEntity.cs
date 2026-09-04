@@ -2,9 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace KargoServis.Domain.Common;
 
-/// <summary>
-/// Tüm kargo varlıkları için temel sınıf.
-/// </summary>
 public abstract class BaseEntity
 {
     [Key]
