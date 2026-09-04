@@ -16,7 +16,7 @@ public sealed class UpdateSepetUrunuCommandHandler(
         if (urun is null || urun.SepetEntity.MusteriId != customer.MusteriId)
             throw new KeyNotFoundException($"Sepet Ürünü '{request.Id}' bulunamadı.");
 
-        urun.MiktarGuncelle(request.UrunMiktar, request.UrunAdet, customer.KullaniciId);
+        urun.MiktarGuncelle(request.UrunMiktar, customer.KullaniciId);
         await repository.UpdateAsync(urun, cancellationToken);
     }
 }

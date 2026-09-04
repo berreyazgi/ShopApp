@@ -40,12 +40,16 @@ export const endpoints = {
   },
 
   // ── Cart ─────────────────────────────────────────────────────────────────
+  //
+  // ARCHITECTURE NOTE:
+  //  These paths match SepetController in ShopApp.Api which uses
+  //  [Route("api/sepet")]. If the controller route ever changes, update here.
+  //
   cart: {
-    summary:        () => '/api/cart',
-    addItem:        () => '/api/cart/items',
-    updateItem:     (id) => `/api/cart/items/${id}`,
-    removeItem:     (id) => `/api/cart/items/${id}`,
-    clear:          () => '/api/cart/clear',
+    carts:        () => '/api/sepet',
+    cartById:     (id) => `/api/sepet/${id}`,
+    cartItems:    (sepetId) => `/api/sepet/${sepetId}/urunler`,
+    cartItemById: (sepetId, urunId) => `/api/sepet/${sepetId}/urunler/${urunId}`,
   },
 
   // ── Ordering ─────────────────────────────────────────────────────────────

@@ -6,5 +6,4 @@ public sealed record CreateSepetUrunuCommand(
     Guid SepetId,
     Guid UrunTurId,
     int UrunMiktar,
-    int UrunAdet,
     decimal FiyatGecmis) : IRequest<Guid>;

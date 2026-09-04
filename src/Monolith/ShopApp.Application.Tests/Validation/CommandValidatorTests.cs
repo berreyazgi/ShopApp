@@ -41,7 +41,7 @@ public class CommandValidatorTests
     public void CreateSepetUrunuCommandValidator_Rejects_NonPositiveQuantity()
     {
         var result = new CreateSepetUrunuCommandValidator().TestValidate(
-            new CreateSepetUrunuCommand(Guid.NewGuid(), Guid.NewGuid(), 0, 1, 10m));
+            new CreateSepetUrunuCommand(Guid.NewGuid(), Guid.NewGuid(), 0, 10m));
         result.ShouldHaveValidationErrorFor(x => x.UrunMiktar);
     }
 

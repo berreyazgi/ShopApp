@@ -16,8 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application\Dtos\" />
-    <Folder Include="Application\Mappings\" />
+    <Folder Include="Application\Mapping\" />
   </ItemGroup>
 
 </Project>

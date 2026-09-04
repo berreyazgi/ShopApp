@@ -9,6 +9,5 @@ public sealed class UpdateSepetUrunuCommandValidator : AbstractValidator<UpdateS
         RuleFor(x => x.SepetId).NotEmpty();
         RuleFor(x => x.Id).NotEmpty();
         RuleFor(x => x.UrunMiktar).GreaterThan(0);
-        RuleFor(x => x.UrunAdet).GreaterThan(0);
     }
 }

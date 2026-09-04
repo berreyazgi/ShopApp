@@ -457,9 +457,6 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("SepetId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("UrunAdet")
-                        .HasColumnType("integer");
-
                     b.Property<int>("UrunMiktar")
                         .HasColumnType("integer");
 

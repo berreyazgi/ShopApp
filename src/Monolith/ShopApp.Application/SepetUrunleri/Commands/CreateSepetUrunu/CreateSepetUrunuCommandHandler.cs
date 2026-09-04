@@ -22,7 +22,6 @@ public sealed class CreateSepetUrunuCommandHandler(
             request.SepetId,
             request.UrunTurId,
             request.UrunMiktar,
-            request.UrunAdet,
             request.FiyatGecmis,
             customer.KullaniciId);
 

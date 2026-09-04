@@ -5,8 +5,7 @@ public record ResultSepetUrunDto(
     Guid SepetId,
     Guid UrunTurId,
     int UrunMiktar,
-    int UrunAdet,
     decimal FiyatGecmis)
 {
-    public decimal ToplamTutar => UrunAdet * FiyatGecmis;
+    public decimal ToplamTutar => UrunMiktar * FiyatGecmis;
 }

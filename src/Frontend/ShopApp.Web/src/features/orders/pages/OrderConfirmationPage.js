@@ -49,29 +49,25 @@ const ORDER_DATA = {
 };
 
 // ─── Test Order Payload ──────────────────────────────────────────────────────
-// TODO: Replace musteriId with the authenticated user's ID from authStore,
-//       and build siparisUrunleri dynamically from the real cart contents
-//       once the product catalog microservice is available.
-const TEST_ORDER_PAYLOAD = {
-  siparis: {
-    musteriId:    '00000000-0000-0000-0000-000000000001', // placeholder — replace with authStore user id
-    indirimOrani: 0,
+// TODO: Build these items dynamically from the real cart contents once the
+//       product catalog microservice is available. MusteriId is never sent —
+//       the backend derives the owner from the authenticated user (JWT).
+const TEST_ORDER_ITEMS = [
+  {
+    urunTurId:      '00000000-0000-0000-0000-000000000101',
+    urunIsmi:       'Nike Air Zoom Alphafly',
+    urunMiktar:     1,
+    urunBirimFiyat: 1800,
+    indirimOrani:   0,
   },
-  urunler: [
-    {
-      urunTurId:       '00000000-0000-0000-0000-000000000101',
-      siparisNumarasi: 'SA-TEST',
-      urunIsmi:        'Nike Air Zoom Alphafly',
-      urunBirimFiyat:  1800,
-    },
-    {
-      urunTurId:       '00000000-0000-0000-0000-000000000102',
-      siparisNumarasi: 'SA-TEST',
-      urunIsmi:        'Sarı Eşofman Takımı',
-      urunBirimFiyat:  1200,
-    },
-  ],
-};
+  {
+    urunTurId:      '00000000-0000-0000-0000-000000000102',
+    urunIsmi:       'Sarı Eşofman Takımı',
+    urunMiktar:     1,
+    urunBirimFiyat: 1200,
+    indirimOrani:   0,
+  },
+];
 
 const BENEFITS = [
   { icon: 'truck',      title: 'Ücretsiz Kargo',   desc: '500 TL ve üzeri siparişlerde', color: '#0071e3', bg: 'rgba(0,113,227,0.08)' },
@@ -383,14 +379,13 @@ function createSummaryCard(data, onGoToOrders, onGoHome) {
     errorMsg.style.display = 'none';
 
     try {
-      // Step 1: Create the order header
-      const { id: siparisId } = await createOrder(TEST_ORDER_PAYLOAD.siparis);
+      // Step 1: Create the order header (no payload — the backend derives the
+      // owner from the authenticated user and generates the order number)
+      const { id: siparisId } = await createOrder();
 
       // Step 2: Add each item to the created order
       await Promise.all(
-        TEST_ORDER_PAYLOAD.urunler.map((item) =>
-          addOrderItem(siparisId, { ...item, siparisId }),
-        ),
+        TEST_ORDER_ITEMS.map((item) => addOrderItem(siparisId, item)),
       );
 
       // Step 3: Navigate to orders list on success

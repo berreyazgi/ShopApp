@@ -122,7 +122,7 @@ function createOrderCard(order) {
       <span class="order-item__variant">
         Ara Toplam: ${formatPrice(order.araToplam)} &nbsp;|&nbsp;
         Kargo: ${order.kargoFiyat === 0 ? 'Ücretsiz' : formatPrice(order.kargoFiyat)} &nbsp;|&nbsp;
-        İndirim: %${order.indirimOrani ?? 0}
+        İndirim: ${order.indirimTutari ? formatPrice(order.indirimTutari) : 'Yok'}
       </span>
     </div>
   `;

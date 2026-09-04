@@ -21,9 +21,6 @@ public sealed class SepetUrunuConfiguration : BaseEntityConfiguration<SepetUrunu
         builder.Property(x => x.UrunMiktar)
             .IsRequired();
 
-        builder.Property(x => x.UrunAdet)
-            .IsRequired();
-
         builder.Property(x => x.FiyatGecmis)
             .IsRequired()
             .HasPrecision(18, 2);
