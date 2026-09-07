@@ -1,13 +1,12 @@
 /**
  * HomePage.js
  * Home feature page component.
- * Composes: HeroCategoryGrid + FeatureBenefits
+ * Composes: HeroCategoryGrid
  *
  * Exported as default so the router can import it dynamically.
  */
 
 import { createHeroCategoryGrid } from '../components/HeroCategoryGrid.js';
-import { createFeatureBenefits }  from '../components/FeatureBenefits.js';
 
 /**
  * @param {{ params: object }} _options
@@ -25,10 +24,6 @@ export default function HomePage(_options = {}) {
     element.appendChild(grid);
     destroyFns.push(destroyGrid);
 
-    // Benefits Banner
-    const { element: benefits, destroy: destroyBenefits } = createFeatureBenefits();
-    element.appendChild(benefits);
-    destroyFns.push(destroyBenefits);
   }
 
   function destroy() {

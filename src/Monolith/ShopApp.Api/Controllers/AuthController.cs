@@ -2,8 +2,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShopApp.Application.Authentication.Services;
-using ShopApp.Application.Authentication;
+using ShopApp.Application.Features.Authentication;
+using ShopApp.Application.Features.Authentication.DTOs;
+using ShopApp.Application.Features.Authentication.Services;
 
 namespace src.Monolith.ShopApp.Api.Controllers;
 

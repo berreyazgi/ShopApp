@@ -8,16 +8,13 @@ namespace KategoriServis.Domain.Entities;
 public class Kategori : BaseEntity
 {
     [Required]
-    [MaxLength(200)]
     public string KategoriIsim { get; set; } = null!;
 
     [ForeignKey(nameof(UstKategoriId))]
     public Guid? UstKategoriId { get; set; }
-
-    [MaxLength(2000)]
+    
     public string? KategoriAciklamasi { get; set; }
-
-    [MaxLength(1000)]
+    
     public string? GorselUrl { get; set; }
 
     public bool AktifMi { get; set; } = true;

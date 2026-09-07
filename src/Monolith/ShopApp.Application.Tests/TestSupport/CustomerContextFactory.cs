@@ -1,5 +1,5 @@
 using Moq;
-using ShopApp.Application.Abstractions;
+using ShopApp.Application.Common.Interfaces;
 
 namespace ShopApp.Application.Tests.TestSupport;
 

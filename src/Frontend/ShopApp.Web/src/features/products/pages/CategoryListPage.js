@@ -2,22 +2,15 @@
  * CategoryListPage.js — Category Index Page
  * Visual grid of all product categories for navigation.
  *
+ * Renders whatever category collection productsService supplies — the page
+ * owns no permanent category data itself.
+ *
  * Exported as default so the router can import it dynamically.
  */
 
-import { categories } from '../data/productData.js';
-
-// ─── Helpers ───────────────────────────────────────────────────────────────
-
-function createImage(imageUrl, alt) {
-  const image = document.createElement('img');
-  image.className = 'product-image';
-  image.src = imageUrl;
-  image.alt = alt;
-  return image;
-}
-
-// ─── Component ─────────────────────────────────────────────────────────────
+import { getCategories } from '../services/productsService.js';
+import { createCategoryGrid } from '../components/CategoryCard.js';
+import { createLoadingState, createEmptyState, createErrorState } from '../../../shared/components/StateView/StateView.js';
 
 /**
  * @returns {{ element: HTMLElement, destroy: () => void }}
@@ -26,62 +19,47 @@ export default function CategoryListPage() {
   const element = document.createElement('div');
   element.className = 'category-list-page';
 
-  // ── Header
   const header = document.createElement('div');
   header.className = 'container cat-header';
-
-  const title = document.createElement('h1');
-  title.className = 'cat-header__title';
-  title.textContent = 'Kategoriler';
-
-  const desc = document.createElement('p');
-  desc.className = 'cat-header__desc';
-  desc.textContent = 'Aradığınız ürünü bulmak için kategorilere göz atın.';
-
-  header.appendChild(title);
-  header.appendChild(desc);
+  header.innerHTML = `
+    <h1 class="cat-header__title">Kategoriler</h1>
+    <p class="cat-header__desc">Aradığınız ürünü bulmak için kategorilere göz atın.</p>
+  `;
   element.appendChild(header);
 
-  // ── Grid
   const container = document.createElement('div');
   container.className = 'container';
-
-  const grid = document.createElement('div');
-  grid.className = 'cat-grid';
-
-  categories.forEach((cat) => {
-    const card = document.createElement('a');
-    card.className = 'cat-card';
-    card.href = cat.href;
-
-    const bg = document.createElement('div');
-    bg.className = 'cat-card__bg';
-    bg.appendChild(createImage(cat.imageUrl, cat.name));
-
-    const overlay = document.createElement('div');
-    overlay.className = 'cat-card__overlay';
-
-    const content = document.createElement('div');
-    content.className = 'cat-card__content';
-
-    const name = document.createElement('h2');
-    name.className = 'cat-card__name';
-    name.textContent = cat.name;
-
-    const count = document.createElement('span');
-    count.className = 'cat-card__count';
-    count.textContent = `${cat.count} ürün`;
-
-    content.appendChild(name);
-    content.appendChild(count);
-    card.appendChild(bg);
-    card.appendChild(overlay);
-    card.appendChild(content);
-    grid.appendChild(card);
-  });
-
-  container.appendChild(grid);
+  container.id = 'category-list-content';
+  container.appendChild(createLoadingState({ message: 'Kategoriler yükleniyor...' }));
   element.appendChild(container);
+
+  async function load() {
+    try {
+      const categories = await getCategories();
+      container.innerHTML = '';
+
+      if (!categories.length) {
+        container.appendChild(createEmptyState({
+          icon: 'search',
+          title: 'Henüz kategori bulunamadı',
+          description: 'Kategoriler eklendiğinde burada listelenecektir.',
+        }));
+        return;
+      }
+
+      container.appendChild(createCategoryGrid(categories));
+    } catch (error) {
+      container.innerHTML = '';
+      container.appendChild(createErrorState({
+        title: 'Kategoriler yüklenemedi',
+        message: error?.message ?? 'Bir hata oluştu. Lütfen daha sonra tekrar deneyin.',
+        onRetry: load,
+      }));
+      console.error('[CategoryListPage] load failed:', error);
+    }
+  }
+
+  load();
 
   return { element, destroy: () => {} };
 }

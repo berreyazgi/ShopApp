@@ -1,45 +1,45 @@
-# Graph Report - ShopApp  (2026-09-04)
+# Graph Report - ShopApp  (2026-09-07)
 
 ## Corpus Check
-- 301 files · ~448,040 words
+- 347 files · ~363,856 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2040 nodes · 3687 edges · 141 communities (126 shown, 14 thin omitted)
-- Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 267 edges (avg confidence: 0.84)
+- 2259 nodes · 4500 edges · 160 communities (145 shown, 14 thin omitted)
+- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 338 edges (avg confidence: 0.84)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ed3f7b04`
+- Built from commit: `fe12b717`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- ShopApp.Application.Abstractions
-- homeService.js
+- src.Monolith.ShopApp.Domain.Sepet.Entities
+- routes.js
 - ShopApp.Infrastructure.csproj
-- App.js
-- ShopAppFrontendAGENTS.md
-- ShopApp.Infrastructure.Persistence.Configurations.Identity
-- src/Frontend/ShopApp.Web/src/features/auth/pages/LoginPage.js
+- authService.js
+- FrontendAGENTS.md
+- IdentityUserRoleConfiguration
+- LoginPage.js
 - TurkcheIdentityVeMusteriGuncellemesi
-- SiparisEntity
+- CurrentCustomer
 - ShopAppDbContext
 - .For
-- src.Monolith.ShopApp.Domain.Sepet.Entities
+- SepetDurumLookup
 - AddRoleSpecificProfiles
 - orderService.js
 - appConstants.js
 - What You Must Do When Invoked
 - SiparisController
 - eventBus.js
-- .Create_Throws_WhenParentOrderBelongsToAnotherCustomer
-- shopapp-auth-patch.7p8f9i/src/Frontend/ShopApp.Web/src/features/auth/services/authService.js
+- SiparisEntity
+- ICurrentCustomerContext
 - SepetController
-- productData.js
+- productsService.js
 - OrderConfirmationPage.js
-- ShopApp.Application.Authentication
-- GetSepetQueryHandler
+- ShopApp.Application.Common.Interfaces
+- .Create
 - InitialCreate
 - shopapp_microservice_database_agent.md
 - What You Must Do When Invoked
@@ -47,7 +47,7 @@
 - IdentityService
 - AuthResponse
 - Migration
-- ShopApp – Vanilla JavaScript SPA Frontend
+- SepetUrunu
 - KargoServis.Domain.Entities
 - ShopApp.Api.csproj
 - graphify reference: extra exports and benchmark
@@ -57,9 +57,9 @@
 - KategoriServis.csproj
 - StokServis.csproj
 - Urun
-- SepetUrunu
+- .GetMyAddresses
 - IlkMigrasyon
-- ShopApp.Infrastructure.Persistence.Configurations
+- BaseEntityConfiguration
 - graphify reference: query, path, explain
 - ShopApp.Application.csproj
 - ShopApp.Infrastructure.Persistence.Migrations
@@ -71,145 +71,164 @@
 - graphify reference: commit hook and native CLAUDE.md integration
 - graphify reference: incremental update and cluster-only
 - InfrastructureInitializer
-- IShopAppDbContext
+- AdminDashboardPage.js
 - graphify reference: GitHub clone and cross-repo merge
 - graphify reference: transcribe video and audio
-- navigate
-- SepetDurum
+- Icon.js
+- createAdminLayout
 - .BuildModel
 - .BuildTargetModel
 - AGENTS.md
 - extraction-spec.md
-- IDesignTimeDbContextFactory
+- .Olustur
 - store.js
 - SepetEntity
-- SepetDurumLookup
-- src.Monolith.ShopApp.Domain.Common
+- ShopApp.Application.Features.Sepet.Dtos
+- AdminProfile
 - Q: Where are Entity Framework Core migrations, DbContext, startup database configuration, and connection strings located?
 - Q: Scan all identity related entities and Musteri entities
 - StokDbContext
-- ResultSiparisDto
+- src.Monolith.ShopApp.Domain.Siparis.Entities
 - StokHareketi
-- .Create
+- ResultSiparisDto
 - src/Frontend/ShopApp.Web/package.json
-- shopapp-auth-patch.7p8f9i/src/Frontend/ShopApp.Web/package.json
-- ICurrentCustomerContext
+- ShopApp.Infrastructure.Persistence.Context
+- IRequest
 - IdentityRoleClaimConfiguration
-- IdentityUserClaimConfiguration
-- src/Frontend/ShopApp.Web/src/features/auth/services/authService.js
-- Address
-- IdentityUserLoginConfiguration
-- IdentityUserTokenConfiguration
-- IdentityRoleConfiguration
+- SiparisUrunleri
+- authStore.js
+- IEntityTypeConfiguration
+- ShopApp.Infrastructure.Persistence.Configurations.Identity
+- ShopApp.Application.Features.Authentication.DTOs
+- AdminCategoriesPage.js
 - Q: How are role-specific customer and admin profiles provisioned?
-- BaseEntity
+- createAdminProductFormModal
 - StokUrunleri
 - KategoriDbContext
 - http
-- PrivateNavigation.cs
+- createHeader
 - .BuildTargetModel
-- authStore.js
+- ProfilePage.js
 - UrunOzelligi
-- SiparisUrunleri
+- homeService.js
+- BaseEntity
 - KargoDbContext
 - SyncIdentityModels
-- SiparisDurum
+- HeroCategoryGrid.js
 - Kategori
 - KayitliKullanici
+- createCategoryMegaMenu
+- AddressDto
+- adminPages.test.js
+- ApplicationUser
+- navigate
+- createEmptyState
+- IShopAppDbContext
 - SepetMapping.cs
-- orderDemoData.js
-- ResultSepetDto
-- IEntityTypeConfiguration
+- KargoDurumGecmisi
+- AuthService
 - KargoGonderisi
+- src/Frontend/ShopApp.Web/src/shared/services/apiClient.js
 - UrunTur
 - KargoDurumu
 - UrunGorseli
 - graphify reference: extra exports and benchmark
-- IIdentityService
+- .UpdateAddress_ThrowsKeyNotFoundException_WhenAddressBelongsToOtherCustomer
 - StokServis.Domain.Entities
+- UserProfileDto
 - ValidationBehavior
 - createIcon
 - AbstractValidator
-- AuthRequest
+- Sevkiyat
 - TestDbContext
 - OrderListPage.js
 - KategoriServis.Domain.Entities
 - .AddInfrastructure
 - BaseEntity
 - graphify reference: query, path, explain
-- SiparisController.cs
-- ISiparisUrunuRepository
+- GetMyAddressesQueryHandler
+- App.js
 - BaseEntity
 - HareketTipi
-- AuthenticationValidationException
+- ProductDetailPage.js
 - ShopApp.Application.Tests.csproj
-- Musteri
+- AuthRequest
+- SiparisDurum
+- AddressHandlerTests.cs
 - graphify reference: add a URL and watch a folder
 - graphify reference: commit hook and native CLAUDE.md integration
 - graphify reference: incremental update and cluster-only
-- Sevkiyat
+- IdentityUserTokenConfiguration
 - graphify reference: GitHub clone and cross-repo merge
 - graphify reference: transcribe video and audio
 - CLAUDE.md
 - .claude/CLAUDE.md
 - .claude/skills/graphify/references/extraction-spec.md
-- .SeedAsync
-- SepetUrunuCommandHandlerTests.cs
+- IdentityUserLoginConfiguration
+- ShopApp.Application.Features.Sepet.Commands.CreateSepetUrunu
+- BaseEntity
+- ShopApp Development Notes
+- AuthenticationValidationException
+- ShopApp.Application.Features.Sepet.Commands.DeleteSepetUrunu
+- ShopApp.Application.Features.Siparis.Commands.DeleteSiparis
+- ProductCard.js
+- Sevkiyat
+- .MapIdentityError
 
 ## God Nodes (most connected - your core abstractions)
-1. `ShopApp.Application.Abstractions` - 42 edges
-2. `ShopAppDbContext` - 40 edges
-3. `SiparisEntity` - 33 edges
-4. `SepetUrunu` - 31 edges
-5. `SiparisUrunleri` - 31 edges
-6. `SepetEntity` - 28 edges
-7. `navigate()` - 25 edges
-8. `ICurrentCustomerContext` - 25 edges
-9. `createIcon()` - 24 edges
-10. `IdentityService` - 24 edges
+1. `createIcon()` - 82 edges
+2. `ShopApp.Application.Common.Interfaces` - 51 edges
+3. `SiparisEntity` - 39 edges
+4. `ShopAppDbContext` - 38 edges
+5. `SepetEntity` - 34 edges
+6. `navigate()` - 31 edges
+7. `ICurrentCustomerContext` - 31 edges
+8. `IShopAppDbContext` - 30 edges
+9. `IdentityService` - 25 edges
+10. `SiparisUrunleri` - 24 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `bindEvents()` --calls--> `navigate()`  [EXTRACTED]
+  src/Frontend/ShopApp.Web/src/features/home/components/CategoryCard.js → src/Frontend/ShopApp.Web/src/app/router.js
 - `render()` --calls--> `createIcon()`  [EXTRACTED]
-  src/Frontend/ShopApp.Web/src/features/home/components/FeatureBenefits.js → src/Frontend/ShopApp.Web/src/shared/components/Icon/Icon.js
-- `initApp()` --calls--> `initRouter()`  [EXTRACTED]
-  src/Frontend/ShopApp.Web/src/app/App.js → src/Frontend/ShopApp.Web/src/app/router.js
-- `initApp()` --calls--> `navigate()`  [EXTRACTED]
-  src/Frontend/ShopApp.Web/src/app/App.js → src/Frontend/ShopApp.Web/src/app/router.js
-- `initApp()` --calls--> `restoreSession()`  [EXTRACTED]
-  src/Frontend/ShopApp.Web/src/app/App.js → src/Frontend/ShopApp.Web/src/features/auth/services/authService.js
-- `bootstrap()` --calls--> `initApp()`  [EXTRACTED]
-  src/Frontend/ShopApp.Web/src/app/bootstrap.js → src/Frontend/ShopApp.Web/src/app/App.js
+  src/Frontend/ShopApp.Web/src/features/about/pages/AboutPage.js → src/Frontend/ShopApp.Web/src/shared/components/Icon/Icon.js
+- `updateImagePreview()` --calls--> `createIcon()`  [EXTRACTED]
+  src/Frontend/ShopApp.Web/src/features/admin/components/AdminProductFormModal.js → src/Frontend/ShopApp.Web/src/shared/components/Icon/Icon.js
+- `renderNode()` --calls--> `createIcon()`  [EXTRACTED]
+  src/Frontend/ShopApp.Web/src/features/admin/components/CategoryTree.js → src/Frontend/ShopApp.Web/src/shared/components/Icon/Icon.js
+- `updateQuantity()` --calls--> `formatPrice()`  [EXTRACTED]
+  src/Frontend/ShopApp.Web/src/features/cart/components/CartItem.js → src/Frontend/ShopApp.Web/src/shared/utils/format.js
 
 ## Import Cycles
 - None detected.
 
-## Communities (141 total, 14 thin omitted)
+## Communities (160 total, 14 thin omitted)
 
-### Community 0 - "ShopApp.Application.Abstractions"
-Cohesion: 0.14
-Nodes (10): ShopApp.Infrastructure.Identity, ShopApp.Application.Siparis.Commands.CreateSiparis, ShopApp.Infrastructure.Persistence, ShopApp.Application.Tests.TestSupport, ShopApp.Infrastructure, ShopApp.Application.Tests.Siparis, ShopApp.Application.Tests.SiparisUrunleri, src.Monolith.ShopApp.Domain.Siparisler (+2 more)
+### Community 0 - "src.Monolith.ShopApp.Domain.Sepet.Entities"
+Cohesion: 0.15
+Nodes (7): ShopApp.Application.Features.Sepet.Commands.UpdateSepetUrunu, ShopApp.Application.Tests.Features.Sepet, src.Monolith.ShopApp.Domain.Sepet.Entities, ShopApp.Application.Features.Sepet.Commands.CreateSepet, ShopApp.Application.Tests.TestSupport, UpdateSepetUrunuCommandValidator, CustomerContextFactory
 
-### Community 1 - "homeService.js"
-Cohesion: 0.10
-Nodes (16): benefits, createFeatureBenefits(), render(), createHeroCategoryGrid(), render(), heroCategories, secondaryCategories, HomePage() (+8 more)
+### Community 1 - "routes.js"
+Cohesion: 0.27
+Nodes (3): routes, AboutPage(), render()
 
 ### Community 2 - "ShopApp.Infrastructure.csproj"
 Cohesion: 0.18
 Nodes (10): Microsoft.AspNetCore.Identity.EntityFrameworkCore (10.0.10), Microsoft.Extensions.Configuration.Json (11.0.0-preview.7.26381.103), Microsoft.Extensions.DependencyInjection (10.0.11), net10.0, Microsoft.AspNetCore.Authentication.JwtBearer (10.0.10), Microsoft.EntityFrameworkCore.Design (10.0.10), Npgsql.EntityFrameworkCore.PostgreSQL (10.0.3), System.ComponentModel.Annotations (5.0.0) (+2 more)
 
-### Community 3 - "App.js"
-Cohesion: 0.19
-Nodes (13): initApp(), bootstrap(), logout(), createFooter(), TRUST_BADGES, createHeader(), bindEvents(), injectIcons() (+5 more)
+### Community 3 - "authService.js"
+Cohesion: 0.22
+Nodes (12): establishSession(), getCurrentUser(), login(), logout(), mapUser(), register(), restoreSession(), setAnonymous() (+4 more)
 
-### Community 4 - "ShopAppFrontendAGENTS.md"
-Cohesion: 0.05
-Nodes (39): 10. Cart Page Requirements, 11. Cart Client-Side Interactions, 12. Cart Empty State, 13. Orders Page Requirements, 14. Order Details Interaction, 15. Orders Empty State, 16. Demo Data, 17. Separation of Responsibilities (+31 more)
+### Community 4 - "FrontendAGENTS.md"
+Cohesion: 0.06
+Nodes (34): 10. No Database Changes, 11. Frontend Responsibility, 12. Dynamic Components Instead of Hardcoded Pages, 13. Existing Architecture Must Be Preserved, 14. Graphify, 15. User-Facing Language, 16. Forms, 17. Authentication and Role-Based Routing Boundary (+26 more)
 
-### Community 5 - "ShopApp.Infrastructure.Persistence.Configurations.Identity"
-Cohesion: 0.24
-Nodes (5): ShopApp.Infrastructure.Persistence.Configurations.Identity, IdentityUserRole, EntityTypeBuilder, Guid, IdentityUserRoleConfiguration
+### Community 5 - "IdentityUserRoleConfiguration"
+Cohesion: 0.60
+Nodes (4): IdentityUserRole, EntityTypeBuilder, Guid, IdentityUserRoleConfiguration
 
-### Community 6 - "src/Frontend/ShopApp.Web/src/features/auth/pages/LoginPage.js"
+### Community 6 - "LoginPage.js"
 Cohesion: 0.06
 Nodes (49): RFC-5322, createAuthForm(), createAuthLayout(), createFormField(), createPasswordField(), createPasswordStrength(), reset(), update() (+41 more)
 
@@ -217,21 +236,21 @@ Nodes (49): RFC-5322, createAuthForm(), createAuthLayout(), createFormField(), c
 Cohesion: 0.18
 Nodes (7): DateTime, MigrationBuilder, DateTime, DateTimeOffset, Guid, ModelBuilder, TurkcheIdentityVeMusteriGuncellemesi
 
-### Community 8 - "SiparisEntity"
-Cohesion: 0.13
-Nodes (20): CancellationToken, Guid, Task, ISiparisRepository, Guid, ICollection, SiparisEntity, AraToplam (+12 more)
+### Community 8 - "CurrentCustomer"
+Cohesion: 0.14
+Nodes (23): Guid, CurrentCustomer, Guid, CreateSepetUrunuCommand, CancellationToken, Guid, Task, CreateSepetUrunuCommandHandler (+15 more)
 
 ### Community 9 - "ShopAppDbContext"
-Cohesion: 0.10
-Nodes (20): IdentityDbContext, DbSet, Guid, IdentityRole, ModelBuilder, SiparisUrunleri, ShopAppDbContext, AdminProfilleri (+12 more)
+Cohesion: 0.09
+Nodes (21): IdentityDbContext, DbSet, Guid, IdentityRole, ModelBuilder, SiparisUrunleri, ShopAppDbContext, AdminProfilleri (+13 more)
 
 ### Community 10 - ".For"
-Cohesion: 0.15
-Nodes (20): ShopApp.Application.Siparis.Commands.DeleteSiparis, Mock, Guid, DeleteSiparisCommand, CancellationToken, Task, DeleteSiparisCommandHandler, DeleteSiparisCommandValidator (+12 more)
+Cohesion: 0.20
+Nodes (17): Mock, Guid, DeleteSiparisUrunuCommand, CancellationToken, Task, DeleteSiparisUrunuCommandHandler, Guid, UpdateSiparisUrunuCommand (+9 more)
 
-### Community 11 - "src.Monolith.ShopApp.Domain.Sepet.Entities"
-Cohesion: 0.15
-Nodes (7): src.Monolith.ShopApp.Domain.Sepet.Enums, src.Monolith.ShopApp.Domain.Sepet.Entities, ShopApp.Application.Tests.Sepet, ShopApp.Application.Sepet.Queries, ShopApp.Application.Sepet.Commands.UpdateSepet, ShopApp.Application.Sepet.Commands.CreateSepet, GetSepet
+### Community 11 - "SepetDurumLookup"
+Cohesion: 0.13
+Nodes (11): src.Monolith.ShopApp.Domain.Sepet.Enums, SepetDurumLookup, DurumIsmi, Id, SepetDurum, Aktif, AktifDegil, IptalEdilmis (+3 more)
 
 ### Community 12 - "AddRoleSpecificProfiles"
 Cohesion: 0.17
@@ -246,36 +265,36 @@ Cohesion: 0.08
 Nodes (24): For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands, Part A - Structural extraction for code files (+16 more)
 
 ### Community 17 - "SiparisController"
-Cohesion: 0.08
-Nodes (35): ShopApp.Application.SiparisUrunleri.Queries, ShopApp.Application.SiparisUrunleri.Dtos, GetSiparisUrunleriQuery, GetSiparisUrunuQuery, ActionResult, CancellationToken, Guid, HttpDelete (+27 more)
-
-### Community 19 - ".Create_Throws_WhenParentOrderBelongsToAnotherCustomer"
-Cohesion: 0.18
-Nodes (17): Guid, CreateSiparisUrunuCommand, CancellationToken, Guid, Task, CreateSiparisUrunuCommandHandler, Guid, UpdateSiparisUrunuCommand (+9 more)
-
-### Community 20 - "shopapp-auth-patch.7p8f9i/src/Frontend/ShopApp.Web/src/features/auth/services/authService.js"
 Cohesion: 0.10
-Nodes (20): appConfig, LoginPage(), RegisterPage(), establishSession(), getCurrentUser(), login(), logout(), mapAuthError() (+12 more)
+Nodes (31): GetSiparisUrunleriQuery, GetSiparisUrunuQuery, ActionResult, CancellationToken, Guid, HttpDelete, HttpGet, HttpPost (+23 more)
+
+### Community 19 - "SiparisEntity"
+Cohesion: 0.12
+Nodes (20): CancellationToken, Guid, Task, ISiparisRepository, Guid, ICollection, SiparisEntity, AraToplam (+12 more)
+
+### Community 20 - "ICurrentCustomerContext"
+Cohesion: 0.12
+Nodes (18): IRequestHandler, CancellationToken, Task, ICurrentCustomerContext, Guid, CreateSiparisCommand, CancellationToken, Guid (+10 more)
 
 ### Community 21 - "SepetController"
-Cohesion: 0.08
-Nodes (36): ShopApp.Application.SepetUrunleri.Queries, ShopApp.Application.SepetUrunleri.Dtos, GetSepetUrunleriQuery, GetSepetUrunuQuery, ActionResult, CancellationToken, Guid, HttpDelete (+28 more)
+Cohesion: 0.10
+Nodes (31): GetSepetUrunleriQuery, GetSepetUrunuQuery, ActionResult, CancellationToken, Guid, HttpDelete, HttpGet, HttpPost (+23 more)
 
-### Community 22 - "productData.js"
-Cohesion: 0.18
-Nodes (14): categories, demoProducts, formatPrice(), getProductDetail(), productDetailMap, TODO: Replace with real API integration when backend is wired up., relatedProducts, CategoryListPage() (+6 more)
+### Community 22 - "productsService.js"
+Cohesion: 0.21
+Nodes (10): demoProducts, getProductDetail(), productDetailMap, TODO: Replace with real API integration when backend is wired up., relatedProducts, getProductById(), TODO: Integrate with Catalog API or Catalog Microservice., TODO: Integrate with Catalog API or Catalog Microservice. (+2 more)
 
 ### Community 23 - "OrderConfirmationPage.js"
-Cohesion: 0.18
-Nodes (16): BENEFITS, createBenefitsSection(), createBreadcrumbs(), createDeliveryCard(), createOrderDetailsCard(), createRawIcon(), createSuccessBanner(), createSummaryCard() (+8 more)
+Cohesion: 0.20
+Nodes (14): DEMO_ORDER, createBreadcrumbs(), createDeliveryCard(), createOrderDetailsCard(), createRawIcon(), createSuccessBanner(), createSummaryCard(), formatPrice() (+6 more)
 
-### Community 24 - "ShopApp.Application.Authentication"
-Cohesion: 0.16
-Nodes (9): ShopApp.Application.Authentication, ShopApp.Application.Authentication.Services, src.Monolith.ShopApp.Api.Controllers, DateTime, JwtToken, IEnumerable, IJwtTokenGenerator, IEnumerable (+1 more)
+### Community 24 - "ShopApp.Application.Common.Interfaces"
+Cohesion: 0.12
+Nodes (10): ShopApp.Application.Features.Siparis.Dtos, ShopApp.Application.Features.Siparis.Queries, ShopApp.Application.Common.Interfaces, ShopApp.Application.Features.Siparis.Commands.UpdateSiparisUrunu, ShopApp.Application.Features.Siparis.Commands.CreateSiparisUrunu, ShopApp.Application.Tests.Features.Siparis, src.Monolith.ShopApp.Api.Controllers, ShopApp.Application.Features.Siparis.Commands.DeleteSiparisUrunu (+2 more)
 
-### Community 25 - "GetSepetQueryHandler"
-Cohesion: 0.23
-Nodes (12): GetSepetQuery, CancellationToken, Guid, IMapper, Task, GetSepetQuery, Id, GetSepetQueryHandler (+4 more)
+### Community 25 - ".Create"
+Cohesion: 0.28
+Nodes (8): CancellationToken, Guid, Task, DeleteAddressCommand, DeleteAddressCommandHandler, Fact, Task, AddressHandlerTests
 
 ### Community 26 - "InitialCreate"
 Cohesion: 0.18
@@ -294,8 +313,8 @@ Cohesion: 0.14
 Nodes (13): StokServis.Infrastructure.Persistence.Configurations, ICollection, Depo, AktifMi, DepoAdresi, DepoIsmi, Sehir, StokKalemleri (+5 more)
 
 ### Community 30 - "IdentityService"
-Cohesion: 0.19
-Nodes (10): IdentityError, IdentityResult, Guid, IdentityRole, IHttpContextAccessor, IReadOnlyCollection, RoleManager, Task (+2 more)
+Cohesion: 0.15
+Nodes (14): Guid, Task, IIdentityService, DateTime, Guid, IdentityUserInfo, Guid, IdentityRole (+6 more)
 
 ### Community 31 - "AuthResponse"
 Cohesion: 0.11
@@ -305,9 +324,9 @@ Nodes (21): AllowAnonymous, Authorize, ActionResult, HttpGet, HttpPost, Task, Au
 Cohesion: 0.22
 Nodes (6): Migration, DateTime, DateTimeOffset, Guid, MigrationBuilder, CreateMonolithTables
 
-### Community 33 - "ShopApp – Vanilla JavaScript SPA Frontend"
-Cohesion: 0.18
-Nodes (10): ♿ Accessibility, 🎨 Design System, 🔧 How the Router Works, ➕ How to Add a New Feature Module, 🔌 How to Connect the Backend API, 🔄 Migration to React / Vue / Angular, 🏗️ Monolith → Microservice Migration, 📁 Project Structure (+2 more)
+### Community 33 - "SepetUrunu"
+Cohesion: 0.24
+Nodes (7): Guid, SepetUrunu, FiyatGecmis, SepetEntity, SepetId, UrunMiktar, UrunTurId
 
 ### Community 34 - "KargoServis.Domain.Entities"
 Cohesion: 0.24
@@ -315,7 +334,7 @@ Nodes (4): KargoServis.Infrastructure.Persistence.Configurations, KargoServis.Do
 
 ### Community 35 - "ShopApp.Api.csproj"
 Cohesion: 0.17
-Nodes (11): FluentValidation.DependencyInjectionExtensions (12.1.1), Microsoft.OpenApi (1.6.22), Swashbuckle.AspNetCore (7.3.1), net10.0, MediatR (14.2.0), Microsoft.AspNetCore.Authentication.JwtBearer (10.0.10), Microsoft.EntityFrameworkCore.Design (10.0.10), Npgsql.EntityFrameworkCore.PostgreSQL (10.0.3) (+3 more)
+Nodes (11): Microsoft.OpenApi (1.6.22), Swashbuckle.AspNetCore (7.3.1), net10.0, FluentValidation.DependencyInjectionExtensions (12.1.1), MediatR (14.2.0), Microsoft.AspNetCore.Authentication.JwtBearer (10.0.10), Microsoft.EntityFrameworkCore.Design (10.0.10), Npgsql.EntityFrameworkCore.PostgreSQL (10.0.3) (+3 more)
 
 ### Community 36 - "graphify reference: extra exports and benchmark"
 Cohesion: 0.22
@@ -330,8 +349,8 @@ Cohesion: 0.33
 Nodes (5): net10.0, Microsoft.AspNetCore.OpenApi (10.0.10), Microsoft.EntityFrameworkCore.Design (10.0.10), Npgsql.EntityFrameworkCore.PostgreSQL (10.0.3), Microsoft.NET.Sdk.Web
 
 ### Community 39 - ".AssignRole"
-Cohesion: 0.17
-Nodes (10): ControllerBase, HashSet, Guid, HttpGet, HttpPost, IActionResult, Task, AdminController (+2 more)
+Cohesion: 0.18
+Nodes (9): HashSet, Guid, HttpGet, HttpPost, IActionResult, Task, AdminController, AssignRoleRequest (+1 more)
 
 ### Community 40 - "KategoriServis.csproj"
 Cohesion: 0.33
@@ -345,25 +364,25 @@ Nodes (5): net10.0, Microsoft.AspNetCore.OpenApi (10.0.10), Microsoft.EntityFram
 Cohesion: 0.12
 Nodes (16): Guid, ICollection, Urun, AktifMi, Fiyat, FiyatGecmis, Gorseller, GorselUrl (+8 more)
 
-### Community 43 - "SepetUrunu"
-Cohesion: 0.08
-Nodes (39): ShopApp.Application.SepetUrunleri.Commands.DeleteSepetUrunu, CancellationToken, Guid, Task, ISepetUrunuRepository, Guid, CreateSepetUrunuCommand, CancellationToken (+31 more)
+### Community 43 - ".GetMyAddresses"
+Cohesion: 0.20
+Nodes (12): ActionResult, CancellationToken, Guid, HttpDelete, HttpGet, HttpPost, HttpPut, IActionResult (+4 more)
 
 ### Community 44 - "IlkMigrasyon"
 Cohesion: 0.04
 Nodes (33): KategoriServis.Migrations, KargoServis.Migrations, ModelSnapshot, DateTime, DateTimeOffset, Guid, ModelBuilder, ShopAppDbContextModelSnapshot (+25 more)
 
-### Community 45 - "ShopApp.Infrastructure.Persistence.Configurations"
-Cohesion: 0.13
-Nodes (11): ShopApp.Infrastructure.Persistence.Configurations, EntityTypeBuilder, BaseEntityConfiguration, EntityTypeBuilder, SepetConfiguration, EntityTypeBuilder, SepetUrunuConfiguration, EntityTypeBuilder (+3 more)
+### Community 45 - "BaseEntityConfiguration"
+Cohesion: 0.12
+Nodes (10): EntityTypeBuilder, BaseEntityConfiguration, EntityTypeBuilder, SepetConfiguration, EntityTypeBuilder, SepetUrunuConfiguration, EntityTypeBuilder, SiparisConfiguration (+2 more)
 
 ### Community 46 - "graphify reference: query, path, explain"
 Cohesion: 0.33
 Nodes (5): For /graphify explain, For /graphify path, graphify reference: query, path, explain, Step 0 — Constrained query expansion (REQUIRED before traversal), Step 1 — Traversal
 
 ### Community 47 - "ShopApp.Application.csproj"
-Cohesion: 0.20
-Nodes (9): AutoMapper (16.2.0), FluentValidation (12.1.1), Microsoft.EntityFrameworkCore (10.0.11), net10.0, MediatR (14.2.0), Microsoft.AspNetCore.Authentication.JwtBearer (10.0.10), System.ComponentModel.Annotations (5.0.0), System.IdentityModel.Tokens.Jwt (8.22.0) (+1 more)
+Cohesion: 0.18
+Nodes (10): AutoMapper (16.2.0), FluentValidation (12.1.1), Microsoft.EntityFrameworkCore (10.0.11), net10.0, FluentValidation.DependencyInjectionExtensions (12.1.1), MediatR (14.2.0), Microsoft.AspNetCore.Authentication.JwtBearer (10.0.10), System.ComponentModel.Annotations (5.0.0) (+2 more)
 
 ### Community 48 - "ShopApp.Infrastructure.Persistence.Migrations"
 Cohesion: 0.32
@@ -398,20 +417,20 @@ Cohesion: 0.50
 Nodes (3): For --cluster-only, For --update (incremental re-extraction), graphify reference: incremental update and cluster-only
 
 ### Community 56 - "InfrastructureInitializer"
-Cohesion: 0.32
-Nodes (6): IHostedService, ILogger, CancellationToken, IServiceProvider, Task, InfrastructureInitializer
+Cohesion: 0.13
+Nodes (13): ShopApp.Infrastructure.Identity.Seed, IHostedService, ILogger, CancellationToken, IServiceProvider, Task, InfrastructureInitializer, Guid (+5 more)
 
-### Community 57 - "IShopAppDbContext"
-Cohesion: 0.22
-Nodes (8): CancellationToken, DbSet, Task, IShopAppDbContext, Sepetler, SepetUrunleri, Siparisler, SiparisUrunleri
+### Community 57 - "AdminDashboardPage.js"
+Cohesion: 0.31
+Nodes (9): createAdminMetricCard(), createCategoryStatistics(), AdminDashboardPage(), load(), createLowStockList(), createMetricsRow(), getDashboardSummary(), getLowStockProducts() (+1 more)
 
-### Community 60 - "navigate"
-Cohesion: 0.11
-Nodes (17): compileRoute(), guardedPath(), initRouter(), matchRoute(), navigate(), render(), notFoundRoute, routes (+9 more)
+### Community 60 - "Icon.js"
+Cohesion: 0.23
+Nodes (6): createAdminPageHeader(), AdminRegisterPage(), createButton(), destroy(), handleClick(), icons
 
-### Community 61 - "SepetDurum"
-Cohesion: 0.33
-Nodes (5): SepetDurum, Aktif, AktifDegil, IptalEdilmis, Tamamlanmis
+### Community 61 - "createAdminLayout"
+Cohesion: 0.24
+Nodes (8): createAdminHeader(), createAdminLayout(), createAdminSidebar(), NAV_SECTIONS, AdminCustomersPage(), getFilteredCustomers(), renderPage(), renderTable()
 
 ### Community 62 - ".BuildModel"
 Cohesion: 0.33
@@ -425,21 +444,25 @@ Nodes (4): DateTime, DateTimeOffset, Guid, ModelBuilder
 Cohesion: 0.25
 Nodes (6): 1. Think Before Coding, 2. Simplicity First, 3. Surgical Changes, 4. Goal-Driven Execution, Additional Instructions !IMPORTANT!, graphify
 
+### Community 66 - ".Olustur"
+Cohesion: 0.20
+Nodes (16): Guid, DeleteSiparisCommand, CancellationToken, Task, DeleteSiparisCommandHandler, Guid, UpdateSiparisCommand, CancellationToken (+8 more)
+
 ### Community 67 - "store.js"
-Cohesion: 0.31
-Nodes (8): getState(), initialState, notify(), resetStore(), setState(), state, subscribe(), subscribers
+Cohesion: 0.36
+Nodes (7): getState(), initialState, notify(), resetStore(), setState(), state, subscribers
 
 ### Community 68 - "SepetEntity"
-Cohesion: 0.07
-Nodes (41): ShopApp.Application.Sepet.Commands.DeleteSepet, IRequest, IRequestHandler, CancellationToken, Guid, Task, ISepetRepository, Guid (+33 more)
+Cohesion: 0.16
+Nodes (15): CancellationToken, Guid, Task, ISepetRepository, Guid, ICollection, SepetEntity, Durum (+7 more)
 
-### Community 69 - "SepetDurumLookup"
-Cohesion: 0.33
-Nodes (5): SepetDurumLookup, DurumIsmi, Id, EntityTypeBuilder, SepetDurumLookupConfiguration
+### Community 69 - "ShopApp.Application.Features.Sepet.Dtos"
+Cohesion: 0.12
+Nodes (9): ShopApp.Application.Features.Sepet.Queries, ShopApp.Application.Features.Sepet.Commands.DeleteSepet, ShopApp.Application.Features.Sepet.Dtos, DeleteSepetCommandValidator, Guid, GetByIdSepetDto, Guid, GetByIdSepetUrunDto (+1 more)
 
-### Community 70 - "src.Monolith.ShopApp.Domain.Common"
-Cohesion: 0.17
-Nodes (7): src.Monolith.ShopApp.Domain.Kullanici, src.Monolith.ShopApp.Domain.Common, Guid, AdminProfile, KullaniciId, EntityTypeBuilder, AdminProfileConfiguration
+### Community 70 - "AdminProfile"
+Cohesion: 0.32
+Nodes (5): Guid, AdminProfile, KullaniciId, EntityTypeBuilder, AdminProfileConfiguration
 
 ### Community 71 - "Q: Where are Entity Framework Core migrations, DbContext, startup database configuration, and connection strings located?"
 Cohesion: 0.40
@@ -453,65 +476,65 @@ Nodes (4): Answer, Outcome, Q: Scan all identity related entities and Musteri en
 Cohesion: 0.16
 Nodes (9): StokServis.Infrastructure.Persistence, DbContextOptions, DbSet, ModelBuilder, StokDbContext, Depolar, StokHareketleri, StokKalemleri (+1 more)
 
-### Community 74 - "ResultSiparisDto"
-Cohesion: 0.20
-Nodes (12): GetMySiparislerQuery, Guid, GetByIdSiparisDto, Guid, ResultSiparisDto, CancellationToken, IMapper, List (+4 more)
+### Community 74 - "src.Monolith.ShopApp.Domain.Siparis.Entities"
+Cohesion: 0.14
+Nodes (5): src.Monolith.ShopApp.Domain.Siparis.Entities, ShopApp.Application.Features.Siparis.Commands.CreateSiparis, src.Monolith.ShopApp.Domain.Siparis.Enums, src.Monolith.ShopApp.Domain.Common, ShopApp.Application.Features.Siparis.Commands.UpdateSiparis
 
 ### Community 75 - "StokHareketi"
 Cohesion: 0.18
 Nodes (10): HareketTipi, Guid, StokHareketi, Aciklama, HareketTipi, Miktar, ReferansId, StokKalemiId (+2 more)
 
-### Community 76 - ".Create"
-Cohesion: 0.20
-Nodes (14): GetSiparisQuery, CancellationToken, Guid, IMapper, Task, GetSiparis, GetSiparisQuery, Id (+6 more)
+### Community 76 - "ResultSiparisDto"
+Cohesion: 0.05
+Nodes (54): GetMySepetlerQuery, GetMySiparislerQuery, GetSepetQuery, GetSiparisQuery, DateTime, Guid, ResultSepetDto, CancellationToken (+46 more)
 
 ### Community 77 - "src/Frontend/ShopApp.Web/package.json"
-Cohesion: 0.20
-Nodes (9): description, engines, node, name, private, scripts, dev, serve (+1 more)
+Cohesion: 0.18
+Nodes (10): description, engines, node, name, private, scripts, dev, serve (+2 more)
 
-### Community 78 - "shopapp-auth-patch.7p8f9i/src/Frontend/ShopApp.Web/package.json"
-Cohesion: 0.20
-Nodes (9): description, engines, node, name, private, scripts, dev, serve (+1 more)
+### Community 78 - "ShopApp.Infrastructure.Persistence.Context"
+Cohesion: 0.21
+Nodes (7): ShopApp.Infrastructure.Identity.Services, ShopApp.Infrastructure.Persistence.Context, ShopApp.Infrastructure.Persistence.Configurations, ShopApp.Infrastructure.Identity.Models, src.Monolith.ShopApp.Domain.Kullanici, ShopApp.Infrastructure.Identity.Settings, ShopApp.Infrastructure.Persistence.Repositories
 
-### Community 79 - "ICurrentCustomerContext"
-Cohesion: 0.13
-Nodes (15): CancellationToken, Guid, Task, CurrentCustomer, ICurrentCustomerContext, Guid, CreateSiparisCommand, CancellationToken (+7 more)
+### Community 79 - "IRequest"
+Cohesion: 0.14
+Nodes (23): IRequest, Guid, CreateSepetCommand, CancellationToken, Guid, Task, CreateSepetCommandHandler, Guid (+15 more)
 
 ### Community 80 - "IdentityRoleClaimConfiguration"
-Cohesion: 0.47
+Cohesion: 0.60
 Nodes (4): IdentityRoleClaim, EntityTypeBuilder, Guid, IdentityRoleClaimConfiguration
 
-### Community 81 - "IdentityUserClaimConfiguration"
-Cohesion: 0.47
-Nodes (4): IdentityUserClaim, EntityTypeBuilder, Guid, IdentityUserClaimConfiguration
-
-### Community 82 - "src/Frontend/ShopApp.Web/src/features/auth/services/authService.js"
+### Community 81 - "SiparisUrunleri"
 Cohesion: 0.14
-Nodes (17): appConfig, establishSession(), getCurrentUser(), login(), mapUser(), register(), restoreSession(), setAuthenticated() (+9 more)
+Nodes (12): Guid, SiparisUrunleri, IndirimOrani, SiparisEntity, SiparisId, StokTakipNumarasi, ToplamFiyat, UrunAciklamasi (+4 more)
 
-### Community 83 - "Address"
+### Community 82 - "authStore.js"
+Cohesion: 0.20
+Nodes (12): clearError(), getState(), initialState, merge(), notify(), setError(), setLoading(), state (+4 more)
+
+### Community 83 - "IEntityTypeConfiguration"
+Cohesion: 0.14
+Nodes (15): IEntityTypeConfiguration, Guid, Address, AdresBilgisi, Ilce, Musteri, MusteriId, PostaKodu (+7 more)
+
+### Community 84 - "ShopApp.Infrastructure.Persistence.Configurations.Identity"
 Cohesion: 0.17
-Nodes (11): Guid, Address, AdresBilgisi, Ilce, MusteriId, PostaKodu, Sehir, TamAdres (+3 more)
+Nodes (9): ShopApp.Infrastructure.Persistence.Configurations.Identity, IdentityUserClaim, EntityTypeBuilder, Guid, IdentityRole, IdentityRoleConfiguration, EntityTypeBuilder, Guid (+1 more)
 
-### Community 84 - "IdentityUserLoginConfiguration"
-Cohesion: 0.60
-Nodes (4): IdentityUserLogin, EntityTypeBuilder, Guid, IdentityUserLoginConfiguration
+### Community 85 - "ShopApp.Application.Features.Authentication.DTOs"
+Cohesion: 0.15
+Nodes (8): ShopApp.Application.Features.Authentication.DTOs, ShopApp.Application.Features.Authentication.Services, ShopApp.Application.Features.Authentication, RegisterRequest, Ad, Email, Sifre, Soyad
 
-### Community 85 - "IdentityUserTokenConfiguration"
-Cohesion: 0.60
-Nodes (4): IdentityUserToken, EntityTypeBuilder, Guid, IdentityUserTokenConfiguration
-
-### Community 86 - "IdentityRoleConfiguration"
-Cohesion: 0.60
-Nodes (4): EntityTypeBuilder, Guid, IdentityRole, IdentityRoleConfiguration
+### Community 86 - "AdminCategoriesPage.js"
+Cohesion: 0.17
+Nodes (16): createAdminConfirmModal(), close(), handleKeydown(), createCategoryFormPanel(), applyCategory(), populateParentOptions(), resetForm(), createCategoryTable() (+8 more)
 
 ### Community 87 - "Q: How are role-specific customer and admin profiles provisioned?"
 Cohesion: 0.40
 Nodes (4): Answer, Outcome, Q: How are role-specific customer and admin profiles provisioned?, Source Nodes
 
-### Community 88 - "BaseEntity"
-Cohesion: 0.17
-Nodes (12): DateTime, Guid, BaseEntity, GuncellemeTarihi, Id, OlusturmaTarihi, ICollection, Sevkiyat (+4 more)
+### Community 88 - "createAdminProductFormModal"
+Cohesion: 0.24
+Nodes (18): createAdminProductFormModal(), clearErrors(), close(), handleKeydown(), handleSubmit(), showError(), updateImagePreview(), AdminProductsPage() (+10 more)
 
 ### Community 89 - "StokUrunleri"
 Cohesion: 0.17
@@ -525,57 +548,97 @@ Nodes (11): KategoriServis.Infrastructure.Persistence, DbContextOptions, DbSet, 
 Cohesion: 0.13
 Nodes (15): ASPNETCORE_ENVIRONMENT, applicationUrl, commandName, dotnetRunMessages, environmentVariables, launchBrowser, applicationUrl, commandName (+7 more)
 
+### Community 92 - "createHeader"
+Cohesion: 0.25
+Nodes (13): createHeader(), bindCategoryDropdown(), bindEvents(), bindMobileCategories(), destroy(), injectIcons(), populateCategoryDropdown(), populateMobileCategories() (+5 more)
+
 ### Community 93 - ".BuildTargetModel"
 Cohesion: 0.40
 Nodes (4): DateTime, DateTimeOffset, Guid, ModelBuilder
 
-### Community 94 - "authStore.js"
-Cohesion: 0.19
-Nodes (13): AUTH_STATUS, clearError(), getState(), initialState, merge(), notify(), setAnonymous(), setError() (+5 more)
+### Community 94 - "ProfilePage.js"
+Cohesion: 0.10
+Nodes (33): getAllOrders(), createPersonalInfoCard(), formatDate(), createAddressModal(), createDeleteConfirmModal(), createModalOverlay(), createProfileEditModal(), escapeHtml() (+25 more)
 
 ### Community 95 - "UrunOzelligi"
 Cohesion: 0.16
 Nodes (11): KategoriServis.Infrastructure.Persistence.Configurations, Guid, UrunOzelligi, OzellikAdi, OzellikDegeri, UrunTur, UrunTurId, EntityTypeBuilder (+3 more)
 
-### Community 97 - "SiparisUrunleri"
-Cohesion: 0.10
-Nodes (20): DateTime, Guid, BaseEntity, GuncellemeTarihi, GuncelleyenKullaniciId, Id, OlusturanKullaniciId, OlusturmaTarihi (+12 more)
+### Community 96 - "homeService.js"
+Cohesion: 0.24
+Nodes (6): heroCategories, secondaryCategories, TODO: Integrate with Catalog API or Catalog Microservice., TODO: Integrate with Catalog API or Catalog Microservice., TODO: Integrate with Catalog API., TODO: Integrate with Catalog/CMS API.
+
+### Community 97 - "BaseEntity"
+Cohesion: 0.15
+Nodes (12): DateTime, Guid, BaseEntity, GuncellemeTarihi, GuncelleyenKullaniciId, Id, OlusturanKullaniciId, OlusturmaTarihi (+4 more)
 
 ### Community 98 - "KargoDbContext"
-Cohesion: 0.15
-Nodes (10): KargoServis.Infrastructure.Persistence, DbContext, DbContextOptions, DbSet, ModelBuilder, KargoDbContext, KargoDurumGecmisleri, KargoGonderileri (+2 more)
+Cohesion: 0.14
+Nodes (11): KargoServis.Infrastructure.Persistence, DbContext, IDesignTimeDbContextFactory, DbContextOptions, DbSet, ModelBuilder, KargoDbContext, KargoDurumGecmisleri (+3 more)
 
 ### Community 99 - "SyncIdentityModels"
 Cohesion: 0.20
 Nodes (6): MigrationBuilder, DateTime, DateTimeOffset, Guid, ModelBuilder, SyncIdentityModels
 
-### Community 100 - "SiparisDurum"
-Cohesion: 0.18
-Nodes (9): src.Monolith.ShopApp.Domain.Siparisler.Enums, SiparisDurum, BekleyenOdeme, Gönderildi, Hazirlaniyor, IadeEdildi, IptalEdildi, Odenmis (+1 more)
+### Community 100 - "HeroCategoryGrid.js"
+Cohesion: 0.20
+Nodes (9): createCategoryCard(), bindEvents(), render(), createHeroCategoryGrid(), render(), HomePage(), render(), getHeroCategories() (+1 more)
 
 ### Community 101 - "Kategori"
 Cohesion: 0.14
 Nodes (13): Guid, ICollection, Kategori, AktifMi, AltKategoriler, GorselUrl, KategoriAciklamasi, KategoriIsim (+5 more)
 
 ### Community 102 - "KayitliKullanici"
-Cohesion: 0.09
-Nodes (20): IdentityUser, Guid, ApplicationUser, Ad, durum, GuncellemeTarihi, OlusturmaTarihi, Soyad (+12 more)
+Cohesion: 0.14
+Nodes (12): DateTime, Guid, KayitliKullanici, Ad, Durum, GuncellemeTarihi, OlusturmaTarihi, Soyad (+4 more)
 
-### Community 104 - "SepetMapping.cs"
+### Community 103 - "createCategoryMegaMenu"
+Cohesion: 0.22
+Nodes (7): createCategoryCard(), createCategoryGrid(), categories, createCategoryMegaMenu(), render(), update(), normalizeCategories()
+
+### Community 104 - "AddressDto"
+Cohesion: 0.26
+Nodes (9): ShopApp.Application.Features.Adres.Dtos, CancellationToken, Task, CreateAddressCommand, CreateAddressCommandHandler, CreateAddressCommandValidator, DateTime, Guid (+1 more)
+
+### Community 105 - "adminPages.test.js"
+Cohesion: 0.24
+Nodes (15): createAdminPagination(), createAdminProductCard(), createProductStockBadge(), createAdminProductDetailModal(), close(), handleKeydown(), createAdminProductGrid(), createAdminProductList() (+7 more)
+
+### Community 106 - "ApplicationUser"
+Cohesion: 0.22
+Nodes (8): IdentityUser, Guid, ApplicationUser, Ad, durum, GuncellemeTarihi, OlusturmaTarihi, Soyad
+
+### Community 107 - "navigate"
+Cohesion: 0.29
+Nodes (10): compileRoute(), guardedPath(), initRouter(), matchRoute(), navigate(), render(), notFoundRoute, hasRole() (+2 more)
+
+### Community 108 - "createEmptyState"
+Cohesion: 0.35
+Nodes (10): CategoryListPage(), load(), createBreadcrumbs(), ProductListPage(), load(), getCategories(), getProducts(), createEmptyState() (+2 more)
+
+### Community 109 - "IShopAppDbContext"
+Cohesion: 0.17
+Nodes (10): CancellationToken, DbSet, Task, IShopAppDbContext, Adresler, Musteriler, Sepetler, SepetUrunleri (+2 more)
+
+### Community 110 - "SepetMapping.cs"
 Cohesion: 0.29
 Nodes (5): ShopApp.Application.Mapping, Profile, SepetMapping, SiparisMapping, MapperFactory
 
-### Community 110 - "ResultSepetDto"
-Cohesion: 0.15
-Nodes (14): ShopApp.Application.Sepet.Dtos, GetMySepetlerQuery, Guid, GetByIdSepetDto, DateTime, Guid, ResultSepetDto, CancellationToken (+6 more)
+### Community 111 - "KargoDurumGecmisi"
+Cohesion: 0.33
+Nodes (6): Guid, KargoDurumGecmisi, Durum, KargoGonderisiId, EntityTypeBuilder, KargoDurumGecmisiConfiguration
 
-### Community 111 - "IEntityTypeConfiguration"
-Cohesion: 0.21
-Nodes (10): IEntityTypeConfiguration, Guid, KargoDurumGecmisi, Durum, KargoGonderisi, KargoGonderisiId, EntityTypeBuilder, KargoDurumGecmisiConfiguration (+2 more)
+### Community 112 - "AuthService"
+Cohesion: 0.35
+Nodes (5): IReadOnlyCollection, Guid, IReadOnlyCollection, Task, AuthService
 
 ### Community 113 - "KargoGonderisi"
 Cohesion: 0.17
 Nodes (12): DateOnly, Guid, ICollection, KargoGonderisi, Durum, DurumGecmisi, KargoSirketIsmi, SevkiyatId (+4 more)
+
+### Community 114 - "src/Frontend/ShopApp.Web/src/shared/services/apiClient.js"
+Cohesion: 0.27
+Nodes (7): appConfig, buildUrl(), DEFAULT_HEADERS, getAuthHeader(), request(), serviceRegistry, getAccessToken()
 
 ### Community 115 - "UrunTur"
 Cohesion: 0.18
@@ -593,41 +656,45 @@ Nodes (8): Guid, UrunGorseli, GorselSiralamasi, GorselUrl, Urun, UrunId, EntityT
 Cohesion: 0.22
 Nodes (8): graphify reference: extra exports and benchmark, Step 6b - Wiki (only if --wiki flag), Step 7 - Neo4j export (only if --neo4j or --neo4j-push flag), Step 7a - FalkorDB export (only if --falkordb or --falkordb-push flag), Step 7b - SVG export (only if --svg flag), Step 7c - GraphML export (only if --graphml flag), Step 7d - MCP server (only if --mcp flag), Step 8 - Token reduction benchmark (only if total_words > 5000)
 
-### Community 119 - "IIdentityService"
-Cohesion: 0.14
-Nodes (15): Guid, IdentityUserInfo, RegisterRequest, Ad, Email, Sifre, Soyad, Guid (+7 more)
+### Community 119 - ".UpdateAddress_ThrowsKeyNotFoundException_WhenAddressBelongsToOtherCustomer"
+Cohesion: 0.31
+Nodes (7): CancellationToken, Guid, Task, UpdateAddressCommand, UpdateAddressCommandHandler, UpdateAddressCommandValidator, KeyNotFoundException
 
 ### Community 120 - "StokServis.Domain.Entities"
 Cohesion: 0.32
 Nodes (3): StokServis.Domain.Entities, StokServis.Domain.Enums, StokServis.Domain.Common
 
+### Community 121 - "UserProfileDto"
+Cohesion: 0.08
+Nodes (31): ControllerBase, ShopApp.Application.Features.Profil.Commands.UpdateMyProfile, ShopApp.Application.Features.Profil.Queries.GetMyProfile, ShopApp.Application.Features.Profil.Dtos, ShopApp.Application.Tests.Features.Profil, GetMyProfileQuery, ActionResult, CancellationToken (+23 more)
+
 ### Community 122 - "ValidationBehavior"
-Cohesion: 0.20
-Nodes (8): ShopApp.Api.Behaviors, IPipelineBehavior, IValidator, RequestHandlerDelegate, CancellationToken, IEnumerable, Task, ValidationBehavior
+Cohesion: 0.12
+Nodes (12): ShopApp.Infrastructure, ShopApp.Application, ShopApp.Application.Common.Behaviors, IPipelineBehavior, IValidator, RequestHandlerDelegate, CancellationToken, IEnumerable (+4 more)
 
 ### Community 123 - "createIcon"
-Cohesion: 0.31
-Nodes (15): BENEFITS, CartPage(), createBenefitsSection(), createCartItemRow(), getGrandTotal(), getShippingCost(), getSubtotal(), removeItem() (+7 more)
+Cohesion: 0.15
+Nodes (19): createPlaceholderIcon(), createBoxPlaceholder(), createCartItemRow(), updateQuantity(), createCartSummary(), formatPrice(), update(), DEMO_CART_ITEMS (+11 more)
 
 ### Community 124 - "AbstractValidator"
 Cohesion: 0.17
-Nodes (9): AbstractValidator, ShopApp.Application.SiparisUrunleri.Commands.CreateSiparisUrunu, ShopApp.Application.Tests.Validation, UpdateSepetCommandValidator, CreateSepetUrunuCommandValidator, UpdateSiparisCommandValidator, CreateSiparisUrunuCommandValidator, Fact (+1 more)
+Nodes (11): AbstractValidator, CreateSepetUrunuCommandValidator, UpdateSepetCommandValidator, Guid, CreateSiparisUrunuCommand, CreateSiparisUrunuCommandValidator, DeleteSiparisUrunuCommandValidator, UpdateSiparisCommandValidator (+3 more)
 
-### Community 125 - "AuthRequest"
-Cohesion: 0.25
-Nodes (7): List, AuthRequest, Ad, Email, Role, Soyad, Token
+### Community 125 - "Sevkiyat"
+Cohesion: 0.22
+Nodes (9): KargoGonderisi, ICollection, Sevkiyat, AktifMi, Gonderiler, SevkiyatTanım, TakipUrlSablonu, EntityTypeBuilder (+1 more)
 
 ### Community 126 - "TestDbContext"
-Cohesion: 0.17
-Nodes (11): DbContextOptions, DbSet, TestDbContext, Sepetler, SepetUrunleri, SiparisDurumlar, Siparisler, SiparisUrunleri (+3 more)
+Cohesion: 0.20
+Nodes (10): DbContextOptions, DbSet, TestDbContext, Adresler, Musteriler, Sepetler, SepetUrunleri, SiparisDurumlar (+2 more)
 
 ### Community 127 - "OrderListPage.js"
-Cohesion: 0.22
-Nodes (15): BENEFITS, createBenefitsSection(), createBreadcrumbs(), createEmptyState(), createErrorState(), createLoadingSpinner(), createOrderCard(), createStatusBadge() (+7 more)
+Cohesion: 0.27
+Nodes (12): createBreadcrumbs(), createEmptyState(), createErrorState(), createLoadingSpinner(), createOrderCard(), createStatusBadge(), formatDate(), formatPrice() (+4 more)
 
 ### Community 129 - ".AddInfrastructure"
-Cohesion: 0.14
-Nodes (12): ShopApp.Infrastructure.Authentication, IConfiguration, IOptions, IServiceCollection, JwtSettings, Audience, ExpirationInMinutes, Issuer (+4 more)
+Cohesion: 0.10
+Nodes (17): IConfiguration, IOptions, IEnumerable, IJwtTokenGenerator, DateTime, JwtToken, Guid, IdentityRole (+9 more)
 
 ### Community 130 - "BaseEntity"
 Cohesion: 0.29
@@ -637,13 +704,13 @@ Nodes (6): DateTime, Guid, BaseEntity, GuncellemeTarihi, Id, OlusturmaTarihi
 Cohesion: 0.33
 Nodes (5): For /graphify explain, For /graphify path, graphify reference: query, path, explain, Step 0 — Constrained query expansion (REQUIRED before traversal), Step 1 — Traversal
 
-### Community 132 - "SiparisController.cs"
-Cohesion: 0.15
-Nodes (5): ShopApp.Application.Siparis.Commands.UpdateSiparis, ShopApp.Application.SiparisUrunleri.Commands.UpdateSiparisUrunu, ShopApp.Application.Siparis.Dtos, ShopApp.Application.Siparis.Queries, UpdateSiparisUrunuCommandValidator
+### Community 132 - "GetMyAddressesQueryHandler"
+Cohesion: 0.31
+Nodes (7): GetMyAddressesQuery, CancellationToken, List, Task, GetMyAddresses, GetMyAddressesQuery, GetMyAddressesQueryHandler
 
-### Community 133 - "ISiparisUrunuRepository"
-Cohesion: 0.13
-Nodes (16): ShopApp.Application.SiparisUrunleri.Commands.DeleteSiparisUrunu, CancellationToken, Guid, Task, ISiparisUrunuRepository, Guid, DeleteSiparisUrunuCommand, CancellationToken (+8 more)
+### Community 133 - "App.js"
+Cohesion: 0.39
+Nodes (6): initApp(), bootstrap(), createFooter(), TRUST_BADGES, setUnauthorizedHandler(), initStore()
 
 ### Community 134 - "BaseEntity"
 Cohesion: 0.33
@@ -653,17 +720,25 @@ Nodes (6): DateTime, Guid, BaseEntity, GuncellemeTarihi, Id, OlusturmaTarihi
 Cohesion: 0.33
 Nodes (6): HareketTipi, Cikis, Duzeltme, Giris, Rezervasyon, RezervasyonIptal
 
-### Community 136 - "AuthenticationValidationException"
-Cohesion: 0.40
-Nodes (4): Exception, IReadOnlyCollection, AuthenticationValidationException, Errors
+### Community 136 - "ProductDetailPage.js"
+Cohesion: 0.36
+Nodes (7): createBreadcrumbs(), createImage(), ProductDetailPage(), destroy(), load(), renderProductDetail(), getRelatedProducts()
 
 ### Community 137 - "ShopApp.Application.Tests.csproj"
 Cohesion: 0.22
 Nodes (8): coverlet.collector (6.0.4), Microsoft.EntityFrameworkCore.InMemory (10.0.11), Microsoft.NET.Test.Sdk (17.14.1), Moq (4.20.72), xunit (2.9.3), xunit.runner.visualstudio (3.1.4), net10.0, Microsoft.NET.Sdk
 
-### Community 138 - "Musteri"
-Cohesion: 0.24
-Nodes (7): Musteri, Guid, Musteri, Cinsiyet, KullaniciId, EntityTypeBuilder, MusteriConfiguration
+### Community 138 - "AuthRequest"
+Cohesion: 0.25
+Nodes (7): List, AuthRequest, Ad, Email, Role, Soyad, Token
+
+### Community 139 - "SiparisDurum"
+Cohesion: 0.25
+Nodes (8): SiparisDurum, BekleyenOdeme, Gönderildi, Hazirlaniyor, IadeEdildi, IptalEdildi, Odenmis, TeslimEdildi
+
+### Community 140 - "AddressHandlerTests.cs"
+Cohesion: 0.43
+Nodes (5): ShopApp.Application.Tests.Features.Adres, ShopApp.Application.Features.Adres.Queries.GetMyAddresses, ShopApp.Application.Features.Adres.Commands.UpdateAddress, ShopApp.Application.Features.Adres.Commands.DeleteAddress, ShopApp.Application.Features.Adres.Commands.CreateAddress
 
 ### Community 141 - "graphify reference: add a URL and watch a folder"
 Cohesion: 0.50
@@ -677,37 +752,64 @@ Nodes (3): For git commit hook, For native CLAUDE.md integration, graphify refer
 Cohesion: 0.50
 Nodes (3): For --cluster-only, For --update (incremental re-extraction), graphify reference: incremental update and cluster-only
 
-### Community 144 - "Sevkiyat"
+### Community 144 - "IdentityUserTokenConfiguration"
+Cohesion: 0.47
+Nodes (4): IdentityUserToken, EntityTypeBuilder, Guid, IdentityUserTokenConfiguration
+
+### Community 150 - "IdentityUserLoginConfiguration"
+Cohesion: 0.47
+Nodes (4): IdentityUserLogin, EntityTypeBuilder, Guid, IdentityUserLoginConfiguration
+
+### Community 151 - "ShopApp.Application.Features.Sepet.Commands.CreateSepetUrunu"
+Cohesion: 0.20
+Nodes (3): ShopApp.Application.Features.Sepet.Commands.CreateSepetUrunu, ShopApp.Application.Tests.Validation, ShopApp.Application.Features.Sepet.Commands.UpdateSepet
+
+### Community 152 - "BaseEntity"
+Cohesion: 0.33
+Nodes (6): DateTime, Guid, BaseEntity, GuncellemeTarihi, Id, OlusturmaTarihi
+
+### Community 153 - "ShopApp Development Notes"
+Cohesion: 0.25
+Nodes (7): Admin Architecture & Dynamic Data Rules, Modern Address Modal UI Refactor (`createAddressModal`), Product Management Architecture (`AdminProductsPage.js`), Profile and Address Architecture, Shared Footer Ownership, ShopApp Development Notes, Temporary Directory Cleanup
+
+### Community 154 - "AuthenticationValidationException"
+Cohesion: 0.29
+Nodes (5): Exception, IdentityResult, IReadOnlyCollection, AuthenticationValidationException, Errors
+
+### Community 157 - "ProductCard.js"
+Cohesion: 0.83
+Nodes (3): createProductCard(), createProductImage(), createProductListLayout()
+
+### Community 158 - "Sevkiyat"
 Cohesion: 0.67
 Nodes (3): Sevkiyat, EntityTypeBuilder, SevkiyatConfiguration
 
-### Community 150 - ".SeedAsync"
-Cohesion: 0.25
-Nodes (6): Guid, IdentityRole, IServiceProvider, RoleManager, Task, IdentityRoleSeeder
-
-### Community 151 - "SepetUrunuCommandHandlerTests.cs"
-Cohesion: 0.18
-Nodes (4): ShopApp.Application.SepetUrunleri.Commands.UpdateSepetUrunu, ShopApp.Application.Tests.SepetUrunleri, ShopApp.Application.SepetUrunleri.Commands.CreateSepetUrunu, UpdateSepetUrunuCommandValidator
-
 ## Knowledge Gaps
-- **498 isolated node(s):** `name`, `version`, `private`, `description`, `dev` (+493 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 911 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **487 isolated node(s):** `name`, `version`, `private`, `type`, `description` (+482 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 931 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **14 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+
+## Work-memory lessons
+
+**Preferred sources** — corroborated by past sessions; start here.
+- `IdentityService` (2× useful, score=1.167199864) _(code changed — re-verify)_
+- `KayitliKullanici` (2× useful, score=1.167199864) _(code changed — re-verify)_
+- `ShopAppDbContext` (2× useful, score=1.166756402) _(code changed — re-verify)_
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `ShopApp.Infrastructure.Persistence` connect `ShopApp.Application.Abstractions` to `Migration`, `IDesignTimeDbContextFactory`, `SyncIdentityModels`, `StandardizeSepetUrunuQuantityField`, `TurkcheIdentityVeMusteriGuncellemesi`, `AddRoleSpecificProfiles`, `IlkMigrasyon`, `ShopApp.Infrastructure.Persistence.Migrations`, `DatabaseChanges`, `MakeApplicationUserUpdatedAtRequired`, `AddMonolithDomainChanges`, `ShopApp.Application.Authentication`?**
-  _High betweenness centrality (0.088) - this node is a cross-community bridge._
-- **Why does `TestDbContext` connect `TestDbContext` to `ShopApp.Application.Abstractions`, `SiparisUrunleri`, `KargoDbContext`, `SepetEntity`, `SiparisEntity`, `SepetUrunu`, `IShopAppDbContext`, `GetSepetQueryHandler`?**
-  _High betweenness centrality (0.072) - this node is a cross-community bridge._
-- **Why does `ShopAppDbContext` connect `ShopAppDbContext` to `ShopApp.Application.Abstractions`, `.AddInfrastructure`, `IDesignTimeDbContextFactory`, `SepetEntity`, `SepetDurumLookup`, `src.Monolith.ShopApp.Domain.Common`, `KayitliKullanici`, `SiparisEntity`, `ISiparisUrunuRepository`, `Musteri`, `SepetUrunu`, `ICurrentCustomerContext`, `Address`, `InfrastructureInitializer`, `IShopAppDbContext`, `TestDbContext`, `IdentityService`?**
-  _High betweenness centrality (0.054) - this node is a cross-community bridge._
+- **Why does `ShopApp.Application.Common.Interfaces` connect `ShopApp.Application.Common.Interfaces` to `src.Monolith.ShopApp.Domain.Sepet.Entities`, `.AddInfrastructure`, `UserProfileDto`, `GetMyAddressesQueryHandler`, `ShopApp.Application.Features.Sepet.Dtos`, `AddressDto`, `src.Monolith.ShopApp.Domain.Siparis.Entities`, `AddressHandlerTests.cs`, `IShopAppDbContext`, `ShopApp.Infrastructure.Persistence.Context`, `ICurrentCustomerContext`, `ShopApp.Application.Features.Authentication.DTOs`, `SepetController`, `.UpdateAddress_ThrowsKeyNotFoundException_WhenAddressBelongsToOtherCustomer`, `ShopApp.Application.Features.Sepet.Commands.CreateSepetUrunu`, `.Create`, `ShopApp.Application.Features.Sepet.Commands.DeleteSepetUrunu`, `ShopApp.Application.Features.Siparis.Commands.DeleteSiparis`?**
+  _High betweenness centrality (0.069) - this node is a cross-community bridge._
+- **Why does `ShopApp.Infrastructure.Persistence.Context` connect `ShopApp.Infrastructure.Persistence.Context` to `Migration`, `SyncIdentityModels`, `StandardizeSepetUrunuQuantityField`, `TurkcheIdentityVeMusteriGuncellemesi`, `ShopAppDbContext`, `AddRoleSpecificProfiles`, `IlkMigrasyon`, `ShopApp.Infrastructure.Persistence.Migrations`, `DatabaseChanges`, `MakeApplicationUserUpdatedAtRequired`, `AddMonolithDomainChanges`?**
+  _High betweenness centrality (0.060) - this node is a cross-community bridge._
+- **Why does `TestDbContext` connect `TestDbContext` to `src.Monolith.ShopApp.Domain.Sepet.Entities`, `SepetUrunu`, `KargoDbContext`, `SepetEntity`, `ResultSiparisDto`, `IShopAppDbContext`, `SiparisUrunleri`, `IEntityTypeConfiguration`, `SiparisEntity`, `.Create`?**
+  _High betweenness centrality (0.059) - this node is a cross-community bridge._
 - **What connects `name`, `version`, `private` to the rest of the system?**
-  _498 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `ShopApp.Application.Abstractions` be split into smaller, more focused modules?**
-  _Cohesion score 0.14285714285714285 - nodes in this community are weakly interconnected._
-- **Should `homeService.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.10256410256410256 - nodes in this community are weakly interconnected._
-- **Should `ShopAppFrontendAGENTS.md` be split into smaller, more focused modules?**
-  _Cohesion score 0.05 - nodes in this community are weakly interconnected._
+  _487 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `FrontendAGENTS.md` be split into smaller, more focused modules?**
+  _Cohesion score 0.05714285714285714 - nodes in this community are weakly interconnected._
+- **Should `LoginPage.js` be split into smaller, more focused modules?**
+  _Cohesion score 0.05877167205406994 - nodes in this community are weakly interconnected._
+- **Should `CurrentCustomer` be split into smaller, more focused modules?**
+  _Cohesion score 0.13825757575757575 - nodes in this community are weakly interconnected._

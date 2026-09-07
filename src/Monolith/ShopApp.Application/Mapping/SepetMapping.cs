@@ -1,6 +1,5 @@
 using AutoMapper;
-using ShopApp.Application.Sepet.Dtos;
-using ShopApp.Application.SepetUrunleri.Dtos;
+using ShopApp.Application.Features.Sepet.Dtos;
 using src.Monolith.ShopApp.Domain.Sepet.Entities;
 
 namespace ShopApp.Application.Mapping;

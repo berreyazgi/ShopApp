@@ -10,7 +10,6 @@ public class UrunGorseli : BaseEntity
     public Guid UrunId { get; set; }
 
     [Required]
-    [MaxLength(1000)]
     public string GorselUrl { get; set; } = null!;
 
     public int GorselSiralamasi { get; set; }

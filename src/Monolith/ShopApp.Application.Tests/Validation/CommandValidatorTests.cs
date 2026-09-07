@@ -1,8 +1,8 @@
 using FluentValidation.TestHelper;
-using ShopApp.Application.SepetUrunleri.Commands.CreateSepetUrunu;
-using ShopApp.Application.Sepet.Commands.UpdateSepet;
-using ShopApp.Application.SiparisUrunleri.Commands.CreateSiparisUrunu;
-using ShopApp.Application.Siparis.Commands.UpdateSiparis;
+using ShopApp.Application.Features.Sepet.Commands.CreateSepetUrunu;
+using ShopApp.Application.Features.Sepet.Commands.UpdateSepet;
+using ShopApp.Application.Features.Siparis.Commands.CreateSiparisUrunu;
+using ShopApp.Application.Features.Siparis.Commands.UpdateSiparis;
 using Xunit;
 
 namespace ShopApp.Application.Tests.Validation;

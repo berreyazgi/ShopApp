@@ -76,4 +76,18 @@ export const endpoints = {
     list:           () => '/api/notifications',
     markRead:       (id) => `/api/notifications/${id}/read`,
   },
+
+  // ── Profile ──────────────────────────────────────────────────────────────
+  profile: {
+    get:            () => '/api/profil',
+    update:         () => '/api/profil',
+  },
+
+  // ── Address ──────────────────────────────────────────────────────────────
+  address: {
+    list:           () => '/api/adres',
+    create:         () => '/api/adres',
+    update:         (id) => `/api/adres/${id}`,
+    delete:         (id) => `/api/adres/${id}`,
+  },
 };

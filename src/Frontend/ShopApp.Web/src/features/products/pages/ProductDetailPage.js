@@ -2,6 +2,9 @@
  * ProductDetailPage.js — Product Detail Page
  * Shows image gallery, product info, options, related products, and description.
  *
+ * Renders whatever product object productsService supplies for the current
+ * :productId route param — the page owns no permanent product catalogue.
+ *
  * JS Functionality:
  *  - Thumbnail click → updates main image
  *  - Quantity +/- buttons
@@ -10,7 +13,9 @@
  * Exported as default so the router can import it dynamically.
  */
 
-import { getProductDetail, relatedProducts, formatPrice } from '../data/productData.js';
+import { getProductById, getRelatedProducts } from '../services/productsService.js';
+import { formatPrice } from '../../../shared/utils/format.js';
+import { createLoadingState, createEmptyState, createErrorState } from '../../../shared/components/StateView/StateView.js';
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
@@ -22,32 +27,7 @@ function createImage(imageUrl, alt) {
   return image;
 }
 
-// ─── Component ─────────────────────────────────────────────────────────────
-
-/**
- * @param {{ params: { productId?: string } }} options
- * @returns {{ element: HTMLElement, destroy: () => void }}
- */
-export default function ProductDetailPage({ params } = {}) {
-  const element = document.createElement('div');
-  element.className = 'product-detail-page';
-
-  const product = getProductDetail(params?.productId);
-  if (!product) {
-    element.innerHTML = `<div class="container" style="padding-top:4rem;text-align:center">
-      <h1>Ürün Bulunamadı</h1>
-      <p style="color:var(--color-secondary);margin-top:.5rem">Bu ürün mevcut değil veya kaldırılmış olabilir.</p>
-      <a href="/urunler" style="color:var(--page-accent, #6200EA);margin-top:1rem;display:inline-block">← Ürünlere Dön</a>
-    </div>`;
-    return { element, destroy: () => {} };
-  }
-
-  let quantity = 1;
-  let activeThumb = 0;
-  let activeColor = 0;
-  const cleanupFns = [];
-
-  // ── Breadcrumbs
+function createBreadcrumbs(productName) {
   const breadcrumbs = document.createElement('nav');
   breadcrumbs.className = 'product-breadcrumbs';
   breadcrumbs.setAttribute('aria-label', 'Breadcrumb');
@@ -58,13 +38,28 @@ export default function ProductDetailPage({ params } = {}) {
         <li class="product-breadcrumbs__sep" aria-hidden="true">/</li>
         <li><a href="/kategoriler" class="product-breadcrumbs__link">Kategoriler</a></li>
         <li class="product-breadcrumbs__sep" aria-hidden="true">/</li>
-        <li><a href="/urunler" class="product-breadcrumbs__link">Spor Ayakkabı</a></li>
+        <li><a href="/urunler" class="product-breadcrumbs__link">Ürünler</a></li>
         <li class="product-breadcrumbs__sep" aria-hidden="true">/</li>
-        <li class="product-breadcrumbs__current" aria-current="page">${product.name}</li>
+        <li class="product-breadcrumbs__current" aria-current="page">${productName}</li>
       </ol>
     </div>
   `;
-  element.appendChild(breadcrumbs);
+  return breadcrumbs;
+}
+
+/**
+ * Renders the full product detail UI for a supplied product object.
+ * @param {import('../data/productData.js').ProductDetail} product
+ * @param {import('../data/productData.js').RelatedProduct[]} relatedProducts
+ * @returns {{ element: HTMLElement, destroy: () => void }}
+ */
+function renderProductDetail(product, relatedProducts) {
+  const element = document.createElement('div');
+
+  let quantity = 1;
+  const cleanupFns = [];
+
+  element.appendChild(createBreadcrumbs(product.name));
 
   // ── Main Product Area (two-column)
   const container = document.createElement('div');
@@ -92,11 +87,8 @@ export default function ProductDetailPage({ params } = {}) {
     thumb.appendChild(createImage(imageUrl, `${product.name} görsel ${i + 1}`));
 
     const onClick = () => {
-      activeThumb = i;
-      // Update main image
       mainImage.innerHTML = '';
       mainImage.appendChild(createImage(imageUrl, product.name));
-      // Update active state
       thumbRow.querySelectorAll('.pdp-gallery__thumb').forEach((t, j) => {
         t.classList.toggle('pdp-gallery__thumb--active', j === i);
       });
@@ -115,13 +107,11 @@ export default function ProductDetailPage({ params } = {}) {
   const info = document.createElement('div');
   info.className = 'pdp-info';
 
-  // Title
   const title = document.createElement('h1');
   title.className = 'pdp-info__title';
   title.textContent = product.name;
   info.appendChild(title);
 
-  // Subtitles
   const modelText = document.createElement('p');
   modelText.className = 'pdp-info__subtitle';
   modelText.textContent = `Model: ${product.model}`;
@@ -132,7 +122,6 @@ export default function ProductDetailPage({ params } = {}) {
   sizeText.textContent = `Beden: ${product.defaultSize}`;
   info.appendChild(sizeText);
 
-  // Price
   const price = document.createElement('div');
   price.className = 'pdp-info__price';
   price.textContent = formatPrice(product.price);
@@ -142,7 +131,6 @@ export default function ProductDetailPage({ params } = {}) {
   const options = document.createElement('div');
   options.className = 'pdp-options';
 
-  // Size Dropdown
   const sizeGroup = document.createElement('div');
   const sizeLabel = document.createElement('label');
   sizeLabel.className = 'pdp-option__label';
@@ -199,7 +187,6 @@ export default function ProductDetailPage({ params } = {}) {
     swatch.appendChild(inner);
 
     const onClick = () => {
-      activeColor = i;
       colorRow.querySelectorAll('.pdp-color-swatch').forEach((s, j) => {
         s.classList.toggle('pdp-color-swatch--active', j === i);
       });
@@ -376,6 +363,65 @@ export default function ProductDetailPage({ params } = {}) {
   function destroy() {
     cleanupFns.forEach((fn) => fn());
     cleanupFns.length = 0;
+  }
+
+  return { element, destroy };
+}
+
+// ─── Page Component ───────────────────────────────────────────────────────
+
+/**
+ * @param {{ params: { productId?: string } }} options
+ * @returns {{ element: HTMLElement, destroy: () => void }}
+ */
+export default function ProductDetailPage({ params } = {}) {
+  const element = document.createElement('div');
+  element.className = 'product-detail-page';
+
+  let currentDestroy = null;
+  const contentArea = document.createElement('div');
+  contentArea.appendChild(createLoadingState({ message: 'Ürün yükleniyor...' }));
+  element.appendChild(contentArea);
+
+  async function load() {
+    try {
+      const [product, relatedProducts] = await Promise.all([
+        getProductById(params?.productId),
+        getRelatedProducts(),
+      ]);
+
+      contentArea.innerHTML = '';
+
+      if (!product) {
+        contentArea.appendChild(createEmptyState({
+          icon: 'search',
+          title: 'Ürün Bulunamadı',
+          description: 'Bu ürün mevcut değil veya kaldırılmış olabilir.',
+          actionLabel: 'Ürünlere Dön',
+          onAction: () => { window.location.href = '/urunler'; },
+        }));
+        return;
+      }
+
+      const detail = renderProductDetail(product, relatedProducts);
+      currentDestroy = detail.destroy;
+      contentArea.appendChild(detail.element);
+    } catch (error) {
+      contentArea.innerHTML = '';
+      contentArea.appendChild(createErrorState({
+        title: 'Ürün yüklenemedi',
+        message: error?.message ?? 'Bir hata oluştu. Lütfen daha sonra tekrar deneyin.',
+        onRetry: load,
+      }));
+      console.error('[ProductDetailPage] load failed:', error);
+    }
+  }
+
+  load();
+
+  function destroy() {
+    currentDestroy?.();
+    currentDestroy = null;
   }
 
   return { element, destroy };

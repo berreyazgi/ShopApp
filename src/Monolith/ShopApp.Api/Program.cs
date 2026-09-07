@@ -1,20 +1,11 @@
-using FluentValidation;
-using MediatR;
 using Microsoft.OpenApi.Models;
-using ShopApp.Api.Behaviors;
-using ShopApp.Application.Abstractions;
+using ShopApp.Application;
 using ShopApp.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
-
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssemblies(
-        typeof(Program).Assembly,
-        typeof(ICurrentCustomerContext).Assembly));
-builder.Services.AddValidatorsFromAssemblies([typeof(Program).Assembly, typeof(ICurrentCustomerContext).Assembly]);
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 var frontendOrigins = builder.Configuration.GetSection("Cors:FrontendOrigins").Get<string[]>()
     ?.Where(origin => Uri.TryCreate(origin, UriKind.Absolute, out _))
@@ -31,8 +22,6 @@ builder.Services.AddCors(options =>
         .AllowAnyHeader()
         .AllowAnyMethod());
 });
-
-builder.Services.AddAutoMapper(cfg => cfg.AddMaps(AppDomain.CurrentDomain.GetAssemblies()));
 
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();

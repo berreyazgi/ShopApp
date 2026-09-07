@@ -2,11 +2,12 @@
  * FeatureBenefits.js
  * "Why shop with us" benefits banner.
  * Four benefit items: Free Shipping, Easy Returns, Secure Payment, 24/7 Support.
- */
 
+*/
 import { createIcon } from '../../../shared/components/Icon/Icon.js';
 
 const benefits = [
+
   {
     icon:        'truck',
     title:       'Ücretsiz Kargo',
@@ -28,7 +29,7 @@ const benefits = [
   {
     icon:        'headphones',
     title:       'Müşteri Desteği',
-    description: '7/24 erişim',
+    description: '7/24 yanınızda',
     iconColor:   '#af52de',
   },
 ];

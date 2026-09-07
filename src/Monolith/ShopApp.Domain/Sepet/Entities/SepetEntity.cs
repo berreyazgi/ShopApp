@@ -9,8 +9,7 @@ public class SepetEntity : BaseEntity
 
     public int DurumId { get; private set; }
     
-    public SepetDurumLookup Durum { get; private set; }
-
+    public SepetDurumLookup Durum { get; private set; } = null!;
     public ICollection<SepetUrunu> Urunler { get; private set; } = [];
 
     private SepetEntity(){}
@@ -27,5 +26,17 @@ public class SepetEntity : BaseEntity
         DurumId = durumId;
         GuncelleyenKullaniciId = guncelleyenKullaniciId;
         MarkAsUpdated();
+    }
+
+    public SepetUrunu UrunEkle(Guid urunTurId, int urunMiktar, decimal fiyatGecmis, Guid olusturanKullaniciId)
+    {
+        var urun = SepetUrunu.Olustur(Id, urunTurId, urunMiktar, fiyatGecmis, olusturanKullaniciId);
+        Urunler.Add(urun);
+        return urun;
+    }
+
+    public void UrunSil(SepetUrunu urun)
+    {
+        Urunler.Remove(urun);
     }
 }

@@ -1,0 +1,950 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+
+// Minimal DOM mock for Node.js environment
+function setupMockDom() {
+  class MockElement {
+    constructor(tagName) {
+      this.tagName = tagName.toUpperCase();
+      this.className = '';
+      this.attributes = {};
+      this.children = [];
+      this.childNodes = this.children;
+      this.innerHTMLString = '';
+      this.textContentString = '';
+      this.eventListeners = {};
+      this.style = {};
+      this.id = '';
+      this.value = '';
+      this.disabled = false;
+      this.checked = false;
+      this.type = '';
+      this.classList = {
+        add: (...cls) => {
+          const set = new Set(this.className.split(/\s+/).filter(Boolean));
+          cls.forEach((c) => set.add(c));
+          this.className = [...set].join(' ');
+        },
+        remove: (...cls) => {
+          const set = new Set(this.className.split(/\s+/).filter(Boolean));
+          cls.forEach((c) => set.delete(c));
+          this.className = [...set].join(' ');
+        },
+        contains: (c) => this.className.split(/\s+/).includes(c),
+        toggle: (c) => {
+          if (this.classList.contains(c)) {
+            this.classList.remove(c);
+            return false;
+          } else {
+            this.classList.add(c);
+            return true;
+          }
+        },
+      };
+    }
+
+    get href() {
+      return this.attributes.href ?? '';
+    }
+
+    get parentElement() {
+      return this.parentNode ?? null;
+    }
+
+    set href(val) {
+      this.attributes.href = String(val);
+    }
+
+    setAttribute(name, value) {
+      this.attributes[name] = String(value);
+    }
+
+    getAttribute(name) {
+      return this.attributes[name] ?? null;
+    }
+
+    removeAttribute(name) {
+      delete this.attributes[name];
+    }
+
+    appendChild(child) {
+      if (typeof child === 'string') {
+        child = new MockTextNode(child);
+      }
+      this.children.push(child);
+      child.parentNode = this;
+      return child;
+    }
+
+    prepend(child) {
+      if (typeof child === 'string') {
+        child = new MockTextNode(child);
+      }
+      this.children.unshift(child);
+      child.parentNode = this;
+      return child;
+    }
+
+    insertBefore(newChild, refChild) {
+      if (typeof newChild === 'string') {
+        newChild = new MockTextNode(newChild);
+      }
+      const idx = this.children.indexOf(refChild);
+      if (idx !== -1) {
+        this.children.splice(idx, 0, newChild);
+      } else {
+        this.children.push(newChild);
+      }
+      newChild.parentNode = this;
+      return newChild;
+    }
+
+    removeChild(child) {
+      const idx = this.children.indexOf(child);
+      if (idx !== -1) {
+        this.children.splice(idx, 1);
+        child.parentNode = null;
+      }
+      return child;
+    }
+
+    remove() {
+      if (this.parentNode) {
+        this.parentNode.removeChild(this);
+      }
+    }
+
+    addEventListener(event, fn) {
+      if (!this.eventListeners[event]) {
+        this.eventListeners[event] = [];
+      }
+      this.eventListeners[event].push(fn);
+    }
+
+    removeEventListener(event, fn) {
+      if (this.eventListeners[event]) {
+        this.eventListeners[event] = this.eventListeners[event].filter((f) => f !== fn);
+      }
+    }
+
+    dispatchEvent(event) {
+      const listeners = this.eventListeners[event.type] || [];
+      listeners.forEach((fn) => fn(event));
+    }
+
+    click() {
+      this.dispatchEvent({ type: 'click' });
+    }
+
+    get innerHTML() {
+      return this.innerHTMLString;
+    }
+
+    set innerHTML(html) {
+      this.innerHTMLString = html;
+      this.children = [];
+      this.childNodes = this.children;
+      if (!html) return;
+
+      const tagRegex = /<([a-zA-Z0-9-]+)([^>]*)>(.*?)<\/\1>|<([a-zA-Z0-9-]+)([^>]*)\/>/gs;
+      let match;
+      while ((match = tagRegex.exec(html)) !== null) {
+        const tagName = match[1] || match[4];
+        const attrs = match[2] || match[5] || '';
+        const inner = match[3] || '';
+        const child = new MockElement(tagName);
+
+        const classMatch = attrs.match(/class=["']([^"']*)["']/);
+        if (classMatch) child.className = classMatch[1];
+
+        const idMatch = attrs.match(/id=["']([^"']*)["']/);
+        if (idMatch) child.id = idMatch[1];
+
+        if (inner && !inner.includes('<')) {
+          child.textContentString = inner.trim();
+        } else if (inner) {
+          child.innerHTML = inner;
+        }
+
+        this.appendChild(child);
+      }
+    }
+
+    get textContent() {
+      if (this.children.length === 0) return this.textContentString;
+      return this.children.map((c) => c.textContent).join(' ');
+    }
+
+    set textContent(text) {
+      this.textContentString = String(text);
+      this.children = [];
+      this.childNodes = this.children;
+    }
+
+    querySelector(selector) {
+      const all = this.querySelectorAll(selector);
+      return all.length > 0 ? all[0] : null;
+    }
+
+    querySelectorAll(selector) {
+      const parts = selector.trim().split(/\s+/);
+      if (parts.length > 1) {
+        let currentResults = [this];
+        for (const part of parts) {
+          const nextResults = [];
+          for (const el of currentResults) {
+            nextResults.push(...el.querySelectorAll(part));
+          }
+          currentResults = nextResults;
+        }
+        return currentResults;
+      }
+
+      const results = [];
+      const match = (el) => {
+        if (!el || !el.tagName) return;
+
+        if (selector.startsWith('.')) {
+          const cls = selector.slice(1);
+          if (el.classList.contains(cls)) {
+            results.push(el);
+          }
+        } else if (selector.startsWith('#')) {
+          const id = selector.slice(1);
+          if (el.id === id) {
+            results.push(el);
+          }
+        } else if (el.tagName.toLowerCase() === selector.toLowerCase()) {
+          results.push(el);
+        }
+
+        if (el.children) {
+          el.children.forEach(match);
+        }
+      };
+
+      this.children.forEach(match);
+      return results;
+    }
+
+    closest(selector) {
+      let current = this;
+      while (current) {
+        if (selector.startsWith('.') && current.classList?.contains(selector.slice(1))) {
+          return current;
+        }
+        if (selector.startsWith('#') && current.id === selector.slice(1)) {
+          return current;
+        }
+        if (current.tagName && current.tagName.toLowerCase() === selector.toLowerCase()) {
+          return current;
+        }
+        current = current.parentNode;
+      }
+      return null;
+    }
+
+    scrollIntoView() {}
+    focus() {}
+    reset() {
+      this.querySelectorAll('input').forEach((inp) => {
+        if (inp.type === 'checkbox') inp.checked = false;
+        else inp.value = '';
+      });
+      this.querySelectorAll('textarea').forEach((t) => (t.value = ''));
+      this.querySelectorAll('select').forEach((s) => (s.value = ''));
+    }
+  }
+
+  class MockTextNode {
+    constructor(text) {
+      this.textContent = String(text);
+      this.nodeType = 3;
+    }
+  }
+
+  global.document = {
+    createElement: (tag) => new MockElement(tag),
+    createTextNode: (text) => new MockTextNode(text),
+    getElementById: (id) => null,
+    querySelector: (sel) => global.document.body.querySelector(sel),
+    querySelectorAll: (sel) => global.document.body.querySelectorAll(sel),
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    body: new MockElement('body'),
+  };
+
+  global.window = {
+    location: { pathname: '/admin', origin: 'http://localhost:3000' },
+    history: { pushState: () => {}, replaceState: () => {} },
+    addEventListener: () => {},
+  };
+}
+
+setupMockDom();
+
+import { routes } from '../src/Frontend/ShopApp.Web/src/app/routes.js';
+import { buildCategoryTree, createCategoryTree } from '../src/Frontend/ShopApp.Web/src/features/admin/components/CategoryTree.js';
+import { createCategoryTable } from '../src/Frontend/ShopApp.Web/src/features/admin/components/CategoryTable.js';
+import { createCategoryFormPanel } from '../src/Frontend/ShopApp.Web/src/features/admin/components/CategoryFormPanel.js';
+import { createCategoryStatistics } from '../src/Frontend/ShopApp.Web/src/features/admin/components/CategoryStatistics.js';
+import { createRecentCategoriesCard } from '../src/Frontend/ShopApp.Web/src/features/admin/components/RecentCategoriesCard.js';
+import { createAdminStatusBadge } from '../src/Frontend/ShopApp.Web/src/features/admin/components/AdminStatusBadge.js';
+import { createAdminPagination } from '../src/Frontend/ShopApp.Web/src/features/admin/components/AdminPagination.js';
+import { createAdminLayout } from '../src/Frontend/ShopApp.Web/src/features/admin/components/AdminLayout.js';
+import AdminCategoriesPage from '../src/Frontend/ShopApp.Web/src/features/admin/pages/AdminCategoriesPage.js';
+import AdminDashboardPage from '../src/Frontend/ShopApp.Web/src/features/admin/pages/AdminDashboardPage.js';
+import AdminProductsPage from '../src/Frontend/ShopApp.Web/src/features/admin/pages/AdminProductsPage.js';
+import AdminCustomersPage from '../src/Frontend/ShopApp.Web/src/features/admin/pages/AdminCustomersPage.js';
+import AdminOrdersPage from '../src/Frontend/ShopApp.Web/src/features/admin/pages/AdminOrdersPage.js';
+import AdminRegisterPage from '../src/Frontend/ShopApp.Web/src/features/admin/pages/AdminRegisterPage.js';
+import LoginPage from '../src/Frontend/ShopApp.Web/src/features/auth/pages/LoginPage.js';
+import { createProductStockBadge, createAdminProductCard } from '../src/Frontend/ShopApp.Web/src/features/admin/components/AdminProductCard.js';
+import { createAdminProductGrid } from '../src/Frontend/ShopApp.Web/src/features/admin/components/AdminProductGrid.js';
+import { createAdminProductList } from '../src/Frontend/ShopApp.Web/src/features/admin/components/AdminProductList.js';
+import { createAdminProductFormModal } from '../src/Frontend/ShopApp.Web/src/features/admin/components/AdminProductFormModal.js';
+import { createAdminProductDetailModal } from '../src/Frontend/ShopApp.Web/src/features/admin/components/AdminProductDetailModal.js';
+
+// ── 1. Routes Verification ──
+test('Admin routes are properly registered with role guard', () => {
+  const adminRoutes = [
+    '/admin',
+    '/admin/urunler',
+    '/admin/kategoriler',
+    '/admin/musteriler',
+    '/admin/siparisler',
+    '/admin/kayit',
+  ];
+
+  adminRoutes.forEach((path) => {
+    const route = routes.find((r) => r.path === path);
+    assert.ok(route, `Route ${path} must be registered in routes.js`);
+    assert.equal(route.requiresAuth, true, `${path} must require authentication`);
+    assert.deepEqual(route.roles, ['Admin'], `${path} must require Admin role`);
+    assert.equal(typeof route.page, 'function', `${path} must have dynamic page importer`);
+  });
+});
+
+// ── 2. CategoryTree Unit & DOM Tests ──
+test('buildCategoryTree correctly maps flat parent-child categories', () => {
+  const flatData = [
+    { id: 1, name: 'Root A', parentId: null },
+    { id: 2, name: 'Child A1', parentId: 1 },
+    { id: 3, name: 'Child A2', parentId: 1 },
+    { id: 4, name: 'Root B', parentId: null },
+    { id: 5, name: 'Child B1', parentId: 4 },
+  ];
+
+  const tree = buildCategoryTree(flatData);
+  assert.equal(tree.length, 2);
+  assert.equal(tree[0].name, 'Root A');
+  assert.equal(tree[0].children.length, 2);
+  assert.equal(tree[0].children[0].name, 'Child A1');
+  assert.equal(tree[1].name, 'Root B');
+  assert.equal(tree[1].children.length, 1);
+});
+
+test('createCategoryTree renders tree and triggers onSelect', () => {
+  const categories = [
+    { id: 10, name: 'Elektronik', parentId: null, productCount: 45 },
+    { id: 11, name: 'Telefon', parentId: 10, productCount: 20 },
+  ];
+
+  let selected = null;
+  const panel = createCategoryTree({
+    categories,
+    onSelect: (cat) => { selected = cat; },
+  });
+
+  assert.ok(panel.classList.contains('admin-card'));
+  const nodes = panel.querySelectorAll('.admin-tree-node');
+  assert.equal(nodes.length, 2);
+
+  const header = panel.querySelector('.admin-tree-node__header');
+  assert.ok(header.textContent.includes('Elektronik'));
+  assert.ok(header.textContent.includes('(45)'));
+
+  header.dispatchEvent({ type: 'click', target: header });
+  assert.ok(selected);
+  assert.equal(selected.id, 10);
+});
+
+test('createCategoryTree handles empty categories collection cleanly', () => {
+  const panel = createCategoryTree({ categories: [] });
+  assert.ok(panel.textContent.includes('Henüz kategori hiyerarşisi bulunmuyor.'));
+});
+
+// ── 3. CategoryTable Unit & DOM Tests ──
+test('createCategoryTable renders rows, status badges, and empty states', () => {
+  const categories = [
+    { id: 1, name: 'Giyim', parentId: null, productCount: 100, isActive: true },
+    { id: 2, name: 'Pantolon', parentId: 1, parentName: 'Giyim', productCount: 30, isActive: false },
+  ];
+
+  let edited = null;
+  let deleted = null;
+
+  const tablePanel = createCategoryTable({
+    categories,
+    onEdit: (cat) => { edited = cat; },
+    onDelete: (cat) => { deleted = cat; },
+  });
+
+  const rows = tablePanel.querySelectorAll('tbody tr');
+  assert.equal(rows.length, 2);
+  assert.ok(rows[0].textContent.includes('Giyim'));
+  assert.ok(rows[0].textContent.includes('100'));
+  assert.ok(rows[0].textContent.includes('Aktif'));
+
+  assert.ok(rows[1].textContent.includes('Pantolon'));
+  assert.ok(rows[1].textContent.includes('Pasif'));
+
+  // Test empty on zero categories
+  const emptyPanel = createCategoryTable({ categories: [] });
+  assert.ok(emptyPanel.textContent.includes('Henüz kategori oluşturulmamış.'));
+});
+
+// ── 4. CategoryFormPanel Unit & DOM Tests ──
+test('createCategoryFormPanel populates fields in edit mode and fires onSave', () => {
+  const categories = [
+    { id: 1, name: 'Ayakkabı', parentId: null },
+    { id: 2, name: 'Spor Ayakkabı', parentId: 1 },
+  ];
+
+  let savedData = null;
+  const panel = createCategoryFormPanel({
+    categories,
+    selectedCategory: categories[1],
+    onSave: (data) => { savedData = data; },
+  });
+
+  assert.ok(panel.querySelector('.admin-card__title').textContent.includes('Kategori Düzenle'));
+
+  const nameInput = panel.querySelector('#category-name-input');
+  assert.equal(nameInput.value, 'Spor Ayakkabı');
+
+  // Submit form
+  const form = panel.querySelector('form');
+  nameInput.value = 'Koşu Ayakkabısı';
+  form.dispatchEvent({ type: 'submit', preventDefault: () => {} });
+
+  assert.ok(savedData);
+  assert.equal(savedData.name, 'Koşu Ayakkabısı');
+  assert.equal(savedData.id, 2);
+});
+
+// ── 5. CategoryStatistics Unit & DOM Tests ──
+test('createCategoryStatistics derives metrics safely without fake numbers', () => {
+  const categories = [
+    { id: 1, parentId: null, productCount: 10, isActive: true },
+    { id: 2, parentId: 1, productCount: 20, isActive: true },
+    { id: 3, parentId: 1, productCount: 30, isActive: false },
+  ];
+
+  const stats = createCategoryStatistics({ categories });
+  const values = stats.querySelectorAll('.admin-metric-card__value');
+
+  // Root categories = 1
+  assert.equal(values[0].textContent, '1');
+  // Total categories = 3
+  assert.equal(values[1].textContent, '3');
+  // Total products = 60
+  assert.equal(values[2].textContent, '60');
+  // Active ratio = %67
+  assert.equal(values[3].textContent, '%67');
+
+  // When 0 categories supplied
+  const emptyStats = createCategoryStatistics({ categories: [] });
+  const emptyValues = emptyStats.querySelectorAll('.admin-metric-card__value');
+  assert.equal(emptyValues[0].textContent, '0');
+  assert.equal(emptyValues[1].textContent, '0');
+  assert.equal(emptyValues[2].textContent, '—');
+  assert.equal(emptyValues[3].textContent, '—');
+});
+
+// ── 6. Status Badges & Pagination ──
+test('createAdminStatusBadge renders semantic classes and dots', () => {
+  const activeBadge = createAdminStatusBadge({ isActive: true });
+  assert.ok(activeBadge.classList.contains('admin-status-badge--success'));
+  assert.ok(activeBadge.textContent.includes('Aktif'));
+
+  const passiveBadge = createAdminStatusBadge({ isActive: false });
+  assert.ok(passiveBadge.classList.contains('admin-status-badge--neutral'));
+  assert.ok(passiveBadge.textContent.includes('Pasif'));
+
+  const deliveryBadge = createAdminStatusBadge({ status: 'Teslim Edildi' });
+  assert.ok(deliveryBadge.classList.contains('admin-status-badge--success'));
+
+  const prepBadge = createAdminStatusBadge({ status: 'Hazırlanıyor' });
+  assert.ok(prepBadge.classList.contains('admin-status-badge--warning'));
+});
+
+test('createAdminPagination renders correct page buttons and handles callback', () => {
+  let targetPage = null;
+  const pagination = createAdminPagination({
+    currentPage: 2,
+    totalPages: 5,
+    totalItems: 48,
+    pageSize: 10,
+    onPageChange: (p) => { targetPage = p; },
+  });
+
+  assert.ok(pagination.textContent.includes('Toplam 48 kayıttan 11 - 20 gösteriliyor'));
+  const activeBtn = pagination.querySelector('.admin-pagination__btn--active');
+  assert.equal(activeBtn.textContent, '2');
+});
+
+// ── 7. AdminLayout Workspace Mode ──
+test('createAdminLayout toggles body.admin-mode and destroys cleanly', () => {
+  const layout = createAdminLayout({ currentPath: '/admin' });
+  assert.equal(document.body.classList.contains('admin-mode'), true);
+
+  layout.destroy();
+  assert.equal(document.body.classList.contains('admin-mode'), false);
+});
+
+// ── 8. Page Components Instantiation ──
+test('Admin pages instantiate and destroy cleanly without exceptions', () => {
+  const catPage = AdminCategoriesPage({ categories: [] });
+  assert.ok(catPage.element);
+  catPage.destroy();
+
+  const dashPage = AdminDashboardPage({ summary: {}, recentOrders: [], lowStockProducts: [] });
+  assert.ok(dashPage.element);
+  dashPage.destroy();
+
+  const prodPage = AdminProductsPage({ products: [] });
+  assert.ok(prodPage.element);
+  prodPage.destroy();
+
+  const custPage = AdminCustomersPage({ customers: [] });
+  assert.ok(custPage.element);
+  custPage.destroy();
+
+  const ordPage = AdminOrdersPage({ orders: [] });
+  assert.ok(ordPage.element);
+  ordPage.destroy();
+
+  const regPage = AdminRegisterPage();
+  assert.ok(regPage.element);
+  regPage.destroy();
+});
+
+// ── 9. Login Page Verification ──
+test('LoginPage does not render admin registration button', () => {
+  const login = LoginPage();
+  const adminBtn = login.element.querySelector('.auth-admin-register-btn');
+  assert.equal(adminBtn, null, 'LoginPage must not contain .auth-admin-register-btn');
+  login.destroy();
+});
+
+test('AdminRegisterPage renders fields and validates password match before firing onRegisterAdmin', () => {
+  let registeredPayload = null;
+  const page = AdminRegisterPage({
+    onRegisterAdmin: (data) => { registeredPayload = data; },
+  });
+
+  const firstNameInp = page.element.querySelector('#admin-reg-first-name');
+  const lastNameInp = page.element.querySelector('#admin-reg-last-name');
+  const emailInp = page.element.querySelector('#admin-reg-email');
+  const passInp = page.element.querySelector('#admin-reg-password');
+  const confirmInp = page.element.querySelector('#admin-reg-confirm-password');
+  const roleSelect = page.element.querySelector('#admin-reg-role');
+  const form = page.element.querySelector('form');
+
+  assert.ok(firstNameInp);
+  assert.ok(lastNameInp);
+  assert.ok(emailInp);
+  assert.ok(passInp);
+  assert.ok(confirmInp);
+  assert.ok(roleSelect);
+
+  // 1. Password mismatch fails
+  firstNameInp.value = 'Ali';
+  lastNameInp.value = 'Yılmaz';
+  emailInp.value = 'ali@shopapp.com';
+  passInp.value = 'Password123!';
+  confirmInp.value = 'DifferentPass';
+  form.dispatchEvent({ type: 'submit', preventDefault: () => {} });
+
+  assert.equal(registeredPayload, null, 'Must not register on password mismatch');
+  assert.ok(page.element.textContent.includes('Girdiğiniz şifreler birbiriyle eşleşmiyor.'));
+
+  // 2. Matching passwords succeed
+  confirmInp.value = 'Password123!';
+  form.dispatchEvent({ type: 'submit', preventDefault: () => {} });
+
+  assert.ok(registeredPayload, 'Must call onRegisterAdmin callback on success');
+  assert.equal(registeredPayload.firstName, 'Ali');
+  assert.equal(registeredPayload.email, 'ali@shopapp.com');
+
+  page.destroy();
+});
+
+// ── 10. Product Stock Badge Tests (Hybrid Decision) ──
+test('createProductStockBadge renders exact hybrid badges based on stock urgency', () => {
+  // 1. Out of stock (stock === 0) -> red danger badge "Tükendi" without count
+  const outOfStockEl = createProductStockBadge({ stock: 0 });
+  assert.ok(outOfStockEl.classList.contains('admin-status-badge--danger'));
+  assert.equal(outOfStockEl.textContent.trim(), 'Tükendi');
+
+  // 2. Low stock (1 <= stock <= 5) -> warning badge with count
+  const lowStockEl = createProductStockBadge({ stock: 3 });
+  assert.ok(lowStockEl.classList.contains('admin-status-badge--warning'));
+  assert.equal(lowStockEl.textContent.trim(), 'Düşük Stok (Son 3 Adet)');
+
+  // 3. In stock (stock > 5) -> success badge with count for admin
+  const inStockEl = createProductStockBadge({ stock: 18 });
+  assert.ok(inStockEl.classList.contains('admin-status-badge--success'));
+  assert.equal(inStockEl.textContent.trim(), 'Stokta (18 Adet)');
+
+  // 4. Missing/Null stock -> neutral badge with "—"
+  const missingStockEl = createProductStockBadge({});
+  assert.ok(missingStockEl.classList.contains('admin-status-badge--neutral'));
+  assert.equal(missingStockEl.textContent.trim(), '—');
+
+  // 5. Explicit stockStatus string precedence
+  const explicitOutOfStock = createProductStockBadge({ stockStatus: 'out-of-stock' });
+  assert.ok(explicitOutOfStock.classList.contains('admin-status-badge--danger'));
+  assert.equal(explicitOutOfStock.textContent.trim(), 'Tükendi');
+});
+
+// ── 11. AdminProductCard Unit & Action Tests ──
+test('createAdminProductCard renders supplied product and triggers callbacks', () => {
+  const dummyProduct = {
+    id: 'prod-101',
+    name: 'Klasik Pamuklu Gömlek',
+    sku: 'GML-101',
+    category: 'Giyim',
+    price: 499.9,
+    stock: 12,
+    isActive: true,
+    imageUrl: '/images/products/shirt.jpg',
+  };
+
+  let viewedProduct = null;
+  let editedProduct = null;
+  let deletedProduct = null;
+
+  const card = createAdminProductCard({
+    product: dummyProduct,
+    onView: (p) => { viewedProduct = p; },
+    onEdit: (p) => { editedProduct = p; },
+    onDelete: (p) => { deletedProduct = p; },
+  });
+
+  assert.equal(card.getAttribute('data-product-id'), 'prod-101');
+  assert.ok(card.textContent.includes('Klasik Pamuklu Gömlek'));
+  assert.ok(card.textContent.includes('GML-101'));
+  assert.ok(card.textContent.includes('Giyim'));
+  assert.ok(card.textContent.includes('Stokta (12 Adet)'));
+  assert.ok(card.textContent.includes('Aktif'));
+
+  // Test Action Buttons
+  const buttons = card.querySelectorAll('button');
+  assert.equal(buttons.length, 3, 'Card must have 3 action buttons (View, Edit, Delete)');
+
+  buttons[0].dispatchEvent({ type: 'click' });
+  assert.equal(viewedProduct?.id, 'prod-101', 'View button must fire onView');
+
+  buttons[1].dispatchEvent({ type: 'click' });
+  assert.equal(editedProduct?.id, 'prod-101', 'Edit button must fire onEdit');
+
+  buttons[2].dispatchEvent({ type: 'click' });
+  assert.equal(deletedProduct?.id, 'prod-101', 'Delete button must fire onDelete');
+});
+
+// ── 12. AdminProductList Unit & Table Tests ──
+test('createAdminProductList renders table rows and handles actions', () => {
+  const products = [
+    { id: 'p1', name: 'Ayakkabı A', sku: 'AYK-01', category: 'Ayakkabı', price: 1200, stock: 4, isActive: true },
+    { id: 'p2', name: 'Çanta B', sku: 'CNT-02', category: 'Aksesuar', price: 850, stock: 0, isActive: false },
+  ];
+
+  let edited = null;
+  const listEl = createAdminProductList({
+    products,
+    onEdit: (p) => { edited = p; },
+  });
+
+  const rows = listEl.querySelectorAll('tbody tr');
+  assert.equal(rows.length, 2, 'Must render 2 table rows for 2 products');
+  assert.ok(listEl.textContent.includes('Ayakkabı A'));
+  assert.ok(listEl.textContent.includes('Çanta B'));
+  assert.ok(listEl.textContent.includes('Düşük Stok (Son 4 Adet)'));
+  assert.ok(listEl.textContent.includes('Tükendi'));
+
+  // Click edit on first row
+  const editBtn = rows[0].querySelector('.admin-table-btn--edit');
+  editBtn.dispatchEvent({ type: 'click' });
+  assert.equal(edited?.id, 'p1');
+});
+
+// ── 13. AdminProductFormModal Validation & Submission Tests ──
+test('createAdminProductFormModal validates inputs and emits onSave in create & edit modes', () => {
+  const categories = [
+    { id: 'cat-1', name: 'Giyim' },
+    { id: 'cat-2', name: 'Ayakkabı' },
+  ];
+
+  let savedData = null;
+
+  // 1. Create Mode: Validation Fails on empty fields
+  const createModal = createAdminProductFormModal({
+    categories,
+    onSave: (data) => { savedData = data; },
+  });
+
+  const submitBtn = createModal.element.querySelectorAll('.admin-modal__footer button')[1];
+  submitBtn.dispatchEvent({ type: 'click' });
+  assert.equal(savedData, null, 'Must not submit with empty name');
+
+  // Fill valid create data
+  const nameInp = createModal.element.querySelector('#prod-modal-name');
+  const priceInp = createModal.element.querySelector('#prod-modal-price');
+  const stockInp = createModal.element.querySelector('#prod-modal-stock');
+  const catSelect = createModal.element.querySelector('#prod-modal-cat');
+
+  nameInp.value = 'Yeni Tişört';
+  priceInp.value = '299.90';
+  stockInp.value = '25';
+  catSelect.value = 'Giyim';
+
+  submitBtn.dispatchEvent({ type: 'click' });
+  assert.ok(savedData, 'Must submit valid create data');
+  assert.equal(savedData.name, 'Yeni Tişört');
+  assert.equal(savedData.price, 299.9);
+  assert.equal(savedData.stock, 25);
+  assert.equal(savedData.category, 'Giyim');
+
+  createModal.close();
+
+  // 2. Edit Mode: Pre-populates existing product
+  const existingProduct = {
+    id: 'p-edit',
+    name: 'Deri Ceket',
+    sku: 'CKT-99',
+    category: 'Giyim',
+    price: 1500,
+    stock: 5,
+    isActive: true,
+  };
+
+  let editSaved = null;
+  const editModal = createAdminProductFormModal({
+    product: existingProduct,
+    categories,
+    onSave: (data) => { editSaved = data; },
+  });
+
+  const editNameInp = editModal.element.querySelector('#prod-modal-name');
+  assert.equal(editNameInp.value, 'Deri Ceket');
+
+  const editSubmitBtn = editModal.element.querySelectorAll('.admin-modal__footer button')[1];
+  editNameInp.value = 'Deri Ceket Güncel';
+  editSubmitBtn.dispatchEvent({ type: 'click' });
+
+  assert.ok(editSaved, 'Must emit updated data');
+  assert.equal(editSaved.name, 'Deri Ceket Güncel');
+  assert.equal(editSaved.id, 'p-edit');
+
+  editModal.close();
+});
+
+// ── 14. AdminProductDetailModal Read-Only Inspection Tests ──
+test('createAdminProductDetailModal displays full product details and fires onEdit', () => {
+  const product = {
+    id: 'p-detail',
+    name: 'Spor Koşu Ayakkabısı',
+    sku: 'AYK-777',
+    category: 'Spor',
+    price: 2400,
+    stock: 2,
+    isActive: true,
+    description: 'Yüksek yastıklama sunan profesyonel koşu ayakkabısı.',
+  };
+
+  let editTriggered = false;
+  const detailModal = createAdminProductDetailModal({
+    product,
+    onEdit: () => { editTriggered = true; },
+  });
+
+  assert.ok(detailModal.element.textContent.includes('Spor Koşu Ayakkabısı'));
+  assert.ok(detailModal.element.textContent.includes('AYK-777'));
+  assert.ok(detailModal.element.textContent.includes('Spor'));
+  assert.ok(detailModal.element.textContent.includes('Düşük Stok (Son 2 Adet)'));
+  assert.ok(detailModal.element.textContent.includes('Yüksek yastıklama'));
+
+  const editBtn = detailModal.element.querySelectorAll('.admin-modal__footer button')[1];
+  editBtn.dispatchEvent({ type: 'click' });
+  assert.equal(editTriggered, true, 'Clicking edit button in details modal must fire onEdit');
+
+  detailModal.close();
+});
+
+// ── 15. AdminProductsPage Integration: Grid/List, Filtering, Sorting, States ──
+test('AdminProductsPage renders empty, loading, and error states dynamically', () => {
+  // 1. Loading State
+  const loadingPage = AdminProductsPage({ loading: true });
+  assert.ok(loadingPage.element.textContent.includes('Ürünler yükleniyor...'));
+  loadingPage.destroy();
+
+  // 2. Error State with Retry
+  let retried = false;
+  const errorPage = AdminProductsPage({
+    error: new Error('Network error'),
+    onRetry: () => { retried = true; },
+  });
+  assert.ok(errorPage.element.textContent.includes('Ürünler görüntülenemedi.'));
+  const retryBtn = errorPage.element.querySelector('.state-view--error button');
+  assert.ok(retryBtn);
+  retryBtn.dispatchEvent({ type: 'click' });
+  assert.equal(retried, true);
+  errorPage.destroy();
+
+  // 3. Initial Empty State
+  const emptyPage = AdminProductsPage({ products: [] });
+  assert.ok(emptyPage.element.textContent.includes('Henüz ürün bulunamadı.'));
+  assert.ok(emptyPage.element.textContent.includes('Yeni Ürün Ekle'));
+  emptyPage.destroy();
+});
+
+test('AdminProductsPage supports Grid/List view toggle, dynamic search, multi-filtering, sorting, and clear', () => {
+  const testProducts = [
+    { id: '1', name: 'Zebra Çanta', sku: 'ZBR-01', category: 'Aksesuar', price: 900, stock: 20, isActive: true, createdAt: '2026-01-01' },
+    { id: '2', name: 'Alpha Spor Ayakkabı', sku: 'ALP-02', category: 'Spor', price: 2500, stock: 2, isActive: true, createdAt: '2026-01-02' },
+    { id: '3', name: 'Beta Koşu Şortu', sku: 'BET-03', category: 'Spor', price: 400, stock: 0, isActive: false, createdAt: '2026-01-03' },
+    { id: '4', name: 'Basic Tişört', sku: 'TSH-04', category: 'Giyim', price: 250, stock: 15, isActive: true, createdAt: '2026-01-04' },
+  ];
+
+  const testCategories = ['Giyim', 'Spor', 'Aksesuar'];
+
+  const page = AdminProductsPage({
+    products: testProducts,
+    categories: testCategories,
+    pageSize: 10,
+  });
+
+  // 1. Initial State: Grid View with 4 items
+  const gridEl = page.element.querySelector('.admin-products-grid');
+  assert.ok(gridEl, 'Must render admin-products-grid by default');
+  assert.equal(gridEl.querySelectorAll('.admin-product-card').length, 4);
+
+  // Result count verification
+  const countEl = page.element.querySelector('.admin-products-toolbar__count');
+  assert.equal(countEl.textContent.trim(), '4 ürün bulundu');
+
+  // 2. View Switcher to List View
+  const listBtn = page.element.querySelectorAll('.admin-view-switch__btn')[1];
+  listBtn.dispatchEvent({ type: 'click' });
+
+  const tableEl = page.element.querySelector('.admin-products-table');
+  assert.ok(tableEl, 'Must switch to admin-products-table');
+  assert.equal(tableEl.querySelectorAll('tbody tr').length, 4);
+
+  // Switch back to Grid
+  const gridBtn = page.element.querySelectorAll('.admin-view-switch__btn')[0];
+  gridBtn.dispatchEvent({ type: 'click' });
+  assert.ok(page.element.querySelector('.admin-products-grid'));
+
+  // 3. Search Filter: Search for "Alpha"
+  const searchInput = page.element.querySelector('.admin-products-toolbar__search-input');
+  searchInput.value = 'alpha';
+  searchInput.dispatchEvent({ type: 'input' });
+
+  assert.equal(page.element.querySelector('.admin-products-toolbar__count').textContent.trim(), '1 ürün bulundu');
+  assert.equal(page.element.querySelectorAll('.admin-product-card').length, 1);
+  assert.ok(page.element.textContent.includes('Alpha Spor Ayakkabı'));
+
+  // Search by SKU: "ZBR"
+  searchInput.value = 'ZBR';
+  searchInput.dispatchEvent({ type: 'input' });
+  assert.equal(page.element.querySelectorAll('.admin-product-card').length, 1);
+  assert.ok(page.element.textContent.includes('Zebra Çanta'));
+
+  // 4. Clear Filters
+  const clearBtn = page.element.querySelector('.admin-btn-clear');
+  clearBtn.dispatchEvent({ type: 'click' });
+  assert.equal(page.element.querySelectorAll('.admin-product-card').length, 4);
+
+  // 5. Category Filter: Select "Spor"
+  const catSelect = page.element.querySelectorAll('.admin-products-toolbar__select')[0];
+  catSelect.value = 'Spor';
+  catSelect.dispatchEvent({ type: 'change' });
+  assert.equal(page.element.querySelectorAll('.admin-product-card').length, 2);
+
+  // 6. Status Filter: Select "Pasif" while category is "Spor" -> only "Beta Koşu Şortu"
+  const statusSelect = page.element.querySelectorAll('.admin-products-toolbar__select')[1];
+  statusSelect.value = 'passive';
+  statusSelect.dispatchEvent({ type: 'change' });
+  assert.equal(page.element.querySelectorAll('.admin-product-card').length, 1);
+  assert.ok(page.element.textContent.includes('Beta Koşu Şortu'));
+
+  // 7. Stock Filter: Select "low-stock" after clearing
+  clearBtn.dispatchEvent({ type: 'click' });
+  const stockSelect = page.element.querySelectorAll('.admin-products-toolbar__select')[2];
+  stockSelect.value = 'low-stock';
+  stockSelect.dispatchEvent({ type: 'change' });
+  assert.equal(page.element.querySelectorAll('.admin-product-card').length, 1);
+  assert.ok(page.element.textContent.includes('Alpha Spor Ayakkabı'));
+
+  // 8. Sorting: Price Artan (Ascending)
+  clearBtn.dispatchEvent({ type: 'click' });
+  const sortSelect = page.element.querySelector('#admin-products-sort');
+  sortSelect.value = 'price-asc';
+  sortSelect.dispatchEvent({ type: 'change' });
+
+  const cards = page.element.querySelectorAll('.admin-product-card');
+  assert.ok(cards[0].textContent.includes('Basic Tişört'), 'First item must be cheapest (250 TL)');
+
+  // 9. Filtered Empty State: Search for nonexistent product
+  searchInput.value = 'NonexistentItem999';
+  searchInput.dispatchEvent({ type: 'input' });
+
+  assert.ok(page.element.querySelector('.admin-filtered-empty'));
+  assert.ok(page.element.textContent.includes('Aramanızla eşleşen ürün bulunamadı.'));
+
+  // Reset from filtered empty state
+  const resetBtn = page.element.querySelector('.admin-filtered-empty button');
+  resetBtn.dispatchEvent({ type: 'click' });
+  assert.equal(page.element.querySelectorAll('.admin-product-card').length, 4);
+
+  page.destroy();
+});
+
+// ── 16. Critical Audit: No Demo Data & No Network Calls ──
+test('Audit: No admin demo data files exist in codebase', () => {
+  const adminDir = path.resolve('src/Frontend/ShopApp.Web/src/features/admin');
+  const files = fs.readdirSync(adminDir, { recursive: true });
+
+  const demoDataExists = files.some((f) => String(f).includes('adminDemoData'));
+  assert.equal(demoDataExists, false, 'adminDemoData.js must not exist in admin directory');
+
+  // Check no admin files import or reference demo data
+  const jsFiles = files.filter((f) => String(f).endsWith('.js'));
+  jsFiles.forEach((file) => {
+    const fullPath = path.join(adminDir, String(file));
+    const content = fs.readFileSync(fullPath, 'utf-8');
+    assert.equal(content.includes('adminDemoData'), false, `${file} must not reference adminDemoData`);
+    assert.equal(content.includes('DEMO_'), false, `${file} must not reference DEMO_ constants`);
+  });
+});
+
+test('Audit: No new fetch or apiClient network calls in admin components/pages', () => {
+  const adminDir = path.resolve('src/Frontend/ShopApp.Web/src/features/admin');
+  const files = fs.readdirSync(adminDir, { recursive: true });
+  const jsFiles = files.filter((f) => String(f).endsWith('.js'));
+
+  jsFiles.forEach((file) => {
+    const fullPath = path.join(adminDir, String(file));
+    const content = fs.readFileSync(fullPath, 'utf-8');
+    // Ensure no fetch(), axios, XMLHttpRequest or apiClient calls
+    assert.equal(content.includes('fetch('), false, `${file} must not call fetch()`);
+    assert.equal(content.includes('axios'), false, `${file} must not call axios`);
+    assert.equal(content.includes('XMLHttpRequest'), false, `${file} must not call XMLHttpRequest`);
+    assert.equal(content.includes('apiClient.'), false, `${file} must not call apiClient`);
+  });
+});

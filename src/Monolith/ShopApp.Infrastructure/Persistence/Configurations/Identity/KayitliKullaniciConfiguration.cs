@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ShopApp.Infrastructure.Identity;
+using ShopApp.Infrastructure.Identity.Models;
 
 namespace ShopApp.Infrastructure.Persistence.Configurations.Identity;
 

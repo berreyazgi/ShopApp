@@ -2,6 +2,7 @@
   "name": "shopapp-web",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "ShopApp Vanilla JS SPA Frontend",
   "scripts": {
     "dev": "npx -y serve -s . -l 3000",
