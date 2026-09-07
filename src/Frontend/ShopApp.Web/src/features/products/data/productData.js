@@ -1,15 +1,19 @@
 /**
  * productData.js — Temporary demo data for product pages.
  * TODO: Replace with real API integration when backend is wired up.
+ *
+ * This file is a temporary fixture only. Pages must not import it directly —
+ * go through productsService.js so the data source can be swapped later
+ * without touching any page/component code.
  */
 
 export const demoProducts = [
-  { id: 'nike-alphafly', name: 'Nike Air Zoom Alphafly Next% 2', price: 1800, imageUrl: 'src/assets/images/products/nike-alphafly/main.webp', featured: true },
-  { id: 'nike-pegasus', name: 'Nike Pegasus 39', price: 1600, imageUrl: 'src/assets/images/products/nike-pegasus-39.webp' },
-  { id: 'adidas-ultraboost', name: 'Adidas Ultraboost 22', price: 1450, imageUrl: 'src/assets/images/products/adidas-ultraboost-22.webp' },
-  { id: 'puma-velocity', name: 'Puma Velocity Nitro 2', price: 1350, imageUrl: 'src/assets/images/products/puma-velocity-nitro-2.webp' },
-  { id: 'nb-fuelcell', name: 'New Balance FuelCell RC Elite', price: 1700, imageUrl: 'src/assets/images/products/new-balance-fuelcell.webp' },
-  { id: 'asics-novablast', name: 'Asics Novablast 3', price: 1250, imageUrl: 'src/assets/images/products/asics-novablast-3.webp' },
+  { id: 'nike-alphafly', name: 'Nike Air Zoom Alphafly Next% 2', price: 1800, imageUrl: '/src/assets/images/products/nike-alphafly/main.webp', featured: true },
+  { id: 'nike-pegasus', name: 'Nike Pegasus 39', price: 1600, imageUrl: '/src/assets/images/products/nike-pegasus-39.webp' },
+  { id: 'adidas-ultraboost', name: 'Adidas Ultraboost 22', price: 1450, imageUrl: '/src/assets/images/products/adidas-ultraboost-22.webp' },
+  { id: 'puma-velocity', name: 'Puma Velocity Nitro 2', price: 1350, imageUrl: '/src/assets/images/products/puma-velocity-nitro-2.webp' },
+  { id: 'nb-fuelcell', name: 'New Balance FuelCell RC Elite', price: 1700, imageUrl: '/src/assets/images/products/new-balance-fuelcell.webp' },
+  { id: 'asics-novablast', name: 'Asics Novablast 3', price: 1250, imageUrl: '/src/assets/images/products/asics-novablast-3.webp' },
 ];
 
 export const productDetailMap = {
@@ -34,12 +38,12 @@ export const productDetailMap = {
       'Malzeme: ZoomX köpük + karbon fiber plaka',
       'Üst kısım: Atomknit 2.0',
     ],
-    imageUrl: 'src/assets/images/products/nike-alphafly/main.webp',
+    imageUrl: '/src/assets/images/products/nike-alphafly/main.webp',
     imageUrls: [
-      'src/assets/images/products/nike-alphafly/main.webp',
-      'src/assets/images/products/nike-alphafly/angle-1.webp',
-      'src/assets/images/products/nike-alphafly/angle-2.webp',
-      'src/assets/images/products/nike-alphafly/angle-3.webp',
+      '/src/assets/images/products/nike-alphafly/main.webp',
+      '/src/assets/images/products/nike-alphafly/angle-1.webp',
+      '/src/assets/images/products/nike-alphafly/angle-2.webp',
+      '/src/assets/images/products/nike-alphafly/angle-3.webp',
     ],
   },
 };
@@ -74,17 +78,56 @@ export function getProductDetail(productId) {
 }
 
 export const relatedProducts = [
-  { name: 'Sarı Eşofman Takımı', variant: 'Beden: M', price: 1200, imageUrl: 'src/assets/images/categories/esofman-forma.webp' },
-  { name: 'Nike Apparel Ayakkabı', variant: 'Beden: M', price: 1800, imageUrl: 'src/assets/images/products/nike-pegasus-39.webp' },
+  { name: 'Sarı Eşofman Takımı', variant: 'Beden: M', price: 1200, imageUrl: '/src/assets/images/categories/esofman-forma.webp' },
+  { name: 'Nike Apparel Ayakkabı', variant: 'Beden: M', price: 1800, imageUrl: '/src/assets/images/products/nike-pegasus-39.webp' },
 ];
 
 export const categories = [
-  { name: 'Spor Ayakkabı', count: 128, imageUrl: 'src/assets/images/categories/spor-ayakkabi.webp', href: '/urunler' },
-  { name: 'Koşu Ayakkabısı', count: 84, imageUrl: 'src/assets/images/categories/kosu-ayakkabisi.webp', href: '/urunler' },
-  { name: 'Günlük Giyim', count: 256, imageUrl: 'src/assets/images/categories/gunluk-giyim.webp', href: '/urunler' },
-  { name: 'Eşofman & Forma', count: 112, imageUrl: 'src/assets/images/categories/esofman-forma.webp', href: '/urunler' },
-  { name: 'Bot & Çizme', count: 67, imageUrl: 'src/assets/images/categories/bot-cizme.webp', href: '/urunler' },
-  { name: 'Aksesuar', count: 189, imageUrl: 'src/assets/images/categories/aksesuar.webp', href: '/urunler' },
+  {
+    id: 'kadin',
+    name: 'Kadın',
+    slug: 'kadin',
+    href: '/urunler/kadin',
+    imageUrl: '/src/assets/images/categories/gunluk-giyim.webp',
+    count: 580,
+    children: [
+      { id: 'kadin-giyim',    name: 'Giyim',    slug: 'giyim',    href: '/urunler/kadin/giyim',    count: 84 },
+      { id: 'kadin-spor',     name: 'Spor',     slug: 'spor',     href: '/urunler/kadin/spor',     count: 256 },
+      { id: 'kadin-aksesuar', name: 'Aksesuar', slug: 'aksesuar', href: '/urunler/kadin/aksesuar', count: 112 },
+      { id: 'kadin-ayakkabi', name: 'Ayakkabı', slug: 'ayakkabi', href: '/urunler/kadin/ayakkabi', count: 128 },
+    ],
+    get subcategories() { return this.children; },
+  },
+  {
+    id: 'erkek',
+    name: 'Erkek',
+    slug: 'erkek',
+    href: '/urunler/erkek',
+    imageUrl: '/src/assets/images/categories/esofman-forma.webp',
+    count: 482,
+    children: [
+      { id: 'erkek-giyim',    name: 'Giyim',    slug: 'giyim',    href: '/urunler/erkek/giyim',    count: 140 },
+      { id: 'erkek-spor',     name: 'Spor',     slug: 'spor',     href: '/urunler/erkek/spor',     count: 180 },
+      { id: 'erkek-aksesuar', name: 'Aksesuar', slug: 'aksesuar', href: '/urunler/erkek/aksesuar', count: 67 },
+      { id: 'erkek-ayakkabi', name: 'Ayakkabı', slug: 'ayakkabi', href: '/urunler/erkek/ayakkabi', count: 95 },
+    ],
+    get subcategories() { return this.children; },
+  },
+  {
+    id: 'cocuk',
+    name: 'Çocuk',
+    slug: 'cocuk',
+    href: '/urunler/cocuk',
+    imageUrl: '/src/assets/images/categories/spor-ayakkabi.webp',
+    count: 314,
+    children: [
+      { id: 'cocuk-giyim',    name: 'Giyim',    slug: 'giyim',    href: '/urunler/cocuk/giyim',    count: 110 },
+      { id: 'cocuk-spor',     name: 'Spor',     slug: 'spor',     href: '/urunler/cocuk/spor',     count: 90 },
+      { id: 'cocuk-aksesuar', name: 'Aksesuar', slug: 'aksesuar', href: '/urunler/cocuk/aksesuar', count: 60 },
+      { id: 'cocuk-ayakkabi', name: 'Ayakkabı', slug: 'ayakkabi', href: '/urunler/cocuk/ayakkabi', count: 54 },
+    ],
+    get subcategories() { return this.children; },
+  },
 ];
 
 export function formatPrice(amount) {

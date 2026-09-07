@@ -78,10 +78,12 @@ export default function LoginPage() {
   const rememberRow = document.createElement('div');
   rememberRow.className = 'auth-form__row auth-form__row--space-between';
 
+  //label oluşturup metin atıyor
   const rememberLabel = document.createElement('label');
   rememberLabel.className = 'auth-checkbox-label';
   rememberLabel.htmlFor   = FIELD_IDS.LOGIN_REMEMBER_ME;
 
+  //checkbox oluşturup label içine ekliyor
   const rememberCheckbox = document.createElement('input');
   rememberCheckbox.type      = 'checkbox';
   rememberCheckbox.id        = FIELD_IDS.LOGIN_REMEMBER_ME;
@@ -132,12 +134,12 @@ export default function LoginPage() {
       try {
         const result = await login({ email, password });
 
+        // 5. Save UI preference
+        saveRememberMe(remember);
+
         if (result?.success) {
-          saveRememberMe(remember);
           const returnTo = new URLSearchParams(window.location.search).get('returnTo');
           navigate(returnTo?.startsWith('/') ? returnTo : AUTH_ROUTES.HOME);
-        } else {
-          authForm.setServerError('Giriş yapılamadı. Lütfen bilgilerinizi kontrol edip tekrar deneyin.');
         }
       } catch (err) {
         authForm.setServerError(mapAuthError(err));

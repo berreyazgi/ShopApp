@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShopApp.Application.Authentication.Services;
-using ShopApp.Application.Authentication;
+using ShopApp.Application.Common.Interfaces;
+using ShopApp.Application.Features.Authentication.DTOs;
 
 namespace src.Monolith.ShopApp.Api.Controllers;
 

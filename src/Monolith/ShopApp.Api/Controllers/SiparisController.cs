@@ -2,16 +2,16 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShopApp.Application.Siparis.Dtos;
-using ShopApp.Application.SiparisUrunleri.Dtos;
-using ShopApp.Application.Siparis.Commands.CreateSiparis;
-using ShopApp.Application.Siparis.Commands.DeleteSiparis;
-using ShopApp.Application.Siparis.Commands.UpdateSiparis;
-using ShopApp.Application.Siparis.Queries;
-using ShopApp.Application.SiparisUrunleri.Commands.CreateSiparisUrunu;
-using ShopApp.Application.SiparisUrunleri.Commands.DeleteSiparisUrunu;
-using ShopApp.Application.SiparisUrunleri.Commands.UpdateSiparisUrunu;
-using ShopApp.Application.SiparisUrunleri.Queries;
+using ShopApp.Application.Features.Siparis.Dtos;
+using ShopApp.Application.Features.Siparis.Dtos;
+using ShopApp.Application.Features.Siparis.Commands.CreateSiparis;
+using ShopApp.Application.Features.Siparis.Commands.DeleteSiparis;
+using ShopApp.Application.Features.Siparis.Commands.UpdateSiparis;
+using ShopApp.Application.Features.Siparis.Queries;
+using ShopApp.Application.Features.Siparis.Commands.CreateSiparisUrunu;
+using ShopApp.Application.Features.Siparis.Commands.DeleteSiparisUrunu;
+using ShopApp.Application.Features.Siparis.Commands.UpdateSiparisUrunu;
+using ShopApp.Application.Features.Siparis.Queries;
 
 namespace src.Monolith.ShopApp.Api.Controllers;
 

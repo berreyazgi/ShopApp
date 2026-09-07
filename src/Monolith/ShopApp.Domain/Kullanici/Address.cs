@@ -39,4 +39,27 @@ public class Address : BaseEntity
         PostaKodu = postaKodu;
         AdresBilgisi = adresBilgisi;
     }
+
+    public static Address Olustur(Guid musteriId, int ulke, int sehir, int ilce, string postaKodu, string? adresBilgisi, Guid olusturanKullaniciId) => new()
+    {
+        MusteriId = musteriId,
+        Ulke = ulke,
+        Sehir = sehir,
+        Ilce = ilce,
+        PostaKodu = postaKodu,
+        AdresBilgisi = adresBilgisi,
+        OlusturanKullaniciId = olusturanKullaniciId,
+        OlusturmaTarihi = DateTime.UtcNow
+    };
+
+    public void Guncelle(int ulke, int sehir, int ilce, string postaKodu, string? adresBilgisi, Guid guncelleyenKullaniciId)
+    {
+        Ulke = ulke;
+        Sehir = sehir;
+        Ilce = ilce;
+        PostaKodu = postaKodu;
+        AdresBilgisi = adresBilgisi;
+        GuncelleyenKullaniciId = guncelleyenKullaniciId;
+        MarkAsUpdated();
+    }
 }

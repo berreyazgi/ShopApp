@@ -9,11 +9,14 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using ShopApp.Application.Abstractions;
-using ShopApp.Application.Authentication.Services;
-using ShopApp.Infrastructure.Authentication;
-using ShopApp.Infrastructure.Identity;
-using ShopApp.Infrastructure.Persistence;
+using ShopApp.Application.Common.Interfaces;
+using ShopApp.Application.Features.Authentication.Services;
+using ShopApp.Infrastructure.Identity.Models;
+using ShopApp.Infrastructure.Identity.Seed;
+using ShopApp.Infrastructure.Identity.Services;
+using ShopApp.Infrastructure.Identity.Settings;
+using ShopApp.Infrastructure.Persistence.Context;
+using ShopApp.Infrastructure.Persistence.Repositories;
 
 namespace ShopApp.Infrastructure;
 
@@ -93,9 +96,7 @@ public static class DependencyInjection
         services.AddScoped<ICurrentCustomerContext, CurrentCustomerContext>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ISepetRepository, SepetRepository>();
-        services.AddScoped<ISepetUrunuRepository, SepetUrunuRepository>();
         services.AddScoped<ISiparisRepository, SiparisRepository>();
-        services.AddScoped<ISiparisUrunuRepository, SiparisUrunuRepository>();
 
         return services;
     }

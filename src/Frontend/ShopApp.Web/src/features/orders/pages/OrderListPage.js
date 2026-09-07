@@ -12,14 +12,6 @@ import { createIcon }   from '../../../shared/components/Icon/Icon.js';
 import { navigate }     from '../../../app/router.js';
 import { getAllOrders }  from '../services/orderService.js';
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const BENEFITS = [
-  { icon: 'truck',      title: 'Ücretsiz Kargo',   desc: '500 TL ve üzeri siparişlerde', color: '#0071e3', bg: 'rgba(0,113,227,0.08)' },
-  { icon: 'refresh',    title: 'Kolay İade',        desc: '30 gün içinde ücretsiz',       color: '#34c759', bg: 'rgba(52,199,89,0.08)' },
-  { icon: 'shield',     title: 'Güvenli Ödeme',     desc: '256-bit SSL şifreleme',        color: '#ff9f0a', bg: 'rgba(255,159,10,0.08)' },
-  { icon: 'headphones', title: 'Müşteri Desteği',   desc: '7/24 destek hattı',            color: '#af52de', bg: 'rgba(175,82,222,0.08)' },
-];
 
 // Maps backend "durumIsmi" strings to CSS modifier classes
 const STATUS_CODE_MAP = {
@@ -235,44 +227,6 @@ function createErrorState(message) {
   return err;
 }
 
-function createBenefitsSection() {
-  const section = document.createElement('section');
-  section.className = 'orders-benefits';
-  section.setAttribute('aria-label', 'Alışveriş avantajları');
-
-  const inner = document.createElement('div');
-  inner.className = 'container';
-
-  const grid = document.createElement('ul');
-  grid.className = 'orders-benefits__grid';
-  grid.setAttribute('role', 'list');
-
-  BENEFITS.forEach(({ icon, title, desc, color, bg }) => {
-    const li = document.createElement('li');
-    li.className = 'orders-benefit';
-
-    const iconWrap = document.createElement('div');
-    iconWrap.className = 'orders-benefit__icon-wrap';
-    iconWrap.style.color = color;
-    iconWrap.style.background = bg;
-    iconWrap.appendChild(createIcon(icon, { size: 24 }));
-
-    const textWrap = document.createElement('div');
-    textWrap.className = 'orders-benefit__text';
-    textWrap.innerHTML = `
-      <span class="orders-benefit__title">${title}</span>
-      <span class="orders-benefit__desc">${desc}</span>
-    `;
-
-    li.appendChild(iconWrap);
-    li.appendChild(textWrap);
-    grid.appendChild(li);
-  });
-
-  inner.appendChild(grid);
-  section.appendChild(inner);
-  return section;
-}
 
 // ─── Page Component ───────────────────────────────────────────────────────────
 
@@ -308,7 +262,6 @@ export default function OrderListPage(_options = {}) {
   mainContainer.appendChild(contentArea);
 
   element.appendChild(mainContainer);
-  element.appendChild(createBenefitsSection());
 
   // ── Async data load ────────────────────────────────────────────────────────
   const badge = pageHeader.querySelector('#orders-count-badge');

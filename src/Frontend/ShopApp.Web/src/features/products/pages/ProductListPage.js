@@ -1,21 +1,16 @@
 /**
- * ProductListPage.js — Category Product Listing
- * Shows a featured product + grid of products for "Spor Ayakkabı" category.
+ * ProductListPage.js — Product Listing Page
+ * Shows a featured product + grid of products for the current listing.
+ *
+ * Renders whatever product collection productsService supplies — the page
+ * owns no permanent product catalogue itself.
  *
  * Exported as default so the router can import it dynamically.
  */
 
-import { demoProducts, formatPrice } from '../data/productData.js';
-
-// ─── Helpers ───────────────────────────────────────────────────────────────
-
-function createImage(imageUrl, alt) {
-  const image = document.createElement('img');
-  image.className = 'product-image';
-  image.src = imageUrl;
-  image.alt = alt;
-  return image;
-}
+import { getProducts } from '../services/productsService.js';
+import { createProductListLayout } from '../components/ProductCard.js';
+import { createLoadingState, createEmptyState, createErrorState } from '../../../shared/components/StateView/StateView.js';
 
 function createBreadcrumbs() {
   const nav = document.createElement('nav');
@@ -28,14 +23,12 @@ function createBreadcrumbs() {
         <li class="product-breadcrumbs__sep" aria-hidden="true">/</li>
         <li><a href="/kategoriler" class="product-breadcrumbs__link">Kategoriler</a></li>
         <li class="product-breadcrumbs__sep" aria-hidden="true">/</li>
-        <li class="product-breadcrumbs__current" aria-current="page">Spor Ayakkabı</li>
+        <li class="product-breadcrumbs__current" aria-current="page">Ürünler</li>
       </ol>
     </div>
   `;
   return nav;
 }
-
-// ─── Component ─────────────────────────────────────────────────────────────
 
 /**
  * @param {{ params: object }} _options
@@ -45,93 +38,41 @@ export default function ProductListPage(_options = {}) {
   const element = document.createElement('div');
   element.className = 'product-list-page';
 
-  const featured = demoProducts.find((p) => p.featured) || demoProducts[0];
-  const gridProducts = demoProducts.filter((p) => p.id !== featured.id);
-
-  // ── Breadcrumbs
   element.appendChild(createBreadcrumbs());
 
-  // ── Main Layout
   const main = document.createElement('section');
   main.className = 'container';
-
-  const layout = document.createElement('div');
-  layout.className = 'plp-layout';
-
-  // ── Featured Card (left)
-  const featuredCard = document.createElement('article');
-  featuredCard.className = 'plp-featured';
-
-  const featuredImg = document.createElement('div');
-  featuredImg.className = 'plp-featured__image';
-  featuredImg.appendChild(createImage(featured.imageUrl, featured.name));
-
-  const featuredBody = document.createElement('div');
-  featuredBody.className = 'plp-featured__body';
-
-  const featuredTitle = document.createElement('h2');
-  featuredTitle.className = 'plp-featured__title';
-  featuredTitle.textContent = featured.name;
-
-  const featuredPrice = document.createElement('span');
-  featuredPrice.className = 'plp-featured__price';
-  featuredPrice.textContent = formatPrice(featured.price);
-
-  const featuredBtn = document.createElement('a');
-  featuredBtn.className = 'plp-btn';
-  featuredBtn.href = `/urunler/${featured.id}`;
-  featuredBtn.textContent = 'İncele';
-
-  featuredBody.appendChild(featuredTitle);
-  featuredBody.appendChild(featuredPrice);
-  featuredBody.appendChild(featuredBtn);
-  featuredCard.appendChild(featuredImg);
-  featuredCard.appendChild(featuredBody);
-  layout.appendChild(featuredCard);
-
-  // ── Product Grid (right)
-  const grid = document.createElement('div');
-  grid.className = 'plp-grid';
-
-  gridProducts.forEach((product) => {
-    const card = document.createElement('article');
-    card.className = 'plp-card';
-
-    const imgWrap = document.createElement('div');
-    imgWrap.className = 'plp-card__image';
-    imgWrap.appendChild(createImage(product.imageUrl, product.name));
-
-    const body = document.createElement('div');
-    body.className = 'plp-card__body';
-
-    const title = document.createElement('h3');
-    title.className = 'plp-card__title';
-    title.textContent = product.name;
-
-    const footer = document.createElement('div');
-    footer.className = 'plp-card__footer';
-
-    const price = document.createElement('span');
-    price.className = 'plp-card__price';
-    price.textContent = formatPrice(product.price);
-
-    const btn = document.createElement('a');
-    btn.className = 'plp-btn plp-btn--sm';
-    btn.href = `/urunler/${product.id}`;
-    btn.textContent = 'İncele';
-
-    footer.appendChild(price);
-    footer.appendChild(btn);
-    body.appendChild(title);
-    body.appendChild(footer);
-    card.appendChild(imgWrap);
-    card.appendChild(body);
-    grid.appendChild(card);
-  });
-
-  layout.appendChild(grid);
-  main.appendChild(layout);
+  main.id = 'product-list-content';
+  main.appendChild(createLoadingState({ message: 'Ürünler yükleniyor...' }));
   element.appendChild(main);
+
+  async function load() {
+    try {
+      const products = await getProducts();
+      main.innerHTML = '';
+
+      if (!products.length) {
+        main.appendChild(createEmptyState({
+          icon: 'search',
+          title: 'Ürün bulunamadı',
+          description: 'Bu kategoride şu anda listelenecek ürün yok.',
+        }));
+        return;
+      }
+
+      main.appendChild(createProductListLayout(products));
+    } catch (error) {
+      main.innerHTML = '';
+      main.appendChild(createErrorState({
+        title: 'Ürünler yüklenemedi',
+        message: error?.message ?? 'Bir hata oluştu. Lütfen daha sonra tekrar deneyin.',
+        onRetry: load,
+      }));
+      console.error('[ProductListPage] load failed:', error);
+    }
+  }
+
+  load();
 
   return { element, destroy: () => {} };
 }

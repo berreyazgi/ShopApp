@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-13T07:33:34.108305+00:00",
+  "generated_at": "2026-09-05T15:10:59.654786+00:00",
   "nodes": {
     "shopapp_microservice_database_agent_migrations": {
       "code_fingerprint": "f421638b20d80d26e69bc8f48e9e7e4d5a8b21b14805ac3f74f82a7c1233d205",
@@ -12,29 +12,156 @@
           "q": "Where are Entity Framework Core migrations, DbContext, startup database configuration, and connection strings located?"
         }
       ],
-      "score": 0.999644179,
+      "score": 0.583268207,
       "source_file": "shopapp_microservice_database_agent.md",
       "status": "tentative",
       "uses": 1
     },
-    "src_monolith_shopapp_infrastructure_persistence_shopappdbcontext_shopapp_infrastructure_persistence_shopappdbcontext": {
-      "code_fingerprint": "110aef270b839598849b1b1b38f7e473157ba2af4ea4ae041d2b4319347d11ff",
-      "label": "ShopAppDbContext",
-      "last": "2026-08-13T07:11:23.292690+00:00",
+    "src_monolith_shopapp_api_controllers_admincontroller_src_monolith_shopapp_api_controllers_admincontroller": {
+      "code_fingerprint": "3afcacffa884fd06219500e9d12e7e79f1d3e58ec1e71b77846b2cbca316584d",
+      "label": "AdminController",
+      "last": "2026-08-13T07:58:45.353899+00:00",
       "provenance": [
+        {
+          "date": "2026-08-13T07:58:45.353899+00:00",
+          "outcome": "useful",
+          "q": "How are role-specific customer and admin profiles provisioned?"
+        }
+      ],
+      "score": 0.58371167,
+      "source_file": "src/Monolith/ShopApp.Api/Controllers/AdminController.cs",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_monolith_shopapp_domain_kullanici_address_src_monolith_shopapp_domain_kullanici_address": {
+      "code_fingerprint": "9cb7a8dd88c6478b5da8da70de7abb9fda8c4c0cb28601fe2c6439121a81d91f",
+      "label": "Address",
+      "last": "2026-08-13T07:34:53.420754+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-13T07:34:53.420754+00:00",
+          "outcome": "useful",
+          "q": "Scan all identity related entities and Musteri entities"
+        }
+      ],
+      "score": 0.583488195,
+      "source_file": "src/Monolith/ShopApp.Domain/Kullanici/Address.cs",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_monolith_shopapp_domain_kullanici_adminprofile_src_monolith_shopapp_domain_kullanici_adminprofile": {
+      "code_fingerprint": "8f59d5735cfef7a9449a09d5c85b948277816f33ab4f6a7ad3515e9f2cbf4e16",
+      "label": "AdminProfile",
+      "last": "2026-08-13T07:58:45.353899+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-13T07:58:45.353899+00:00",
+          "outcome": "useful",
+          "q": "How are role-specific customer and admin profiles provisioned?"
+        }
+      ],
+      "score": 0.58371167,
+      "source_file": "src/Monolith/ShopApp.Domain/Kullanici/AdminProfile.cs",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_monolith_shopapp_infrastructure_identity_identityservice_shopapp_infrastructure_identity_identityservice": {
+      "code_fingerprint": "7a05dd26857b10ecf9056a5f59f9bacc612943e0db95b01712449b81b4b5eaed",
+      "label": "IdentityService",
+      "last": "2026-08-13T07:58:45.353899+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-13T07:58:45.353899+00:00",
+          "outcome": "useful",
+          "q": "How are role-specific customer and admin profiles provisioned?"
+        },
+        {
+          "date": "2026-08-13T07:34:53.420754+00:00",
+          "outcome": "useful",
+          "q": "Scan all identity related entities and Musteri entities"
+        }
+      ],
+      "score": 1.167199864,
+      "source_file": "src/Monolith/ShopApp.Infrastructure/Identity/IdentityService.cs",
+      "status": "preferred",
+      "uses": 2
+    },
+    "src_monolith_shopapp_infrastructure_identity_kayitlikullanici_shopapp_infrastructure_identity_kayitlikullanici": {
+      "code_fingerprint": "1a8bfa2623cee6fb570dc5ebfd72d4775a39f29331787ca11130ed3fc001c38a",
+      "label": "KayitliKullanici",
+      "last": "2026-08-13T07:58:45.353899+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-13T07:58:45.353899+00:00",
+          "outcome": "useful",
+          "q": "How are role-specific customer and admin profiles provisioned?"
+        },
+        {
+          "date": "2026-08-13T07:34:53.420754+00:00",
+          "outcome": "useful",
+          "q": "Scan all identity related entities and Musteri entities"
+        }
+      ],
+      "score": 1.167199864,
+      "source_file": "src/Monolith/ShopApp.Infrastructure/Identity/KayitliKullanici.cs",
+      "status": "preferred",
+      "uses": 2
+    },
+    "src_monolith_shopapp_infrastructure_persistence_migrations_20260813071003_addmonolithdomainchanges_designer_shopapp_infrastructure_persistence_migrations_addmonolithdomainchanges": {
+      "code_fingerprint": "7e747afb1945f1facc3dac9058a5d1d76779f783dd819b617be873a867f3e70e",
+      "label": "AddMonolithDomainChanges",
+      "last": "2026-08-13T07:34:53.420754+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-13T07:34:53.420754+00:00",
+          "outcome": "useful",
+          "q": "Scan all identity related entities and Musteri entities"
+        }
+      ],
+      "score": 0.583488195,
+      "source_file": "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260813071003_AddMonolithDomainChanges.Designer.cs",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_monolith_shopapp_infrastructure_persistence_migrations_20260813075654_addrolespecificprofiles_designer_shopapp_infrastructure_persistence_migrations_addrolespecificprofiles": {
+      "code_fingerprint": "409cb4a142a01c1864fcbeb719f24e2adc95a10fc1bea7a039a8d24f9a3173cb",
+      "label": "AddRoleSpecificProfiles",
+      "last": "2026-08-13T07:58:45.353899+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-13T07:58:45.353899+00:00",
+          "outcome": "useful",
+          "q": "How are role-specific customer and admin profiles provisioned?"
+        }
+      ],
+      "score": 0.58371167,
+      "source_file": "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260813075654_AddRoleSpecificProfiles.Designer.cs",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_monolith_shopapp_infrastructure_persistence_shopappdbcontext_shopapp_infrastructure_persistence_shopappdbcontext": {
+      "code_fingerprint": "afbb78ecca382d51ebf0737e76f7548bdefad9e3c3c2a2ef90eb9f69b985e942",
+      "label": "ShopAppDbContext",
+      "last": "2026-08-13T07:34:53.420754+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-13T07:34:53.420754+00:00",
+          "outcome": "useful",
+          "q": "Scan all identity related entities and Musteri entities"
+        },
         {
           "date": "2026-08-13T07:11:23.292690+00:00",
           "outcome": "useful",
           "q": "Where are Entity Framework Core migrations, DbContext, startup database configuration, and connection strings located?"
         }
       ],
-      "score": 0.999644179,
+      "score": 1.166756402,
       "source_file": "src/Monolith/ShopApp.Infrastructure/Persistence/ShopAppDbContext.cs",
-      "status": "tentative",
-      "uses": 1
+      "status": "preferred",
+      "uses": 2
     },
     "src_monolith_shopapp_infrastructure_shopapp_infrastructure": {
-      "code_fingerprint": "1797aa8792094668d035af549d9303cf3ef79ac29f8e0ab804d22a8e72835dab",
+      "code_fingerprint": "e358203cba1344bcc84d98d3d983cac6bd90c9b8b1f867e1b335ea417b42bae0",
       "label": "ShopApp.Infrastructure.csproj",
       "last": "2026-08-13T07:11:23.292690+00:00",
       "provenance": [
@@ -44,7 +171,7 @@
           "q": "Where are Entity Framework Core migrations, DbContext, startup database configuration, and connection strings located?"
         }
       ],
-      "score": 0.999644179,
+      "score": 0.583268207,
       "source_file": "src/Monolith/ShopApp.Infrastructure/ShopApp.Infrastructure.csproj",
       "status": "tentative",
       "uses": 1

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using ShopApp.Infrastructure.Persistence;
+using ShopApp.Infrastructure.Persistence.Context;
 
 #nullable disable
 
@@ -152,7 +152,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.ToTable("UserTokens", "identity");
                 });
 
-            modelBuilder.Entity("ShopApp.Infrastructure.Identity.KayitliKullanici", b =>
+            modelBuilder.Entity("ShopApp.Infrastructure.Identity.Models.KayitliKullanici", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -470,7 +470,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.ToTable("SepetUrunleri", "sales");
                 });
 
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.SiparisDurumLookup", b =>
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparis.Entities.SiparisDurumLookup", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -488,7 +488,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.ToTable("SiparisDurum", "sales");
                 });
 
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.SiparisEntity", b =>
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparis.Entities.SiparisEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -540,7 +540,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.ToTable("Siparisler", "sales");
                 });
 
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.SiparisUrunleri", b =>
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparis.Entities.SiparisUrunleri", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -609,7 +609,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("ShopApp.Infrastructure.Identity.KayitliKullanici", null)
+                    b.HasOne("ShopApp.Infrastructure.Identity.Models.KayitliKullanici", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -618,7 +618,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("ShopApp.Infrastructure.Identity.KayitliKullanici", null)
+                    b.HasOne("ShopApp.Infrastructure.Identity.Models.KayitliKullanici", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -633,7 +633,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ShopApp.Infrastructure.Identity.KayitliKullanici", null)
+                    b.HasOne("ShopApp.Infrastructure.Identity.Models.KayitliKullanici", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -642,7 +642,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("ShopApp.Infrastructure.Identity.KayitliKullanici", null)
+                    b.HasOne("ShopApp.Infrastructure.Identity.Models.KayitliKullanici", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -662,7 +662,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Kullanici.AdminProfile", b =>
                 {
-                    b.HasOne("ShopApp.Infrastructure.Identity.KayitliKullanici", null)
+                    b.HasOne("ShopApp.Infrastructure.Identity.Models.KayitliKullanici", null)
                         .WithOne()
                         .HasForeignKey("src.Monolith.ShopApp.Domain.Kullanici.AdminProfile", "KullaniciId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -671,7 +671,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Kullanici.Musteri", b =>
                 {
-                    b.HasOne("ShopApp.Infrastructure.Identity.KayitliKullanici", null)
+                    b.HasOne("ShopApp.Infrastructure.Identity.Models.KayitliKullanici", null)
                         .WithOne()
                         .HasForeignKey("src.Monolith.ShopApp.Domain.Kullanici.Musteri", "KullaniciId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -700,9 +700,9 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Navigation("SepetEntity");
                 });
 
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.SiparisEntity", b =>
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparis.Entities.SiparisEntity", b =>
                 {
-                    b.HasOne("src.Monolith.ShopApp.Domain.Siparisler.SiparisDurumLookup", "Durum")
+                    b.HasOne("src.Monolith.ShopApp.Domain.Siparis.Entities.SiparisDurumLookup", "Durum")
                         .WithMany()
                         .HasForeignKey("DurumId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -711,9 +711,9 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Navigation("Durum");
                 });
 
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.SiparisUrunleri", b =>
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparis.Entities.SiparisUrunleri", b =>
                 {
-                    b.HasOne("src.Monolith.ShopApp.Domain.Siparisler.SiparisEntity", "SiparisEntity")
+                    b.HasOne("src.Monolith.ShopApp.Domain.Siparis.Entities.SiparisEntity", "SiparisEntity")
                         .WithMany("Urunler")
                         .HasForeignKey("SiparisId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -727,7 +727,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Navigation("Urunler");
                 });
 
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparisler.SiparisEntity", b =>
+            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparis.Entities.SiparisEntity", b =>
                 {
                     b.Navigation("Urunler");
                 });

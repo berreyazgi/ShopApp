@@ -1,0 +1,223 @@
+/* ============================================================
+   CategoryMegaMenu.css — Hierarchical Category Mega Menu Styles
+   ============================================================ */
+
+.category-mega-menu {
+  width: 100%;
+  max-width: 820px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 48px -12px rgb(0 0 0 / 14%),
+              0 0 1px 1px rgb(0 0 0 / 4%);
+  padding: var(--space-6) var(--space-8);
+  box-sizing: border-box;
+}
+
+/* ── 3-Column Grid ── */
+.category-mega-menu__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-8);
+  align-items: start;
+}
+
+/* ── Column ── */
+.category-mega-menu__column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  position: relative;
+}
+
+/* Column divider for desktop */
+.category-mega-menu__column:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: var(--space-2);
+  bottom: var(--space-2);
+  right: calc(var(--space-8) * -0.5);
+  width: 1px;
+  background: var(--color-border-light);
+  opacity: 0.7;
+}
+
+/* ── Parent Header ── */
+.category-mega-menu__parent-header {
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1.5px solid var(--color-border-light);
+}
+
+.category-mega-menu__parent-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  text-decoration: none;
+  color: var(--color-primary);
+  font-size: var(--text-base);
+  font-weight: var(--font-bold);
+  letter-spacing: var(--tracking-tight);
+  padding: var(--space-1) var(--space-2);
+  margin-left: calc(var(--space-2) * -1);
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.category-mega-menu__parent-link:hover,
+.category-mega-menu__parent-link:focus-visible {
+  color: var(--color-accent);
+  background: rgb(0 113 227 / 6%);
+}
+
+.category-mega-menu__parent-link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.category-mega-menu__parent-name {
+  flex: 1;
+}
+
+.category-mega-menu__parent-arrow {
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-tertiary);
+  margin-left: var(--space-2);
+  transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+.category-mega-menu__parent-link:hover .category-mega-menu__parent-arrow {
+  color: var(--color-accent);
+  transform: translateX(2px);
+}
+
+/* ── Child Categories List ── */
+.category-mega-menu__child-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.category-mega-menu__child-item {
+  margin: 0;
+  padding: 0;
+}
+
+.category-mega-menu__child-link {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  margin-left: calc(var(--space-2) * -0.5);
+  font-size: var(--text-sm);
+  font-weight: var(--font-normal);
+  color: var(--color-secondary);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: color var(--transition-fast),
+              background var(--transition-fast),
+              transform var(--transition-fast);
+}
+
+.category-mega-menu__child-link:hover {
+  color: var(--color-primary);
+  background: rgb(0 0 0 / 4%);
+  transform: translateX(3px);
+}
+
+.category-mega-menu__child-link:focus-visible {
+  color: var(--color-primary);
+  background: rgb(0 113 227 / 8%);
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+/* ── Column Footer: Tümünü Gör ── */
+.category-mega-menu__footer {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px dashed var(--color-border-light);
+}
+
+.category-mega-menu__view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: var(--color-accent);
+  text-decoration: none;
+  padding: var(--space-1) var(--space-2);
+  margin-left: calc(var(--space-2) * -1);
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.category-mega-menu__view-all:hover {
+  color: var(--color-primary);
+  background: rgb(0 113 227 / 6%);
+}
+
+.category-mega-menu__view-all:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.category-mega-menu__view-all-arrow {
+  display: inline-block;
+  font-size: var(--text-sm);
+  transition: transform var(--transition-fast);
+}
+
+.category-mega-menu__view-all:hover .category-mega-menu__view-all-arrow {
+  transform: translateX(3px);
+}
+
+/* ── Status & Empty Notices ── */
+.category-mega-menu__empty,
+.category-mega-menu__status {
+  padding: var(--space-6);
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--color-secondary);
+}
+
+/* ── Responsive Adaptations ── */
+@media (max-width: 900px) {
+  .category-mega-menu {
+    max-width: 620px;
+    padding: var(--space-5) var(--space-6);
+  }
+
+  .category-mega-menu__grid {
+    gap: var(--space-6);
+  }
+
+  .category-mega-menu__column:not(:last-child)::after {
+    right: calc(var(--space-6) * -0.5);
+  }
+}
+
+@media (max-width: 768px) {
+  .category-mega-menu {
+    max-width: 100%;
+    padding: var(--space-4);
+  }
+
+  .category-mega-menu__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  .category-mega-menu__column:not(:last-child)::after {
+    display: none;
+  }
+
+  .category-mega-menu__column:not(:last-child) {
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+}

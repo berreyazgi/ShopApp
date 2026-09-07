@@ -4,8 +4,12 @@
  * Displays a success banner, order details, delivery/payment info,
  * and an order summary sidebar after a successful checkout.
  *
- * Static demo data is used. When the user later integrates the API,
- * replace the ORDER_DATA constant with real data from the order service.
+ * The display data (order number, items, delivery/payment summary) is
+ * supplied to the page — see orderConfirmationDemoData.js for the temporary
+ * preview fixture used until the real cart/order summary is wired in.
+ *
+ * The order-creation action below (createOrder / addOrderItem) already talks
+ * to the real backend and is left untouched by this refactor.
  *
  * Follows the existing { element, destroy } page lifecycle pattern.
  */
@@ -13,40 +17,7 @@
 import { createIcon }               from '../../../shared/components/Icon/Icon.js';
 import { navigate }                  from '../../../app/router.js';
 import { createOrder, addOrderItem } from '../services/orderService.js';
-
-// ─── Static Display Data ────────────────────────────────────────────────────
-// These values are shown in the confirmation UI.
-// The real order is created via POST /api/siparis when the user clicks the button.
-
-const ORDER_DATA = {
-  orderNumber: '#SA-456789',
-  items: [
-    {
-      id: 'item-1',
-      name: 'Nike Air Zoom Alphafly',
-      size: 'Beden: 42',
-      quantity: 1,
-      price: 1800,
-      image: 'src/assets/images/products/nike-shoes.png',
-    },
-    {
-      id: 'item-2',
-      name: 'Sarı Eşofman Takımı',
-      size: 'Beden: M',
-      quantity: 1,
-      price: 1200,
-      image: 'src/assets/images/products/yellow-tracksuit.png',
-    },
-  ],
-  delivery: {
-    address: 'Atatürk Mah. Cumhuriyet Cad.\nNo: 42, Daire: 5\n34000 İstanbul, Türkiye',
-    payment: 'Visa **** 1234 (Garanti BBVA)',
-    shipping: 'Ücretsiz',
-  },
-  subtotal: 3000,
-  shippingCost: 0,
-  total: 3000,
-};
+import { DEMO_ORDER }                 from '../data/orderConfirmationDemoData.js';
 
 // ─── Test Order Payload ──────────────────────────────────────────────────────
 // TODO: Build these items dynamically from the real cart contents once the
@@ -69,12 +40,6 @@ const TEST_ORDER_ITEMS = [
   },
 ];
 
-const BENEFITS = [
-  { icon: 'truck',      title: 'Ücretsiz Kargo',   desc: '500 TL ve üzeri siparişlerde', color: '#0071e3', bg: 'rgba(0,113,227,0.08)' },
-  { icon: 'refresh',    title: 'Kolay İade',        desc: '30 gün içinde ücretsiz',       color: '#34c759', bg: 'rgba(52,199,89,0.08)' },
-  { icon: 'shield',     title: 'Güvenli Ödeme',     desc: '256-bit SSL şifreleme',        color: '#ff9f0a', bg: 'rgba(255,159,10,0.08)' },
-  { icon: 'headphones', title: 'Müşteri Desteği',   desc: '7/24 destek hattı',            color: '#af52de', bg: 'rgba(175,82,222,0.08)' },
-];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -415,52 +380,15 @@ function createSummaryCard(data, onGoToOrders, onGoHome) {
   return { card, primaryBtn, secondaryBtn };
 }
 
-function createBenefitsSection() {
-  const section = document.createElement('section');
-  section.className = 'oc-benefits';
-  section.setAttribute('aria-label', 'Alışveriş avantajları');
-
-  const inner = document.createElement('div');
-  inner.className = 'container';
-
-  const grid = document.createElement('ul');
-  grid.className = 'oc-benefits__grid';
-  grid.setAttribute('role', 'list');
-
-  BENEFITS.forEach(({ icon, title, desc, color, bg }) => {
-    const li = document.createElement('li');
-    li.className = 'oc-benefit';
-
-    const iconWrap = document.createElement('div');
-    iconWrap.className = 'oc-benefit__icon-wrap';
-    iconWrap.style.color = color;
-    iconWrap.style.background = bg;
-    iconWrap.appendChild(createIcon(icon, { size: 24 }));
-
-    const textWrap = document.createElement('div');
-    textWrap.className = 'oc-benefit__text';
-    textWrap.innerHTML = `
-      <span class="oc-benefit__title">${title}</span>
-      <span class="oc-benefit__desc">${desc}</span>
-    `;
-
-    li.appendChild(iconWrap);
-    li.appendChild(textWrap);
-    grid.appendChild(li);
-  });
-
-  inner.appendChild(grid);
-  section.appendChild(inner);
-  return section;
-}
 
 // ─── Page Component ───────────────────────────────────────────────────────────
 
 /**
- * @param {{ params: object }} _options
+ * @param {{ params: object, order?: object }} options - `order` lets a future
+ *   caller supply the real order summary; falls back to temporary demo data.
  * @returns {{ element: HTMLElement, destroy: () => void }}
  */
-export default function OrderConfirmationPage(_options = {}) {
+export default function OrderConfirmationPage({ order = DEMO_ORDER } = {}) {
   const element = document.createElement('div');
   element.className = 'order-confirmation-page';
 
@@ -475,7 +403,7 @@ export default function OrderConfirmationPage(_options = {}) {
     // Success banner
     const bannerWrap = document.createElement('div');
     bannerWrap.className = 'container';
-    bannerWrap.appendChild(createSuccessBanner(ORDER_DATA.orderNumber));
+    bannerWrap.appendChild(createSuccessBanner(order.orderNumber));
     element.appendChild(bannerWrap);
 
     // Main layout
@@ -488,13 +416,13 @@ export default function OrderConfirmationPage(_options = {}) {
     // ── Left Column ──────────────────────────────────────────────────────────
     const leftCol = document.createElement('div');
     leftCol.className = 'oc-left';
-    leftCol.appendChild(createOrderDetailsCard(ORDER_DATA.items));
-    leftCol.appendChild(createDeliveryCard(ORDER_DATA.delivery));
+    leftCol.appendChild(createOrderDetailsCard(order.items));
+    leftCol.appendChild(createDeliveryCard(order.delivery));
     layout.appendChild(leftCol);
 
     // ── Right Column ─────────────────────────────────────────────────────────
     const { card: summaryCard, primaryBtn, secondaryBtn } = createSummaryCard(
-      ORDER_DATA,
+      order,
       () => navigate('/siparisler'),
       () => navigate('/'),
     );
@@ -510,11 +438,6 @@ export default function OrderConfirmationPage(_options = {}) {
     main.appendChild(layout);
     element.appendChild(main);
 
-    // Benefits footer
-    const benefitsWrap = document.createElement('div');
-    benefitsWrap.className = 'container';
-    benefitsWrap.appendChild(createBenefitsSection());
-    element.appendChild(benefitsWrap);
   }
 
   function destroy() {

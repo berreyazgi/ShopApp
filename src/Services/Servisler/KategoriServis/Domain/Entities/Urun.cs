@@ -10,23 +10,19 @@ public class Urun : BaseEntity
     public Guid KategoriId { get; set; }
 
     [Required]
-    [MaxLength(300)]
     public string UrunIsmi { get; set; } = null!;
-
-    [MaxLength(4000)]
+    
     public string? UrunAciklamasi { get; set; }
 
     [Column(TypeName = "decimal(8, 2)")]    
     public decimal Fiyat { get; set; }
 
     [Required]
-    [MaxLength(200)]
     public string MarkaIsmi { get; set; } = null!;
 
     [Column(TypeName = "decimal(8, 2)")]    
     public decimal FiyatGecmis { get; set; }
-
-    [MaxLength(1000)]
+    
     public string? GorselUrl { get; set; }
 
     public bool AktifMi { get; set; } = true;

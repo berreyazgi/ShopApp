@@ -279,7 +279,7 @@ export default function RegisterPage() {
     formElement:     authForm.element,
     sideTitle:       'ShopApp dünyasına katılın',
     sideDescription: 'Size özel önerileri keşfedin, favorilerinizi kaydedin ve siparişlerinizi kolayca yönetin.',
-    sideImage:       'src/assets/images/auth/register-cover.webp',
+    sideImage:       '/src/assets/images/auth/register-cover.webp',
     footerText:      'Zaten hesabınız var mı? ',
     footerLinkLabel: 'Giriş Yap',
     footerLinkPath:  AUTH_ROUTES.LOGIN,
