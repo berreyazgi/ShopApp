@@ -82,53 +82,6 @@ export const relatedProducts = [
   { name: 'Nike Apparel Ayakkabı', variant: 'Beden: M', price: 1800, imageUrl: '/src/assets/images/products/nike-pegasus-39.webp' },
 ];
 
-export const categories = [
-  {
-    id: 'kadin',
-    name: 'Kadın',
-    slug: 'kadin',
-    href: '/urunler/kadin',
-    imageUrl: '/src/assets/images/categories/gunluk-giyim.webp',
-    count: 580,
-    children: [
-      { id: 'kadin-giyim',    name: 'Giyim',    slug: 'giyim',    href: '/urunler/kadin/giyim',    count: 84 },
-      { id: 'kadin-spor',     name: 'Spor',     slug: 'spor',     href: '/urunler/kadin/spor',     count: 256 },
-      { id: 'kadin-aksesuar', name: 'Aksesuar', slug: 'aksesuar', href: '/urunler/kadin/aksesuar', count: 112 },
-      { id: 'kadin-ayakkabi', name: 'Ayakkabı', slug: 'ayakkabi', href: '/urunler/kadin/ayakkabi', count: 128 },
-    ],
-    get subcategories() { return this.children; },
-  },
-  {
-    id: 'erkek',
-    name: 'Erkek',
-    slug: 'erkek',
-    href: '/urunler/erkek',
-    imageUrl: '/src/assets/images/categories/esofman-forma.webp',
-    count: 482,
-    children: [
-      { id: 'erkek-giyim',    name: 'Giyim',    slug: 'giyim',    href: '/urunler/erkek/giyim',    count: 140 },
-      { id: 'erkek-spor',     name: 'Spor',     slug: 'spor',     href: '/urunler/erkek/spor',     count: 180 },
-      { id: 'erkek-aksesuar', name: 'Aksesuar', slug: 'aksesuar', href: '/urunler/erkek/aksesuar', count: 67 },
-      { id: 'erkek-ayakkabi', name: 'Ayakkabı', slug: 'ayakkabi', href: '/urunler/erkek/ayakkabi', count: 95 },
-    ],
-    get subcategories() { return this.children; },
-  },
-  {
-    id: 'cocuk',
-    name: 'Çocuk',
-    slug: 'cocuk',
-    href: '/urunler/cocuk',
-    imageUrl: '/src/assets/images/categories/spor-ayakkabi.webp',
-    count: 314,
-    children: [
-      { id: 'cocuk-giyim',    name: 'Giyim',    slug: 'giyim',    href: '/urunler/cocuk/giyim',    count: 110 },
-      { id: 'cocuk-spor',     name: 'Spor',     slug: 'spor',     href: '/urunler/cocuk/spor',     count: 90 },
-      { id: 'cocuk-aksesuar', name: 'Aksesuar', slug: 'aksesuar', href: '/urunler/cocuk/aksesuar', count: 60 },
-      { id: 'cocuk-ayakkabi', name: 'Ayakkabı', slug: 'ayakkabi', href: '/urunler/cocuk/ayakkabi', count: 54 },
-    ],
-    get subcategories() { return this.children; },
-  },
-];
 
 export function formatPrice(amount) {
   return amount.toLocaleString('tr-TR') + ' TL';

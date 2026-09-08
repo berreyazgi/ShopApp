@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Application.Common.Interfaces;
 using ShopApp.Application.Features.Sepet.Dtos;
+using src.Monolith.ShopApp.Domain.Sepet.Entities;
 
 namespace ShopApp.Application.Features.Sepet.Queries;
 

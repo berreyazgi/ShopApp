@@ -110,3 +110,45 @@
 ## Temporary Directory Cleanup
 - `tmp/shopapp-auth-patch.7p8f9i` was an obsolete patch workspace accidentally tracked in Git during commit `72327a68`. It has been removed via `git rm -r` and should not be restored.
 
+## Database Reset and Entity Migration (2026-09-08)
+- Local PostgreSQL database `ShopAppDb` was intentionally dropped and recreated. Migration `20260908080022_RebuildAllEntitySchema` is applied; it adds product tables under `Urunler`, moves cart/order tables to `Satis`, and uses the corrected `UrunTur` identifier.
+
+## Dynamic Cart, Order Confirmation, and Category Single-Source-of-Truth Architecture (2026-09-08)
+- **Zero Dummy Data in Cart & Order Confirmation**:
+  - `cartDemoData.js` and `orderConfirmationDemoData.js` have been permanently deleted along with their empty parent `data/` folders.
+  - `CartPage.js`: Strictly uses `(items ?? []).map(...)`. Renders centered full-width empty-cart state ("Sepetiniz boş.") and hides the order summary panel entirely when items are empty. Shipping cost returns `0 TL` instead of fake static amounts when empty.
+  - `OrderConfirmationPage.js`: Removed `DEMO_ORDER` and fake payload `TEST_ORDER_ITEMS`. If accessed directly without an active completed order payload, renders an accessible empty state with "Siparişlerim'e Git" and "Alışverişe Devam Et" navigation buttons.
+- **Dynamic Category Architecture (Option A)**:
+  - `categoryService.js` under `src/features/categories/services/` is the single source of truth for categories across customer and admin views. It starts strictly empty (`[]`) with zero mock categories.
+  - Hardcoded categories array in `productData.js` was removed. `productsService.getCategories()` delegates to `categoryService.getCategories()`.
+  - `AdminCategoriesPage.js` reads from `categoryService` and its `onSave` / `onDelete` handlers persist to `addCategory`, `updateCategory`, and `deleteCategory`.
+  - `AdminProductsPage.js` category filter and product create/edit modals read from `getCategoriesSync()`.
+  - `Header.js` (mega menu & mobile accordion) and `CategoryListPage.js` dynamically fetch from this source of truth and display truthful empty states ("Henüz kategori bulunamadı") without crashing or fabricating mock items.
+- **Rules Permanently Encoded in `FrontendAGENTS.md`**:
+  - Section 7 updated to restrict demo datasets.
+  - Section 8 added: `Dynamic Commerce Data — No Dummy Data` with 12 permanent instructions prohibiting fake cart items, mock orders, demo confirmation payloads, and fake seeded categories.
+  - Section 30 ("Hard Scope Summary") updated with `YOU MAY` / `YOU MAY NOT` guidelines.
+- **Strict Network Boundary**:
+  - No backend code was touched.
+  - No frontend API calls (`fetch`, `axios`, `XMLHttpRequest`, `apiClient`) were added. Pure presentation layer ready for the developer to integrate backend endpoints.
+
+## Generic Product Repository (2026-09-08)
+- IGenericUrunRepository<TEntity> and GenericUrunRepository<TEntity> provide CRUD for Urun, Kategori, UrunGorsel, UrunOzellik, and UrunTur through DbContext.Set<TEntity>(). It deliberately does not eager-load navigation properties; product-specific read shapes belong in dedicated query services or repositories.
+
+## Hierarchical Category Mega Menu Under Kategoriler (2026-09-08)
+- **Top Navbar Integrity**:
+  - `Kategoriler` remains the single primary dropdown navigation item in the top desktop navbar.
+  - Parent categories (`Kadın`, `Erkek`, `Çocuk`, etc.) are never moved directly onto the top navbar; they reside strictly inside the `CategoryMegaMenu` dropdown.
+- **Hierarchy Normalization (`normalizeCategories`)**:
+  - Located in `src/Frontend/ShopApp.Web/src/shared/components/Header/CategoryMegaMenu.js`.
+  - Seamlessly handles flat collections with `parentId` / `ustKategoriId` / `parentCategoryId` (where `parentId == null` is parent, `parentId == parent.id` is child) as well as pre-nested collections (`children` or `subcategories`).
+  - Normalizes Turkish property aliases (`name`/`ad`, `count`/`productCount`/`urunSayisi`).
+  - Dynamically computes parent columns (`--mega-cols` CSS variable) to accommodate any number of parents without hardcoding.
+- **Desktop Hover & Click Interaction**:
+  - Hover opens the mega-menu; mouse leaving the dropdown item triggers a 180ms debounce timer before closing to eliminate accidental closures.
+  - A transparent CSS hit-bridge (`.header-category-dropdown::before`, height `calc(var(--space-2) + 6px)`) bridges the physical gap between `#category-dropdown-trigger` and `.header-category-dropdown`.
+  - Accessible keyboard navigation: `Escape` key closes the dropdown and returns focus to the trigger button; mouseleave focus-shift is suppressed to avoid stealing focus from active inputs.
+  - Closed immediately on outside click, item click, or SPA `popstate` navigation.
+- **Dynamic Mobile Harmony**:
+  - Mobile accordion in `Header.js` consumes the same normalized hierarchy via `loadDropdownCategories()`, rendering each parent with its children and a `Tümünü Gör →` link.
+

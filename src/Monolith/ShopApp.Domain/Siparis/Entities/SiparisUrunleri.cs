@@ -6,6 +6,7 @@ public class SiparisUrunleri : BaseEntity
 {
     public Guid SiparisId { get; private set; }
 
+    public Guid UrunId { get; private set; }
     public Guid UrunTurId { get; private set; }
 
     public string UrunIsmi { get; private set; } = null!;
@@ -27,6 +28,7 @@ public class SiparisUrunleri : BaseEntity
 
     public static SiparisUrunleri Olustur(
         Guid siparisId,
+        Guid urunId,
         Guid urunTurId,
         string urunIsmi,
         string? urunAciklamasi,
@@ -37,6 +39,7 @@ public class SiparisUrunleri : BaseEntity
         Guid olusturanKullaniciId) => new()
     {
         SiparisId = siparisId,
+        UrunId = urunId,
         UrunTurId = urunTurId,
         UrunIsmi = urunIsmi,
         UrunAciklamasi = urunAciklamasi,

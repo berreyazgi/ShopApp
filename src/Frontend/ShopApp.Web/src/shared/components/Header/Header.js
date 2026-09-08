@@ -21,7 +21,8 @@ import { subscribe }   from '../../state/store.js';
 import { navigate }    from '../../../app/router.js';
 import { logout }      from '../../../features/auth/services/authService.js';
 import { getState as getAuthState, subscribe as subscribeAuth } from '../../../features/auth/state/authStore.js';
-import { createCategoryMegaMenu } from './CategoryMegaMenu.js';
+import { createCategoryMegaMenu, normalizeCategories } from './CategoryMegaMenu.js';
+import { subscribeCategories } from '../../../features/categories/services/categoryService.js';
 
 // ─── Navigation Items ──────────────────────────────────────────────────────
 
@@ -31,17 +32,11 @@ const navItems = [
 ];
 
 // ─── Category dropdown data (lazy) ─────────────────────────────────────────
-// Loaded on first open rather than imported eagerly, so Header.js (loaded at
-// boot for every page) doesn't pull in the products feature's demo data
-// up front. Swap the import target here when a real catalog source exists.
 
-let categoryDropdownDataPromise = null;
-function loadDropdownCategories() {
-  if (!categoryDropdownDataPromise) {
-    categoryDropdownDataPromise = import('../../../features/products/services/productsService.js')
-      .then((mod) => mod.getCategories());
-  }
-  return categoryDropdownDataPromise;
+async function loadDropdownCategories() {
+  const mod = await import('../../../features/products/services/productsService.js');
+  const raw = await mod.getCategories();
+  return normalizeCategories(raw);
 }
 
 // ─── Component ─────────────────────────────────────────────────────────────
@@ -208,10 +203,12 @@ export function createHeader() {
 
   let megaMenuInstance = null;
 
-  function setCategoryDropdownOpen(open) {
+  function setCategoryDropdownOpen(open, { returnFocus = false } = {}) {
     const trigger = element.querySelector('#category-dropdown-trigger');
     const panel = element.querySelector('#category-dropdown');
     if (!trigger || !panel) return;
+
+    if (categoryDropdownOpen === open) return;
 
     categoryDropdownOpen = open;
     trigger.setAttribute('aria-expanded', String(open));
@@ -220,7 +217,9 @@ export function createHeader() {
     if (open) {
       populateCategoryDropdown(panel);
     } else {
-      trigger.focus();
+      if (returnFocus || (panel && panel.contains(document.activeElement))) {
+        trigger.focus();
+      }
     }
   }
 
@@ -239,7 +238,7 @@ export function createHeader() {
       panel.innerHTML = '';
       megaMenuInstance = createCategoryMegaMenu(categories, {
         onNavigate: () => setCategoryDropdownOpen(false),
-        onClose: () => setCategoryDropdownOpen(false),
+        onClose: () => setCategoryDropdownOpen(false, { returnFocus: true }),
       });
       panel.appendChild(megaMenuInstance.element);
       cleanupFns.push(() => megaMenuInstance?.destroy());
@@ -254,22 +253,61 @@ export function createHeader() {
     const trigger = element.querySelector('#category-dropdown-trigger');
     const panel = element.querySelector('#category-dropdown');
     const dropdownItem = element.querySelector('.header-nav__item--dropdown');
-    if (!trigger || !panel) return;
+    if (!trigger || !panel || !dropdownItem) return;
 
-    const onTriggerClick = () => setCategoryDropdownOpen(!categoryDropdownOpen);
+    let hoverCloseTimer = null;
+
+    // Hover interaction: open on enter, grace-period close on leave
+    const onMouseEnter = () => {
+      if (hoverCloseTimer) {
+        clearTimeout(hoverCloseTimer);
+        hoverCloseTimer = null;
+      }
+      setCategoryDropdownOpen(true);
+    };
+
+    const onMouseLeave = () => {
+      if (hoverCloseTimer) clearTimeout(hoverCloseTimer);
+      hoverCloseTimer = setTimeout(() => {
+        setCategoryDropdownOpen(false);
+        hoverCloseTimer = null;
+      }, 180);
+    };
+
+    dropdownItem.addEventListener('mouseenter', onMouseEnter);
+    dropdownItem.addEventListener('mouseleave', onMouseLeave);
+    cleanupFns.push(() => {
+      if (hoverCloseTimer) clearTimeout(hoverCloseTimer);
+      dropdownItem.removeEventListener('mouseenter', onMouseEnter);
+      dropdownItem.removeEventListener('mouseleave', onMouseLeave);
+    });
+
+    // Click toggle for touch devices & accessibility
+    const onTriggerClick = (event) => {
+      event.stopPropagation();
+      if (hoverCloseTimer) {
+        clearTimeout(hoverCloseTimer);
+        hoverCloseTimer = null;
+      }
+      setCategoryDropdownOpen(!categoryDropdownOpen);
+    };
     trigger.addEventListener('click', onTriggerClick);
     cleanupFns.push(() => trigger.removeEventListener('click', onTriggerClick));
 
+    // Close on click outside
     const onDocumentClick = (event) => {
       if (!categoryDropdownOpen) return;
-      if (trigger.contains(event.target) || panel.contains(event.target)) return;
+      if (dropdownItem.contains(event.target)) return;
       setCategoryDropdownOpen(false);
     };
     document.addEventListener('click', onDocumentClick);
     cleanupFns.push(() => document.removeEventListener('click', onDocumentClick));
 
+    // Close on Escape key and return focus
     const onKeydown = (event) => {
-      if (event.key === 'Escape' && categoryDropdownOpen) setCategoryDropdownOpen(false);
+      if (event.key === 'Escape' && categoryDropdownOpen) {
+        setCategoryDropdownOpen(false, { returnFocus: true });
+      }
     };
     document.addEventListener('keydown', onKeydown);
     cleanupFns.push(() => document.removeEventListener('keydown', onKeydown));
@@ -281,15 +319,33 @@ export function createHeader() {
         setCategoryDropdownOpen(false);
       }
     };
-    dropdownItem?.addEventListener('focusout', onFocusOut);
-    cleanupFns.push(() => dropdownItem?.removeEventListener('focusout', onFocusOut));
+    dropdownItem.addEventListener('focusout', onFocusOut);
+    cleanupFns.push(() => dropdownItem.removeEventListener('focusout', onFocusOut));
 
-    // Close on SPA navigation triggered from within the dropdown.
+    // Close on navigation triggered from within the dropdown
     const onPanelClick = (event) => {
-      if (event.target.closest('a[href]')) setCategoryDropdownOpen(false);
+      if (event.target.closest('a[href]')) {
+        setCategoryDropdownOpen(false);
+      }
     };
     panel.addEventListener('click', onPanelClick);
     cleanupFns.push(() => panel.removeEventListener('click', onPanelClick));
+
+    // Subscribe to dynamic category single source of truth
+    const unsubscribeCategories = subscribeCategories(() => {
+      panel.dataset.loaded = 'false';
+      if (categoryDropdownOpen) {
+        populateCategoryDropdown(panel);
+      }
+      const mobilePanel = element.querySelector('#mobile-categories-panel');
+      if (mobilePanel) {
+        mobilePanel.dataset.loaded = 'false';
+        if (mobileCategoriesOpen) {
+          populateMobileCategories(mobilePanel);
+        }
+      }
+    });
+    cleanupFns.push(unsubscribeCategories);
   }
 
   // ── Category accordion (mobile) ───────────────────────────────────────────
@@ -435,12 +491,13 @@ export function createHeader() {
     mobileBtn?.addEventListener('click', toggleMobileMenu);
     cleanupFns.push(() => mobileBtn?.removeEventListener('click', toggleMobileMenu));
 
-    // Close mobile menu on SPA navigation
-    const closeMobileOnNav = () => {
+    // Close mobile menu & category dropdown on SPA navigation
+    const closeOnNav = () => {
       if (mobileMenuOpen) toggleMobileMenu();
+      if (categoryDropdownOpen) setCategoryDropdownOpen(false);
     };
-    window.addEventListener('popstate', closeMobileOnNav);
-    cleanupFns.push(() => window.removeEventListener('popstate', closeMobileOnNav));
+    window.addEventListener('popstate', closeOnNav);
+    cleanupFns.push(() => window.removeEventListener('popstate', closeOnNav));
 
     // Search — stub: future API integration point
     const searchInput = element.querySelector('#site-search');

@@ -11,7 +11,7 @@ public sealed class SiparisUrunleriConfiguration : BaseEntityConfiguration<Sipar
     {
         base.Configure(builder);
 
-        builder.ToTable("SiparisUrunleri", "sales");
+        builder.ToTable("SiparisUrunleri", "Satis");
 
         builder.Property(x => x.SiparisId)
             .IsRequired();

@@ -1,9 +1,47 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { categories } from '../src/Frontend/ShopApp.Web/src/features/products/data/productData.js';
 import { normalizeCategories, createCategoryMegaMenu } from '../src/Frontend/ShopApp.Web/src/shared/components/Header/CategoryMegaMenu.js';
 import { createCategoryGrid } from '../src/Frontend/ShopApp.Web/src/features/products/components/CategoryCard.js';
+
+const mockCategories = [
+  {
+    id: 'kadin',
+    name: 'Kadın',
+    slug: 'kadin',
+    href: '/urunler/kadin',
+    children: [
+      { id: 'kadin-giyim', name: 'Giyim', slug: 'giyim', href: '/urunler/kadin/giyim' },
+      { id: 'kadin-spor', name: 'Spor', slug: 'spor', href: '/urunler/kadin/spor' },
+      { id: 'kadin-aksesuar', name: 'Aksesuar', slug: 'aksesuar', href: '/urunler/kadin/aksesuar' },
+      { id: 'kadin-ayakkabi', name: 'Ayakkabı', slug: 'ayakkabi', href: '/urunler/kadin/ayakkabi' },
+    ],
+  },
+  {
+    id: 'erkek',
+    name: 'Erkek',
+    slug: 'erkek',
+    href: '/urunler/erkek',
+    children: [
+      { id: 'erkek-giyim', name: 'Giyim', slug: 'giyim', href: '/urunler/erkek/giyim' },
+      { id: 'erkek-spor', name: 'Spor', slug: 'spor', href: '/urunler/erkek/spor' },
+      { id: 'erkek-aksesuar', name: 'Aksesuar', slug: 'aksesuar', href: '/urunler/erkek/aksesuar' },
+      { id: 'erkek-ayakkabi', name: 'Ayakkabı', slug: 'ayakkabi', href: '/urunler/erkek/ayakkabi' },
+    ],
+  },
+  {
+    id: 'cocuk',
+    name: 'Çocuk',
+    slug: 'cocuk',
+    href: '/urunler/cocuk',
+    children: [
+      { id: 'cocuk-giyim', name: 'Giyim', slug: 'giyim', href: '/urunler/cocuk/giyim' },
+      { id: 'cocuk-spor', name: 'Spor', slug: 'spor', href: '/urunler/cocuk/spor' },
+      { id: 'cocuk-aksesuar', name: 'Aksesuar', slug: 'aksesuar', href: '/urunler/cocuk/aksesuar' },
+      { id: 'cocuk-ayakkabi', name: 'Ayakkabı', slug: 'ayakkabi', href: '/urunler/cocuk/ayakkabi' },
+    ],
+  },
+];
 
 // Minimal DOM mock for Node.js environment
 function setupMockDom() {
@@ -116,14 +154,14 @@ function setupMockDom() {
 }
 
 test('Category fixture data matches expected hierarchy', () => {
-  assert.equal(categories.length, 3, 'Should have exactly 3 parent categories');
+  assert.equal(mockCategories.length, 3, 'Should have exactly 3 parent categories');
 
-  const parentNames = categories.map((c) => c.name);
+  const parentNames = mockCategories.map((c) => c.name);
   assert.deepEqual(parentNames, ['Kadın', 'Erkek', 'Çocuk'], 'Parents should be Kadın, Erkek, Çocuk');
 
   const expectedChildren = ['Giyim', 'Spor', 'Aksesuar', 'Ayakkabı'];
 
-  for (const parent of categories) {
+  for (const parent of mockCategories) {
     const childNames = (parent.children || []).map((c) => c.name);
     assert.deepEqual(
       childNames,
@@ -131,8 +169,39 @@ test('Category fixture data matches expected hierarchy', () => {
       `Parent "${parent.name}" should contain Giyim, Spor, Aksesuar, Ayakkabı in order`
     );
     assert.ok(parent.href, `Parent "${parent.name}" should have href`);
-    assert.ok(Array.isArray(parent.subcategories), 'Should provide backwards-compatible subcategories alias');
   }
+});
+
+test('normalizeCategories correctly handles flat lists with parentId / ustKategoriId', () => {
+  const flatCollection = [
+    { id: 10, name: 'Kadın', parentId: null },
+    { id: 20, name: 'Erkek', parentId: null },
+    { id: 30, name: 'Çocuk', parentId: null },
+    { id: 101, name: 'Elbise', parentId: 10 },
+    { id: 102, name: 'Çanta', parentId: 10 },
+    { id: 201, name: 'Gömlek', ustKategoriId: 20 },
+    { id: 202, name: 'Pantolon', ustKategoriId: 20 },
+    { id: 301, name: 'Kız Çocuk', parentId: 30 },
+  ];
+
+  const normalized = normalizeCategories(flatCollection);
+  assert.equal(normalized.length, 3, 'Should produce 3 root categories');
+
+  const kadin = normalized.find((c) => c.name === 'Kadın');
+  assert.ok(kadin);
+  assert.equal(kadin.children.length, 2);
+  assert.deepEqual(kadin.children.map((c) => c.name), ['Elbise', 'Çanta']);
+  assert.equal(kadin.children[0].href, '/urunler/kadin/elbise');
+
+  const erkek = normalized.find((c) => c.name === 'Erkek');
+  assert.ok(erkek);
+  assert.equal(erkek.children.length, 2);
+  assert.deepEqual(erkek.children.map((c) => c.name), ['Gömlek', 'Pantolon']);
+
+  const cocuk = normalized.find((c) => c.name === 'Çocuk');
+  assert.ok(cocuk);
+  assert.equal(cocuk.children.length, 1);
+  assert.deepEqual(cocuk.children.map((c) => c.name), ['Kız Çocuk']);
 });
 
 test('normalizeCategories correctly handles both children and subcategories', () => {
@@ -174,7 +243,7 @@ test('normalizeCategories correctly handles both children and subcategories', ()
 test('createCategoryMegaMenu builds proper presentation DOM', () => {
   setupMockDom();
 
-  const megaMenu = createCategoryMegaMenu(categories);
+  const megaMenu = createCategoryMegaMenu(mockCategories);
   assert.ok(megaMenu.element);
   assert.equal(megaMenu.element.className, 'category-mega-menu');
   assert.equal(megaMenu.element.getAttribute('role'), 'region');
@@ -215,11 +284,21 @@ test('createCategoryMegaMenu builds proper presentation DOM', () => {
   assert.equal(megaMenu.element.children.length, 0);
 });
 
+test('createCategoryMegaMenu renders empty state when categories array is empty', () => {
+  setupMockDom();
+
+  const megaMenu = createCategoryMegaMenu([]);
+  const emptyNotice = megaMenu.element.querySelector('.category-mega-menu__empty');
+  assert.ok(emptyNotice, 'Should display empty state when categories are empty');
+  assert.match(emptyNotice.textContent, /Henüz kategori bulunamadı/);
+  megaMenu.destroy();
+});
+
 test('createCategoryMegaMenu navigates via callback', () => {
   setupMockDom();
 
   let navigatedHref = null;
-  const megaMenu = createCategoryMegaMenu(categories, {
+  const megaMenu = createCategoryMegaMenu(mockCategories, {
     onNavigate: (href) => {
       navigatedHref = href;
     },
@@ -241,7 +320,7 @@ test('createCategoryMegaMenu navigates via callback', () => {
 test('Non-regression: createCategoryGrid still renders with updated categories', () => {
   setupMockDom();
 
-  const grid = createCategoryGrid(categories);
+  const grid = createCategoryGrid(mockCategories);
   assert.ok(grid);
   assert.equal(grid.className, 'cat-grid');
   assert.equal(grid.children.length, 3);

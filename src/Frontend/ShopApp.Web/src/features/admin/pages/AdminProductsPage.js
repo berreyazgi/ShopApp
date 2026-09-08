@@ -37,6 +37,7 @@ import { createAdminProductFormModal } from '../components/AdminProductFormModal
 import { createAdminProductDetailModal } from '../components/AdminProductDetailModal.js';
 import { createLoadingState, createEmptyState, createErrorState } from '../../../shared/components/StateView/StateView.js';
 import { createIcon } from '../../../shared/components/Icon/Icon.js';
+import { getCategoriesSync } from '../../categories/services/categoryService.js';
 
 /**
  * @param {{
@@ -57,7 +58,7 @@ import { createIcon } from '../../../shared/components/Icon/Icon.js';
 export default function AdminProductsPage(props = {}) {
   // Dynamic business data inputs (strictly defaults to empty array / null)
   let products = props.products ? [...props.products] : [];
-  let categories = props.categories ? [...props.categories] : [];
+  let categories = props.categories ? [...props.categories] : getCategoriesSync();
   const pageSize = props.pageSize ?? 12;
   const isLoading = !!props.loading;
   const hasError = !!props.error;

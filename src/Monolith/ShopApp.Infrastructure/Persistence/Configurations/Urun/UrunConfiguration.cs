@@ -8,7 +8,7 @@ public class UrunConfiguration : IEntityTypeConfiguration<UrunEntity>
 {
     public void Configure(EntityTypeBuilder<UrunEntity> b)
     {
-        b.ToTable("Urunler", "katalog",
+        b.ToTable("Urun", "Urunler",
             t => t.HasCheckConstraint("CK_Urunler_Fiyat", "\"Fiyat\" >= 0"));
 
         b.HasIndex(x => x.KategoriId);

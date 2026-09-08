@@ -2,44 +2,16 @@
  * OrderConfirmationPage.js — Order Confirmation Page (Sipariş Onayı)
  *
  * Displays a success banner, order details, delivery/payment info,
- * and an order summary sidebar after a successful checkout.
+ * and an order summary sidebar when an order is supplied.
  *
- * The display data (order number, items, delivery/payment summary) is
- * supplied to the page — see orderConfirmationDemoData.js for the temporary
- * preview fixture used until the real cart/order summary is wired in.
- *
- * The order-creation action below (createOrder / addOrderItem) already talks
- * to the real backend and is left untouched by this refactor.
+ * Zero demo orders, zero fake data fixtures.
+ * When no active order data exists, renders a clean, genuine empty state.
  *
  * Follows the existing { element, destroy } page lifecycle pattern.
  */
 
-import { createIcon }               from '../../../shared/components/Icon/Icon.js';
-import { navigate }                  from '../../../app/router.js';
-import { createOrder, addOrderItem } from '../services/orderService.js';
-import { DEMO_ORDER }                 from '../data/orderConfirmationDemoData.js';
-
-// ─── Test Order Payload ──────────────────────────────────────────────────────
-// TODO: Build these items dynamically from the real cart contents once the
-//       product catalog microservice is available. MusteriId is never sent —
-//       the backend derives the owner from the authenticated user (JWT).
-const TEST_ORDER_ITEMS = [
-  {
-    urunTurId:      '00000000-0000-0000-0000-000000000101',
-    urunIsmi:       'Nike Air Zoom Alphafly',
-    urunMiktar:     1,
-    urunBirimFiyat: 1800,
-    indirimOrani:   0,
-  },
-  {
-    urunTurId:      '00000000-0000-0000-0000-000000000102',
-    urunIsmi:       'Sarı Eşofman Takımı',
-    urunMiktar:     1,
-    urunBirimFiyat: 1200,
-    indirimOrani:   0,
-  },
-];
-
+import { createIcon } from '../../../shared/components/Icon/Icon.js';
+import { navigate }   from '../../../app/router.js';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -88,13 +60,41 @@ function createBreadcrumbs() {
         <li class="oc-breadcrumbs__separator" aria-hidden="true">/</li>
         <li><a href="/sepet" class="oc-breadcrumbs__link">Alışveriş Sepetim</a></li>
         <li class="oc-breadcrumbs__separator" aria-hidden="true">/</li>
-        <li><span class="oc-breadcrumbs__link" style="opacity:0.6;cursor:default">Ödeme</span></li>
-        <li class="oc-breadcrumbs__separator" aria-hidden="true">/</li>
         <li class="oc-breadcrumbs__current" aria-current="page">Sipariş Onayı</li>
       </ol>
     </div>
   `;
   return nav;
+}
+
+function createEmptyState() {
+  const empty = document.createElement('div');
+  empty.className = 'orders-empty';
+  empty.style.padding = 'var(--space-16) var(--space-6)';
+
+  const iconWrap = document.createElement('div');
+  iconWrap.className = 'orders-empty__icon';
+  iconWrap.appendChild(createIcon('cart', { size: 48 }));
+  empty.appendChild(iconWrap);
+
+  const title = document.createElement('h2');
+  title.className = 'orders-empty__title';
+  title.textContent = 'Görüntülenecek sipariş onayı bulunamadı';
+  empty.appendChild(title);
+
+  const desc = document.createElement('p');
+  desc.className = 'orders-empty__desc';
+  desc.textContent = 'Henüz onaylanmış bir sipariş bulunmuyor veya sipariş detaylarına ulaşılamadı.';
+  empty.appendChild(desc);
+
+  const cta = document.createElement('button');
+  cta.type = 'button';
+  cta.className = 'order-btn order-btn--primary orders-empty__cta';
+  cta.textContent = "Siparişlerime Git";
+  cta.addEventListener('click', () => navigate('/siparisler'));
+  empty.appendChild(cta);
+
+  return empty;
 }
 
 function createSuccessBanner(orderNumber) {
@@ -121,7 +121,7 @@ function createSuccessBanner(orderNumber) {
   return banner;
 }
 
-function createOrderDetailsCard(items) {
+function createOrderDetailsCard(items = []) {
   const card = document.createElement('div');
   card.className = 'oc-card';
 
@@ -137,6 +137,16 @@ function createOrderDetailsCard(items) {
   list.className = 'oc-product-list';
   list.setAttribute('role', 'list');
 
+  if (!items || items.length === 0) {
+    const emptyMsg = document.createElement('li');
+    emptyMsg.style.padding = 'var(--space-4)';
+    emptyMsg.style.color = 'var(--color-secondary)';
+    emptyMsg.textContent = 'Sipariş edilen ürün detayı bulunamadı.';
+    list.appendChild(emptyMsg);
+    card.appendChild(list);
+    return card;
+  }
+
   items.forEach((item) => {
     const li = document.createElement('li');
     li.className = 'oc-product-item';
@@ -144,38 +154,48 @@ function createOrderDetailsCard(items) {
     // Image
     const imgWrap = document.createElement('div');
     imgWrap.className = 'oc-product-image-wrap';
-    const img = document.createElement('img');
-    img.className = 'oc-product-image';
-    img.src = item.image;
-    img.alt = item.name;
-    img.loading = 'lazy';
-    imgWrap.appendChild(img);
+    const imgSrc = item.image || item.imageUrl || item.gorselUrl;
+    if (imgSrc) {
+      const img = document.createElement('img');
+      img.className = 'oc-product-image';
+      img.src = imgSrc;
+      img.alt = item.name || item.urunIsmi || '';
+      img.loading = 'lazy';
+      imgWrap.appendChild(img);
+    } else {
+      imgWrap.appendChild(createIcon('box', { size: 28 }));
+    }
     li.appendChild(imgWrap);
 
-    // Info (name + size)
+    // Info (name + variant / size)
     const info = document.createElement('div');
     info.className = 'oc-product-info';
     const name = document.createElement('span');
     name.className = 'oc-product-name';
-    name.textContent = item.name;
-    const size = document.createElement('span');
-    size.className = 'oc-product-size';
-    size.textContent = item.size;
+    name.textContent = item.name || item.urunIsmi || 'Ürün';
+    const variantText = item.size || item.variant || item.urunAciklamasi || '';
     info.appendChild(name);
-    info.appendChild(size);
+    if (variantText) {
+      const variant = document.createElement('span');
+      variant.className = 'oc-product-size';
+      variant.textContent = variantText;
+      info.appendChild(variant);
+    }
     li.appendChild(info);
 
-    // Quantity (static plain number — no +/- buttons)
+    // Quantity
+    const qtyVal = item.quantity ?? item.urunMiktar ?? 1;
     const qty = document.createElement('span');
     qty.className = 'oc-product-qty';
-    qty.textContent = String(item.quantity);
-    qty.setAttribute('aria-label', `Adet: ${item.quantity}`);
+    qty.textContent = String(qtyVal);
+    qty.setAttribute('aria-label', `Adet: ${qtyVal}`);
     li.appendChild(qty);
 
     // Price
+    const priceVal = item.price ?? item.urunBirimFiyat ?? item.toplamFiyat ?? 0;
     const price = document.createElement('span');
     price.className = 'oc-product-price';
-    price.textContent = formatPrice(item.price);
+    price.textContent = formatPrice(priceVal);
     li.appendChild(price);
 
     list.appendChild(li);
@@ -185,7 +205,7 @@ function createOrderDetailsCard(items) {
   return card;
 }
 
-function createDeliveryCard(delivery) {
+function createDeliveryCard(delivery = {}) {
   const card = document.createElement('div');
   card.className = 'oc-card';
 
@@ -211,7 +231,7 @@ function createDeliveryCard(delivery) {
   label1.textContent = 'Teslimat Adresi:';
   const val1 = document.createElement('span');
   val1.className = 'oc-delivery-col__value';
-  val1.textContent = delivery.address;
+  val1.textContent = delivery?.address || delivery?.adres || '—';
   col1.appendChild(icon1);
   col1.appendChild(label1);
   col1.appendChild(val1);
@@ -227,7 +247,7 @@ function createDeliveryCard(delivery) {
   label2.textContent = 'Ödeme Yöntemi:';
   const val2 = document.createElement('span');
   val2.className = 'oc-delivery-col__value';
-  val2.textContent = delivery.payment;
+  val2.textContent = delivery?.payment || delivery?.odeme || '—';
   col2.appendChild(icon2);
   col2.appendChild(label2);
   col2.appendChild(val2);
@@ -243,8 +263,9 @@ function createDeliveryCard(delivery) {
   label3.textContent = 'Kargo';
   const freeWrap = document.createElement('span');
   freeWrap.className = 'oc-delivery-col__free';
+  const shippingText = delivery?.shipping || delivery?.kargo || 'Ücretsiz';
   freeWrap.appendChild(createIcon('check', { size: 14 }));
-  freeWrap.appendChild(document.createTextNode(' ' + delivery.shipping));
+  freeWrap.appendChild(document.createTextNode(' ' + shippingText));
   col3.appendChild(icon3);
   col3.appendChild(label3);
   col3.appendChild(freeWrap);
@@ -256,7 +277,7 @@ function createDeliveryCard(delivery) {
   return card;
 }
 
-function createSummaryCard(data, onGoToOrders, onGoHome) {
+function createSummaryCard(data = {}, onGoToOrders, onGoHome) {
   const card = document.createElement('div');
   card.className = 'oc-card oc-summary';
 
@@ -273,13 +294,17 @@ function createSummaryCard(data, onGoToOrders, onGoHome) {
   const body = document.createElement('div');
   body.className = 'oc-summary__body';
 
+  const subtotal = data.subtotal ?? data.araToplam ?? 0;
+  const shippingCost = data.shippingCost ?? data.kargoFiyat ?? 0;
+  const total = data.total ?? data.toplamFiyat ?? (subtotal + shippingCost);
+
   // Row 1: Subtotal
   const row1 = document.createElement('div');
   row1.className = 'oc-summary__row';
   row1.innerHTML = `<span class="oc-summary__label">Ara Toplam</span>`;
   const val1 = document.createElement('span');
   val1.className = 'oc-summary__value';
-  val1.textContent = formatPrice(data.subtotal);
+  val1.textContent = formatPrice(subtotal);
   row1.appendChild(val1);
   body.appendChild(row1);
 
@@ -288,8 +313,13 @@ function createSummaryCard(data, onGoToOrders, onGoHome) {
   row2.className = 'oc-summary__row';
   row2.innerHTML = `<span class="oc-summary__label">Kargo</span>`;
   const val2 = document.createElement('span');
-  val2.className = 'oc-summary__value--free';
-  val2.textContent = 'Ücretsiz';
+  if (shippingCost === 0) {
+    val2.className = 'oc-summary__value--free';
+    val2.textContent = 'Ücretsiz';
+  } else {
+    val2.className = 'oc-summary__value';
+    val2.textContent = formatPrice(shippingCost);
+  }
   row2.appendChild(val2);
   body.appendChild(row2);
 
@@ -309,7 +339,7 @@ function createSummaryCard(data, onGoToOrders, onGoHome) {
   const totalVal = document.createElement('span');
   totalVal.className = 'oc-summary__total-value';
   totalVal.id = 'oc-total-price';
-  totalVal.textContent = formatPrice(data.total);
+  totalVal.textContent = formatPrice(total);
   totalRow.appendChild(totalLabel);
   totalRow.appendChild(totalVal);
   card.appendChild(totalRow);
@@ -321,57 +351,23 @@ function createSummaryCard(data, onGoToOrders, onGoHome) {
     "Ödeme işlemi başarıyla tamamlanmıştır. Sipariş durumunu 'Siparişlerim' sayfasından takip edebilirsiniz.";
   card.appendChild(info);
 
-  // Error message area (shown on POST failure)
-  const errorMsg = document.createElement('p');
-  errorMsg.className = 'oc-summary__info';
-  errorMsg.style.cssText = 'color:var(--color-error);display:none;margin-top:0';
-  card.appendChild(errorMsg);
-
   // Action buttons
   const actions = document.createElement('div');
   actions.className = 'oc-actions';
 
   const primaryBtn = document.createElement('button');
   primaryBtn.type = 'button';
-  primaryBtn.id = 'btn-complete-order';
+  primaryBtn.id = 'btn-go-to-orders';
   primaryBtn.className = 'oc-btn oc-btn--primary';
-  primaryBtn.textContent = 'Siparişi Tamamla';
-
-  // ── POST order on click ─────────────────────────────────────────────────
-  primaryBtn.addEventListener('click', async () => {
-    primaryBtn.disabled = true;
-    primaryBtn.textContent = 'İşleniyor...';
-    errorMsg.style.display = 'none';
-
-    try {
-      // Step 1: Create the order header (no payload — the backend derives the
-      // owner from the authenticated user and generates the order number)
-      const { id: siparisId } = await createOrder();
-
-      // Step 2: Add each item to the created order
-      await Promise.all(
-        TEST_ORDER_ITEMS.map((item) => addOrderItem(siparisId, item)),
-      );
-
-      // Step 3: Navigate to orders list on success
-      navigate('/siparisler');
-
-    } catch (err) {
-      const text = err?.message ?? 'Sipariş oluşturulurken bir hata oluştu.';
-      errorMsg.textContent = text;
-      errorMsg.style.display = 'block';
-      primaryBtn.disabled = false;
-      primaryBtn.textContent = 'Tekrar Dene';
-      console.error('[OrderConfirmationPage] createOrder failed:', err);
-    }
-  });
+  primaryBtn.textContent = "Siparişlerim'e Git";
+  primaryBtn.addEventListener('click', onGoToOrders);
 
   const secondaryBtn = document.createElement('button');
   secondaryBtn.type = 'button';
-  secondaryBtn.id = 'btn-go-to-orders';
+  secondaryBtn.id = 'btn-go-home';
   secondaryBtn.className = 'oc-btn oc-btn--secondary';
-  secondaryBtn.textContent = "Siparişlerim'e Git";
-  secondaryBtn.addEventListener('click', onGoToOrders);
+  secondaryBtn.textContent = 'Alışverişe Devam Et';
+  secondaryBtn.addEventListener('click', onGoHome);
 
   actions.appendChild(primaryBtn);
   actions.appendChild(secondaryBtn);
@@ -384,11 +380,10 @@ function createSummaryCard(data, onGoToOrders, onGoHome) {
 // ─── Page Component ───────────────────────────────────────────────────────────
 
 /**
- * @param {{ params: object, order?: object }} options - `order` lets a future
- *   caller supply the real order summary; falls back to temporary demo data.
+ * @param {{ params?: object, order?: object }} [options] - `order` accepts dynamic order data.
  * @returns {{ element: HTMLElement, destroy: () => void }}
  */
-export default function OrderConfirmationPage({ order = DEMO_ORDER } = {}) {
+export default function OrderConfirmationPage({ order = null } = {}) {
   const element = document.createElement('div');
   element.className = 'order-confirmation-page';
 
@@ -400,10 +395,20 @@ export default function OrderConfirmationPage({ order = DEMO_ORDER } = {}) {
     // Breadcrumbs
     element.appendChild(createBreadcrumbs());
 
+    // Check if valid order data exists
+    if (!order || (!order.orderNumber && !order.siparisNumarasi && !order.id && (!order.items || order.items.length === 0))) {
+      const emptyWrap = document.createElement('div');
+      emptyWrap.className = 'container';
+      emptyWrap.appendChild(createEmptyState());
+      element.appendChild(emptyWrap);
+      return;
+    }
+
     // Success banner
     const bannerWrap = document.createElement('div');
     bannerWrap.className = 'container';
-    bannerWrap.appendChild(createSuccessBanner(order.orderNumber));
+    const orderNo = order.orderNumber || order.siparisNumarasi || `#${order.id || ''}`;
+    bannerWrap.appendChild(createSuccessBanner(orderNo));
     element.appendChild(bannerWrap);
 
     // Main layout
@@ -413,21 +418,20 @@ export default function OrderConfirmationPage({ order = DEMO_ORDER } = {}) {
     const layout = document.createElement('div');
     layout.className = 'oc-layout';
 
-    // ── Left Column ──────────────────────────────────────────────────────────
+    // ── Left Column ──
     const leftCol = document.createElement('div');
     leftCol.className = 'oc-left';
-    leftCol.appendChild(createOrderDetailsCard(order.items));
-    leftCol.appendChild(createDeliveryCard(order.delivery));
+    leftCol.appendChild(createOrderDetailsCard(order.items || order.urunler || []));
+    leftCol.appendChild(createDeliveryCard(order.delivery || {}));
     layout.appendChild(leftCol);
 
-    // ── Right Column ─────────────────────────────────────────────────────────
+    // ── Right Column ──
     const { card: summaryCard, primaryBtn, secondaryBtn } = createSummaryCard(
       order,
       () => navigate('/siparisler'),
       () => navigate('/'),
     );
 
-    // Track event listeners for cleanup
     cleanupFns.push(() => {
       primaryBtn.replaceWith(primaryBtn.cloneNode(true));
       secondaryBtn.replaceWith(secondaryBtn.cloneNode(true));
@@ -437,7 +441,6 @@ export default function OrderConfirmationPage({ order = DEMO_ORDER } = {}) {
 
     main.appendChild(layout);
     element.appendChild(main);
-
   }
 
   function destroy() {

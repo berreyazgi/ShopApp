@@ -18,6 +18,7 @@ public sealed class CreateSiparisUrunuCommandHandler(
 
         var urun = siparis.UrunEkle(
             request.UrunTurId,
+            request.UrunId,
             request.UrunIsmi,
             request.UrunAciklamasi,
             request.StokTakipNumarasi,

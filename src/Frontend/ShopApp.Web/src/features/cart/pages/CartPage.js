@@ -1,9 +1,9 @@
 /**
  * CartPage.js — Shopping Cart Page
  *
- * Renders whatever cart items are supplied to it. No permanent cart data is
- * owned by this page — see cartDemoData.js for the temporary preview fixture
- * used until real cart items are wired in.
+ * Renders whatever cart items are supplied to it dynamically.
+ * Zero demo products, zero fake data fixtures.
+ * Displays a genuine empty-cart state when no items exist.
  *
  * Full-featured cart page with:
  *  - Breadcrumb navigation
@@ -18,7 +18,6 @@
 
 import { createIcon } from '../../../shared/components/Icon/Icon.js';
 import { navigate }   from '../../../app/router.js';
-import { getDemoCartItems } from '../data/cartDemoData.js';
 import { createCartItemRow } from '../components/CartItem.js';
 import { createCartSummary } from '../components/CartSummary.js';
 
@@ -36,7 +35,7 @@ function createEmptyState() {
 
   const title = document.createElement('h2');
   title.className = 'cart-empty__title';
-  title.textContent = 'Sepetiniz boş';
+  title.textContent = 'Sepetiniz boş.';
   empty.appendChild(title);
 
   const desc = document.createElement('p');
@@ -56,15 +55,14 @@ function createEmptyState() {
 
 
 /**
- * @param {{ params: object, items?: Array }} _options - `items` lets a future
- *   caller supply real cart items; falls back to temporary demo data.
+ * @param {{ params?: object, items?: Array }} [options] - `items` accepts dynamic cart items.
  * @returns {{ element: HTMLElement, destroy: () => void }}
  */
 export default function CartPage({ items } = {}) {
   const element = document.createElement('div');
   element.className = 'cart-page';
 
-  let cartItems = (items ?? getDemoCartItems()).map((item) => ({ ...item }));
+  let cartItems = (items ?? []).map((item) => ({ ...item }));
   const itemRows = new Map();
 
   // ── Breadcrumbs
@@ -115,10 +113,11 @@ export default function CartPage({ items } = {}) {
   // ── Calculations ──────────────────────────────────────────────────────
 
   function getSubtotal() {
-    return cartItems.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+    return cartItems.reduce((sum, item) => sum + (Number(item.unitPrice) || 0) * (Number(item.quantity) || 0), 0);
   }
 
   function getShippingCost() {
+    if (cartItems.length === 0) return 0;
     return getSubtotal() >= FREE_SHIPPING_THRESHOLD ? 0 : 29.90;
   }
 
@@ -127,7 +126,7 @@ export default function CartPage({ items } = {}) {
     const shipping = getShippingCost();
     summary.update({ subtotal, shipping, grandTotal: subtotal + shipping });
 
-    const count = cartItems.reduce((s, i) => s + i.quantity, 0);
+    const count = cartItems.reduce((s, i) => s + (Number(i.quantity) || 0), 0);
     titleEl.innerHTML = `Alışveriş Sepetim <span class="cart-card__count">(${count} Ürün)</span>`;
   }
 
@@ -136,9 +135,16 @@ export default function CartPage({ items } = {}) {
     itemRows.clear();
 
     if (cartItems.length === 0) {
+      summary.element.style.display = 'none';
+      layout.style.gridTemplateColumns = '1fr';
+      header.style.display = 'none';
       itemsContainer.appendChild(createEmptyState());
       return;
     }
+
+    summary.element.style.display = '';
+    layout.style.gridTemplateColumns = '';
+    header.style.display = '';
 
     cartItems.forEach((item) => {
       const row = createCartItemRow(item, {

@@ -25,4 +25,5 @@ public class UrunTur : BaseEntity
 
     public Urun Urun { get; set; } = null!;
     public ICollection<UrunOzellik> Ozellikler { get; set; } = new List<UrunOzellik>();
+    
 }

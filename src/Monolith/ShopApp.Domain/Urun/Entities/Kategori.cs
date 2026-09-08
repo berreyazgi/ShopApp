@@ -3,12 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using src.Monolith.ShopApp.Domain.Common;
 
 namespace ShopApp.Domain.Urun.Entities;
-
 public class Kategori : BaseEntity
 {
     [Required]
     public string KategoriAd { get; set; } = null!;
-
+    
     [ForeignKey(nameof(UstKategoriId))]
     public Guid? UstKategoriId { get; set; }
     
