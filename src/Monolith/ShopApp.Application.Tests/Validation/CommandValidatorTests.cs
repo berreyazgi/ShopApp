@@ -49,7 +49,7 @@ public class CommandValidatorTests
     public void CreateSiparisUrunuCommandValidator_Rejects_DiscountOutsideZeroToOneRange()
     {
         var result = new CreateSiparisUrunuCommandValidator().TestValidate(
-            new CreateSiparisUrunuCommand(Guid.NewGuid(), Guid.NewGuid(), "Ürün", null, null, 1, 10m, 1.5m));
+            new CreateSiparisUrunuCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Ürün", null, null, 1, 10m, 1.5m));
         result.ShouldHaveValidationErrorFor(x => x.IndirimOrani);
     }
 
@@ -57,7 +57,7 @@ public class CommandValidatorTests
     public void CreateSiparisUrunuCommandValidator_Accepts_ValidCommand()
     {
         var result = new CreateSiparisUrunuCommandValidator().TestValidate(
-            new CreateSiparisUrunuCommand(Guid.NewGuid(), Guid.NewGuid(), "Ürün", null, null, 1, 10m, 0.1m));
+            new CreateSiparisUrunuCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Ürün", null, null, 1, 10m, 0.1m));
         result.ShouldNotHaveAnyValidationErrors();
     }
 }

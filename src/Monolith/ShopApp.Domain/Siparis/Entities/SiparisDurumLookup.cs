@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace src.Monolith.ShopApp.Domain.Siparis.Entities;
 
-[Table("SiparisDurum", Schema = "sales")]
+[Table("SiparisDurum", Schema = "Satis")]
 public class SiparisDurumLookup
 {
     [Key]

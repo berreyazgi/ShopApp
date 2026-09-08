@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Application.Common.Interfaces;
 using ShopApp.Application.Features.Siparis.Dtos;
+using src.Monolith.ShopApp.Domain.Siparis.Entities;
 
 namespace ShopApp.Application.Features.Siparis.Queries;
 

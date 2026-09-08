@@ -20,6 +20,12 @@ import { createCategoryTable } from '../components/CategoryTable.js';
 import { createCategoryFormPanel } from '../components/CategoryFormPanel.js';
 import { createRecentCategoriesCard } from '../components/RecentCategoriesCard.js';
 import { createAdminConfirmModal } from '../components/AdminConfirmModal.js';
+import {
+  getCategoriesSync,
+  addCategory,
+  updateCategory,
+  deleteCategory,
+} from '../../categories/services/categoryService.js';
 
 /**
  * @param {{
@@ -32,10 +38,10 @@ import { createAdminConfirmModal } from '../components/AdminConfirmModal.js';
  * @returns {{ element: HTMLElement, destroy: () => void }}
  */
 export default function AdminCategoriesPage(props = {}) {
-  // Business data supplied via props (defaults to empty array - zero demo data)
-  let categories = props.categories ?? [];
+  // Business data supplied via props or dynamic single source of truth (defaults to empty array)
+  let categories = props.categories ?? getCategoriesSync();
   let statistics = props.statistics ?? null;
-  let recentCategories = props.recentCategories ?? [];
+  let recentCategories = props.recentCategories ?? [...categories].slice(0, 5);
 
   const layout = createAdminLayout({ currentPath: '/admin/kategoriler' });
   const container = layout.contentArea;
@@ -97,9 +103,10 @@ export default function AdminCategoriesPage(props = {}) {
           title: 'Kategoriyi Sil',
           message: `"${catName}" kategorisini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`,
           confirmLabel: 'Sil',
-          onConfirm: () => {
-            // Local presentation update & integration callback point
-            categories = categories.filter((c) => (c.id ?? c.kategoriId) !== catId);
+          onConfirm: async () => {
+            // Persist to dynamic category single source of truth
+            await deleteCategory(catId);
+            categories = getCategoriesSync();
             recentCategories = recentCategories.filter((c) => (c.id ?? c.kategoriId) !== catId);
             if (typeof props.onDeleteCategory === 'function') {
               props.onDeleteCategory(catId);
@@ -115,23 +122,18 @@ export default function AdminCategoriesPage(props = {}) {
     // Right: Category Form Panel (Create / Edit)
     formPanel = createCategoryFormPanel({
       categories,
-      onSave: (payload) => {
+      onSave: async (payload) => {
+        let savedCategory;
         if (payload.id) {
-          // Edit mode local state update
-          categories = categories.map((c) => {
-            const cId = c.id ?? c.kategoriId;
-            return cId === payload.id ? { ...c, ...payload } : c;
-          });
+          savedCategory = await updateCategory(payload);
         } else {
-          // Create mode local state update
-          const newId = Date.now();
-          const newCat = { ...payload, id: newId };
-          categories = [newCat, ...categories];
-          recentCategories = [newCat, ...recentCategories].slice(0, 5);
+          savedCategory = await addCategory(payload);
+          recentCategories = [savedCategory, ...recentCategories].slice(0, 5);
         }
+        categories = getCategoriesSync();
 
         if (typeof props.onSaveCategory === 'function') {
-          props.onSaveCategory(payload);
+          props.onSaveCategory(savedCategory || payload);
         }
 
         renderPage();

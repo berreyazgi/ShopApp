@@ -97,6 +97,8 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ISepetRepository, SepetRepository>();
         services.AddScoped<ISiparisRepository, SiparisRepository>();
+        
+        services.AddScoped(typeof(IGenericUrunRepository<>), typeof(GenericUrunRepository<>));
 
         return services;
     }

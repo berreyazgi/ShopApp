@@ -7,6 +7,7 @@ public sealed class CreateSiparisUrunuCommandValidator : AbstractValidator<Creat
     public CreateSiparisUrunuCommandValidator()
     {
         RuleFor(x => x.SiparisId).NotEmpty();
+        RuleFor(x => x.UrunId).NotEmpty();
         RuleFor(x => x.UrunTurId).NotEmpty();
         RuleFor(x => x.UrunIsmi).NotEmpty().MaximumLength(500);
         RuleFor(x => x.StokTakipNumarasi).MaximumLength(500);

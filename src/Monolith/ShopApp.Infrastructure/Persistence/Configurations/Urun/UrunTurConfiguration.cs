@@ -8,6 +8,7 @@ public class UrunTurConfiguration : IEntityTypeConfiguration<UrunTur>
 {
     public void Configure(EntityTypeBuilder<UrunTur> b)
     {
+        b.ToTable("UrunTur", "Urunler");
         b.HasIndex(x => x.StokKod).IsUnique();
 
         b.Property(x => x.FiyatFarki).HasPrecision(18, 2);

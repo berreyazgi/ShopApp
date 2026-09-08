@@ -11,7 +11,7 @@ public sealed class SepetConfiguration : BaseEntityConfiguration<SepetEntity>
     {
         base.Configure(builder);
 
-        builder.ToTable("Sepetler", "sales");
+        builder.ToTable("Sepetler", "Satis");
 
         builder.Property(x => x.MusteriId)
             .IsRequired();

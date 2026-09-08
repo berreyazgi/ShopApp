@@ -26,4 +26,5 @@ public class UrunOzellik : BaseEntity
         OzellikDeger = ozellikDeger;
         UrunTurId = urunTurId;
     }
+    
 }

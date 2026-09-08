@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Application.Common.Interfaces;
 using ShopApp.Application.Features.Siparis.Dtos;
+using src.Monolith.ShopApp.Domain.Siparis.Entities;
 
 namespace ShopApp.Application.Features.Siparis.Queries;
 
@@ -11,7 +12,7 @@ public class GetSiparisUrunleri
     public sealed record GetSiparisUrunleriQuery(Guid SiparisId) : IRequest<List<ResultSiparisUrunleriDto>>;
 
     public sealed class GetSiparisUrunleriQueryHandler(
-        IShopAppDbContext context,
+        IShopAppDbContext  context,
         ICurrentCustomerContext currentCustomerContext,
         IMapper mapper) : IRequestHandler<GetSiparisUrunleriQuery, List<ResultSiparisUrunleriDto>>
     {

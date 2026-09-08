@@ -152,6 +152,226 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.ToTable("UserTokens", "identity");
                 });
 
+            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.Kategori", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("AktifMi")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Detay")
+                        .HasColumnType("text");
+
+                    b.Property<string>("GorselUrl")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("GuncellemeTarihi")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("GuncelleyenKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("KategoriAd")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OlusturanKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("OlusturmaTarihi")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UstKategoriId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UstKategoriId");
+
+                    b.ToTable("Kategori", "Urunler");
+                });
+
+            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.Urun", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("AktifMi")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Detay")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Fiyat")
+                        .HasColumnType("decimal(8, 2)");
+
+                    b.Property<decimal>("GecmisFiyat")
+                        .HasColumnType("decimal(8, 2)");
+
+                    b.Property<string>("GorselUrl")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("GuncellemeTarihi")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("GuncelleyenKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("KategoriId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("MarkaAd")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OlusturanKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("OlusturmaTarihi")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UrunAd")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("KategoriId");
+
+                    b.ToTable("Urun", "Urunler", t =>
+                        {
+                            t.HasCheckConstraint("CK_Urunler_Fiyat", "\"Fiyat\" >= 0");
+                        });
+                });
+
+            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.UrunGorsel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("GorselSira")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("GorselUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("GuncellemeTarihi")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("GuncelleyenKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OlusturanKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("OlusturmaTarihi")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UrunId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UrunId", "GorselSira");
+
+                    b.ToTable("UrunGorsel", "Urunler");
+                });
+
+            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.UrunOzellik", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("GuncellemeTarihi")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("GuncelleyenKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OlusturanKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("OlusturmaTarihi")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("OzellikAd")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("OzellikDeger")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("UrunTurId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("UrunTipiId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UrunTurId", "OzellikAd");
+
+                    b.ToTable("UrunOzellik", "Urunler");
+                });
+
+            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.UrunTur", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Ad")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<bool>("AktifMi")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("FiyatFarki")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(8, 2)");
+
+                    b.Property<DateTime?>("GuncellemeTarihi")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("GuncelleyenKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OlusturanKullaniciId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("OlusturmaTarihi")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("StokAded")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StokKod")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid>("UrunId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StokKod")
+                        .IsUnique();
+
+                    b.HasIndex("UrunId");
+
+                    b.ToTable("UrunTur", "Urunler");
+                });
+
             modelBuilder.Entity("ShopApp.Infrastructure.Identity.Models.KayitliKullanici", b =>
                 {
                     b.Property<Guid>("Id")
@@ -376,7 +596,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SepetDurumlari", "sales");
+                    b.ToTable("SepetDurumlari", "Satis");
 
                     b.HasData(
                         new
@@ -429,7 +649,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("DurumId");
 
-                    b.ToTable("Sepetler", "sales");
+                    b.ToTable("Sepetler", "Satis");
                 });
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Entities.SepetUrunu", b =>
@@ -467,7 +687,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("SepetId");
 
-                    b.ToTable("SepetUrunleri", "sales");
+                    b.ToTable("SepetUrunleri", "Satis");
                 });
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparis.Entities.SiparisDurumLookup", b =>
@@ -485,7 +705,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SiparisDurum", "sales");
+                    b.ToTable("SiparisDurum", "Satis");
                 });
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparis.Entities.SiparisEntity", b =>
@@ -537,7 +757,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("DurumId");
 
-                    b.ToTable("Siparisler", "sales");
+                    b.ToTable("Siparisler", "Satis");
                 });
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparis.Entities.SiparisUrunleri", b =>
@@ -580,6 +800,9 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
 
+                    b.Property<Guid>("UrunId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("UrunIsmi")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -595,7 +818,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("SiparisId");
 
-                    b.ToTable("SiparisUrunleri", "sales");
+                    b.ToTable("SiparisUrunleri", "Satis");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -647,6 +870,60 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.Kategori", b =>
+                {
+                    b.HasOne("ShopApp.Domain.Urun.Entities.Kategori", "UstKategori")
+                        .WithMany("AltKategoriler")
+                        .HasForeignKey("UstKategoriId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("UstKategori");
+                });
+
+            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.Urun", b =>
+                {
+                    b.HasOne("ShopApp.Domain.Urun.Entities.Kategori", "Kategori")
+                        .WithMany("Urunler")
+                        .HasForeignKey("KategoriId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Kategori");
+                });
+
+            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.UrunGorsel", b =>
+                {
+                    b.HasOne("ShopApp.Domain.Urun.Entities.Urun", "Urun")
+                        .WithMany("Gorseller")
+                        .HasForeignKey("UrunId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Urun");
+                });
+
+            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.UrunOzellik", b =>
+                {
+                    b.HasOne("ShopApp.Domain.Urun.Entities.UrunTur", "UrunTur")
+                        .WithMany("Ozellikler")
+                        .HasForeignKey("UrunTurId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UrunTur");
+                });
+
+            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.UrunTur", b =>
+                {
+                    b.HasOne("ShopApp.Domain.Urun.Entities.Urun", "Urun")
+                        .WithMany("UrunTurleri")
+                        .HasForeignKey("UrunId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Urun");
                 });
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Kullanici.Address", b =>
@@ -720,6 +997,25 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("SiparisEntity");
+                });
+
+            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.Kategori", b =>
+                {
+                    b.Navigation("AltKategoriler");
+
+                    b.Navigation("Urunler");
+                });
+
+            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.Urun", b =>
+                {
+                    b.Navigation("Gorseller");
+
+                    b.Navigation("UrunTurleri");
+                });
+
+            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.UrunTur", b =>
+                {
+                    b.Navigation("Ozellikler");
                 });
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Entities.SepetEntity", b =>

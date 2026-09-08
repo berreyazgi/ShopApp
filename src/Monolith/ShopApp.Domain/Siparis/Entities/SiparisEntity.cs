@@ -7,7 +7,7 @@ public class SiparisEntity : BaseEntity
 {
 
     public Guid MusteriId { get; private set; }
-
+    
     public string SiparisNumarasi { get; private set; } = null!;
 
     public int DurumId { get; private set; }
@@ -43,6 +43,7 @@ public class SiparisEntity : BaseEntity
 
     public SiparisUrunleri UrunEkle(
         Guid urunTurId,
+        Guid urunId,
         string urunIsmi,
         string? urunAciklamasi,
         string? stokTakipNumarasi,
@@ -53,6 +54,7 @@ public class SiparisEntity : BaseEntity
     {
         var urun = SiparisUrunleri.Olustur(
             Id,
+            urunId,
             urunTurId,
             urunIsmi,
             urunAciklamasi,

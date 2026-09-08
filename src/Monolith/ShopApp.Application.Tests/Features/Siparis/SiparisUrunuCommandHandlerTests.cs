@@ -18,7 +18,7 @@ public class SiparisUrunuCommandHandlerTests
     private static SiparisEntity CreateSiparisWithItem(CurrentCustomer owner, out SiparisUrunleriEntity urun)
     {
         var siparis = SiparisEntity.Olustur(owner.MusteriId, "SIP-ITEM-TEST", owner.KullaniciId);
-        urun = siparis.UrunEkle(Guid.NewGuid(), "Test Ürünü", null, null, 2, 25m, 0m, owner.KullaniciId);
+        urun = siparis.UrunEkle(Guid.NewGuid(), Guid.NewGuid(), "Test Ürünü", null, null, 2, 25m, 0m, owner.KullaniciId);
         return siparis;
     }
 
@@ -33,7 +33,7 @@ public class SiparisUrunuCommandHandlerTests
         var handler = new CreateSiparisUrunuCommandHandler(siparisRepository.Object, CustomerContextFactory.For(Stranger).Object);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(() =>
-            handler.Handle(new CreateSiparisUrunuCommand(siparis.Id, Guid.NewGuid(), "Ürün", null, null, 1, 10m, 0m), CancellationToken.None));
+            handler.Handle(new CreateSiparisUrunuCommand(siparis.Id, Guid.NewGuid(), Guid.NewGuid(), "Ürün", null, null, 1, 10m, 0m), CancellationToken.None));
 
         siparisRepository.Verify(r => r.UpdateAsync(It.IsAny<SiparisEntity>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -48,7 +48,7 @@ public class SiparisUrunuCommandHandlerTests
 
         var handler = new CreateSiparisUrunuCommandHandler(siparisRepository.Object, CustomerContextFactory.For(Owner).Object);
 
-        var id = await handler.Handle(new CreateSiparisUrunuCommand(siparis.Id, Guid.NewGuid(), "Ürün", null, null, 1, 10m, 0m), CancellationToken.None);
+        var id = await handler.Handle(new CreateSiparisUrunuCommand(siparis.Id, Guid.NewGuid(), Guid.NewGuid(), "Ürün", null, null, 1, 10m, 0m), CancellationToken.None);
 
         Assert.NotEqual(Guid.Empty, id);
         Assert.Contains(siparis.Urunler, u => u.Id == id);

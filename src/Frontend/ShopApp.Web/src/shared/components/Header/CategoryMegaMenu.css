@@ -4,7 +4,7 @@
 
 .category-mega-menu {
   width: 100%;
-  max-width: 820px;
+  max-width: 880px;
   background: var(--color-surface);
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-xl);
@@ -14,10 +14,10 @@
   box-sizing: border-box;
 }
 
-/* ── 3-Column Grid ── */
+/* ── Dynamic Category Columns Grid ── */
 .category-mega-menu__grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(var(--mega-cols, 3), minmax(180px, 1fr));
   gap: var(--space-8);
   align-items: start;
 }

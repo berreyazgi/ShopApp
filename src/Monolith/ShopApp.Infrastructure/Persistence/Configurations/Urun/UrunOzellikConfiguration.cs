@@ -8,6 +8,7 @@ public class UrunOzellikConfiguration : IEntityTypeConfiguration<UrunOzellik>
 {
     public void Configure(EntityTypeBuilder<UrunOzellik> b)
     {
+        b.ToTable("UrunOzellik", "Urunler");
         b.HasIndex(x => new { x.UrunTurId, x.OzellikAd });
     }
 }

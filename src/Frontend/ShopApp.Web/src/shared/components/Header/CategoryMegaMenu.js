@@ -14,9 +14,26 @@
  * Database/API results can be passed directly as the `categories` argument.
  */
 
+function slugify(text) {
+  if (!text) return '';
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/ğ/g, 'g')
+    .replace(/ü/g, 'u')
+    .replace(/ş/g, 's')
+    .replace(/ı/g, 'i')
+    .replace(/ö/g, 'o')
+    .replace(/ç/g, 'c')
+    .replace(/[^a-z0-9 -]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+}
+
 /**
  * Normalizes category data to handle various API or fixture property names
- * (.children or .subcategories, optional href, slug, id).
+ * (.children or .subcategories, flat lists with parentId / ustKategoriId, optional href, slug, id).
  *
  * @param {Array<object>} rawCategories
  * @returns {Array<object>}
@@ -24,35 +41,92 @@
 export function normalizeCategories(rawCategories = []) {
   if (!Array.isArray(rawCategories)) return [];
 
-  return rawCategories.map((parent) => {
-    const parentId = parent.id ?? parent.slug ?? String(parent.name || '').toLowerCase();
-    const parentName = parent.name ?? '';
-    const parentSlug = parent.slug ?? parentId;
+  // Check if rawCategories is already hierarchical
+  const hasNestedChildren = rawCategories.some(
+    (c) => (Array.isArray(c.children) && c.children.length > 0) ||
+           (Array.isArray(c.subcategories) && c.subcategories.length > 0)
+  );
+
+  let rootNodes = [];
+
+  if (hasNestedChildren) {
+    rootNodes = rawCategories.map((cat) => {
+      const rawChildren = cat.children ?? cat.subcategories ?? [];
+      return {
+        ...cat,
+        children: Array.isArray(rawChildren) ? [...rawChildren] : [],
+      };
+    });
+  } else {
+    // Flat collection: build tree using parentId / ustKategoriId / parentCategoryId
+    const isRoot = (cat) => {
+      const pId = cat.parentId ?? cat.ustKategoriId ?? cat.parentCategoryId ?? null;
+      return pId === null || pId === undefined || pId === '' || pId === 0 || pId === '0';
+    };
+
+    const map = new Map();
+    const roots = [];
+
+    rawCategories.forEach((cat) => {
+      const id = String(cat.id ?? cat.kategoriId ?? cat.slug ?? '');
+      map.set(id, { ...cat, id: cat.id ?? id, children: [] });
+    });
+
+    rawCategories.forEach((cat) => {
+      const id = String(cat.id ?? cat.kategoriId ?? cat.slug ?? '');
+      const pId = cat.parentId ?? cat.ustKategoriId ?? cat.parentCategoryId ?? null;
+      const node = map.get(id);
+
+      if (pId !== null && pId !== undefined && pId !== '' && pId !== 0 && pId !== '0') {
+        const parentKey = String(pId);
+        if (map.has(parentKey)) {
+          map.get(parentKey).children.push(node);
+          return;
+        }
+      }
+      roots.push(node);
+    });
+
+    rootNodes = roots;
+  }
+
+  return rootNodes.map((parent) => {
+    const parentId = parent.id ?? parent.kategoriId ?? parent.slug ?? String(parent.name || parent.ad || '').toLowerCase();
+    const parentName = parent.name ?? parent.ad ?? '';
+    const parentSlug = parent.slug ?? (slugify(parentName) || String(parentId));
     const parentHref = parent.href ?? (parentSlug ? `/urunler/${parentSlug}` : '/kategoriler');
     const rawChildren = parent.children ?? parent.subcategories ?? [];
 
     const children = Array.isArray(rawChildren)
       ? rawChildren.map((child) => {
-          const childId = child.id ?? `${parentId}-${child.slug ?? String(child.name || '').toLowerCase()}`;
-          const childName = child.name ?? '';
-          const childSlug = child.slug ?? childId;
-          const childHref = child.href ?? (parentSlug && childSlug ? `/urunler/${parentSlug}/${childSlug}` : '/urunler');
+          const childId = child.id ?? child.kategoriId ?? `${parentId}-${child.slug ?? slugify(child.name || child.ad || '')}`;
+          const childName = child.name ?? child.ad ?? '';
+          const childSlug = child.slug ?? (slugify(childName) || String(childId));
+          let childHref = child.href;
+          if (!childHref) {
+            childHref = parentSlug && childSlug ? `/urunler/${parentSlug}/${childSlug}` : `/urunler/${childSlug || ''}`;
+          }
+          const count = child.count ?? child.productCount ?? child.urunSayisi;
+
           return {
             id: childId,
             name: childName,
             slug: childSlug,
             href: childHref,
-            count: child.count,
+            count: count !== undefined ? count : null,
+            parentId,
           };
         })
       : [];
+
+    const count = parent.count ?? parent.productCount ?? parent.urunSayisi;
 
     return {
       id: parentId,
       name: parentName,
       slug: parentSlug,
       href: parentHref,
-      count: parent.count,
+      count: count !== undefined ? count : null,
       children,
     };
   });
@@ -95,6 +169,7 @@ export function createCategoryMegaMenu(initialCategories = [], options = {}) {
 
     const grid = document.createElement('div');
     grid.className = 'category-mega-menu__grid';
+    grid.style?.setProperty?.('--mega-cols', Math.min(Math.max(currentCategories.length, 1), 4));
 
     currentCategories.forEach((parent) => {
       const column = document.createElement('div');

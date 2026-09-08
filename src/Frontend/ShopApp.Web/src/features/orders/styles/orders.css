@@ -84,23 +84,6 @@
   border-radius: var(--radius-full);
 }
 
-/* Toggle demo state button */
-.orders-header__toggle-demo {
-  font-size: var(--text-xs);
-  color: var(--color-secondary);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.orders-header__toggle-demo:hover {
-  background: var(--color-background);
-  color: var(--color-primary);
-}
-
 /* ── Order Card List ── */
 .orders-list {
   display: flex;

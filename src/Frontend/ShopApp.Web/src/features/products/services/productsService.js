@@ -12,17 +12,19 @@
 // import { apiClient } from '../../../shared/services/apiClient.js';
 // import { endpoints } from '../../../shared/services/endpoints.js';
 
-import { categories, demoProducts, relatedProducts, getProductDetail } from '../data/productData.js';
+import { demoProducts, relatedProducts, getProductDetail } from '../data/productData.js';
+import { getCategories as getCategoriesFromService } from '../../categories/services/categoryService.js';
 
 /**
  * Returns the category catalogue for the category index page.
- * @returns {Promise<import('../data/productData.js').CategorySummary[]>}
+ * Uses the dynamic categoryService single source of truth.
+ * @returns {Promise<any[]>}
  */
 export async function getCategories() {
   // TODO: Integrate with Catalog API or Catalog Microservice.
   // return apiClient.get(endpoints.catalog.categories());
 
-  return categories;
+  return getCategoriesFromService();
 }
 
 /**

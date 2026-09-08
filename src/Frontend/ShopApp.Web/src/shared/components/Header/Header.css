@@ -129,10 +129,20 @@
   z-index: var(--z-dropdown);
 }
 
+/* Invisible hit-bridge spanning between trigger button and dropdown to prevent hover gap flicker */
+.header-category-dropdown::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--space-2) * -1 - 6px);
+  left: 0;
+  right: 0;
+  height: calc(var(--space-2) + 6px);
+}
+
 .header-category-dropdown--mega {
   min-width: unset;
   width: max-content;
-  max-width: min(820px, calc(100vw - var(--space-8)));
+  max-width: min(880px, calc(100vw - var(--space-8)));
   background: transparent;
   border: none;
   border-radius: 0;

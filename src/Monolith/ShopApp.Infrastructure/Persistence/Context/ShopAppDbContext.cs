@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Application.Common.Interfaces;
+using ShopApp.Domain.Urun.Entities;
 using ShopApp.Infrastructure.Identity.Models;
 using src.Monolith.ShopApp.Domain.Kullanici;
 using src.Monolith.ShopApp.Domain.Sepet.Enums;
@@ -39,6 +40,13 @@ public class ShopAppDbContext : IdentityDbContext<KayitliKullanici, IdentityRole
 
     public DbSet<SiparisUrunleri> OrderItems => Set<SiparisUrunleri>();
     public DbSet<SiparisDurumLookup> SiparisDurumlar => Set<SiparisDurumLookup>();
+    
+    //Product modülü
+    public DbSet<Urun> Urun => Set<Urun>();
+    public DbSet<Kategori> Kategori => Set<Kategori>();
+    public DbSet<UrunGorsel> UrunGorsel => Set<UrunGorsel>();
+    public DbSet<UrunTur> UrunTur => Set<UrunTur>();
+    public DbSet<UrunOzellik> UrunOzellik => Set<UrunOzellik>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

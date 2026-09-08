@@ -12,8 +12,8 @@ public class SiparisMapping : Profile
             .ForCtorParam(nameof(ResultSiparisDto.DurumIsmi), opt => opt.MapFrom(src => src.Durum.DurumIsmi));
         CreateMap<SiparisEntity, GetByIdSiparisDto>().ReverseMap();
 
-        CreateMap<src.Monolith.ShopApp.Domain.Siparis.Entities.SiparisUrunleri, ResultSiparisUrunleriDto>();
-        CreateMap<src.Monolith.ShopApp.Domain.Siparis.Entities.SiparisUrunleri, GetByIdSiparisUrunleriDto>().ReverseMap();
+        CreateMap<SiparisUrunleri, ResultSiparisUrunleriDto>();
+        CreateMap<SiparisUrunleri, GetByIdSiparisUrunleriDto>().ReverseMap();
 
     }
 }

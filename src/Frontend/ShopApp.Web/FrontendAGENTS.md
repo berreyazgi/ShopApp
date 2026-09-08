@@ -168,33 +168,62 @@ Do not use the Hakkımızda exception as a reason to hardcode content on other p
 
 ---
 
-# 7. Demo Data Rules
+# 7. Demo Data Rules and Restrictions
 
-Temporary local/demo data may be used only when necessary to design, preview, or verify a dynamic UI before the real integration exists.
+Temporary local/demo data may be used only when strictly necessary to design, preview, or verify a dynamic UI before real integration exists, EXCEPT for protected commerce domains.
 
-Demo data must:
-
-- be clearly temporary;
-- be easy to remove;
-- be isolated from UI logic when practical;
-- never pretend to be a real API or database implementation;
-- never become the permanent source of business data.
-
-Prefer this separation:
-
-```text
-Page / View
-   ↓
-Components
-   ↓
-Temporary presentation data
-```
-
-The final architecture should remain ready for the user to replace temporary data with real API results.
+> [!CAUTION]
+> The general permission to use temporary/demo business data does **NOT** apply to:
+> - **Sepet (Shopping Cart)**
+> - **Siparişler (Orders)**
+> - **Sipariş Onayı (Order Confirmation)**
+> - **Admin Siparişler (Admin Orders)**
+> - **Kategoriler (Categories & Category Management)**
+>
+> For these areas, dummy/demo business records are **strictly forbidden**.
 
 ---
 
-# 8. Frontend API Integration Is Reserved for the User
+# 8. Dynamic Commerce Data — No Dummy Data
+
+This is a high-priority, permanent frontend architecture rule:
+
+> **Missing backend integration is NOT permission to create fake business data.**
+>
+> **If real data is unavailable, render a loading, empty, error, or data-ready state instead of inventing records.**
+>
+> **Never reintroduce `cartDemoData`, `orderConfirmationDemoData`, or equivalent replacement mock datasets.**
+
+### Permanent Rules:
+
+1. **Sepet production UI must never use dummy/demo/mock products.**
+   An empty cart must render an actual empty-cart state (*"Sepetiniz boş"*). Changing quantities or removing items must recalculate totals dynamically from current state. Never populate the cart automatically with sample products because backend data is missing.
+2. **Sipariş/Sipariş confirmation production UI must never use dummy/demo/mock orders.**
+   Neither customer `Siparişlerim` nor `/siparis-onay` may use fake order numbers, hardcoded product lines, fake dates, or fake totals.
+3. **Admin orders must never use fake order records.**
+   The admin orders page (`/admin/siparisler`) must render supplied dynamic orders; if empty, show a genuine empty state (*"Henüz sipariş bulunmuyor"*). Do not fabricate dashboard metrics.
+4. **Categories must not be duplicated as hardcoded business-data arrays.**
+   Do not maintain separate category arrays across pages or components. The frontend must have a single category collection/data source.
+5. **Empty backend/frontend data must produce an empty state, never demo fallback.**
+   No fallback such as `items = response?.items?.length ? response.items : cartDemoData;` is allowed.
+6. **Dynamic render functions/components are preferred.**
+   Components receive data and render it. No hardcoded domain entities inside presentation templates.
+7. **API integration remains reserved for the user.**
+   Do NOT implement network calls (`fetch`, `axios`, `XMLHttpRequest`, `apiClient`). Leave the API layer for the user.
+8. **Backend implementation remains reserved for the user.**
+   Do NOT touch controllers, CQRS, entities, DbContext, migrations, or database seeds.
+9. **Admin remains inside the same unified frontend application.**
+   Do not create a separate admin application or separate build.
+10. **Category UI must be ready for future backend integration.**
+    Structure category consumption (`AdminCategoriesPage`, `AdminProductsPage`, `CategoryListPage`, `Header.js`) so that a future backend API can be wired without rewriting the UI.
+11. **Removing demo data must include removing obsolete imports/files/fallbacks.**
+    Delete demo files, remove unused imports, remove fake test item payloads (`TEST_ORDER_ITEMS`), and remove dead variables.
+12. **Future AI agents must not reintroduce deleted demo data.**
+    Deleted fixtures like `cartDemoData.js` and `orderConfirmationDemoData.js` must never be recreated or restored under different names.
+
+---
+
+# 9. Frontend API Integration Is Reserved for the User
 
 The agent must NOT implement or complete frontend-to-backend communication.
 
@@ -771,7 +800,7 @@ API/service integration remains for the user to implement.
 ✓ Create loading, empty, and error states
 ✓ Create frontend-only interactions
 ✓ Render supplied/demonstration data dynamically
-✓ Use temporary isolated demo data for UI development
+✓ Use temporary isolated demo data for non-commerce UI development (never for Cart, Orders, or Categories)
 ✓ Reuse existing project components and libraries
 ✓ Preserve and work with the project's existing Graphify setup
 ✓ Adjust existing frontend routing/layouts for role-gated `/admin` pages
@@ -781,6 +810,12 @@ API/service integration remains for the user to implement.
 ## YOU MAY NOT
 
 ```text
+✗ Use dummy/demo/mock products in Sepet
+✗ Use dummy/demo/mock orders in Siparişler or Sipariş Onayı
+✗ Use fake order records in Admin Siparişler
+✗ Hardcode or duplicate category business data arrays
+✗ Fall back to sample/demo data when real data is empty
+✗ Reintroduce deleted demo datasets (cartDemoData, orderConfirmationDemoData)
 ✗ Write backend application code
 ✗ Modify backend application code
 ✗ Write controllers or endpoints

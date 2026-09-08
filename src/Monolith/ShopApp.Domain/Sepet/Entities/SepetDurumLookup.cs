@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace src.Monolith.ShopApp.Domain.Sepet.Entities;
 
-[Table("SepetDurumlari", Schema = "sales")]
+[Table("SepetDurumlari", Schema = "Satis")]
 public class SepetDurumLookup
 {
     [Key]
