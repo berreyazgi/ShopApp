@@ -16,47 +16,35 @@ public class Address : BaseEntity
 
     public int Sehir { get; private set; }
 
-    [MaxLength(10)]
-    public string PostaKodu { get; private set; } = null!;
+    public int PostaKodu { get; private set; }
 
     public int Ilce { get; private set; }
 
-    [NotMapped]
-    public string TamAdres { get; private set; } = null!;
+    public int Mahalle { get; private set; }
 
     public Musteri Musteri { get; private set; } = null!;
-    
-    //efcore için boş bırakılıyor
+
     private Address() { }
 
-    private Address(Guid musteriId, int ulke, int sehir, int ilce, string tamAdres, string postaKodu, string? adresBilgisi)
-    {
-        MusteriId = musteriId;
-        Ulke = ulke;
-        Ilce = ilce;
-        TamAdres = tamAdres;
-        Sehir = sehir;
-        PostaKodu = postaKodu;
-        AdresBilgisi = adresBilgisi;
-    }
-
-    public static Address Olustur(Guid musteriId, int ulke, int sehir, int ilce, string postaKodu, string? adresBilgisi, Guid olusturanKullaniciId) => new()
+    public static Address Olustur(Guid musteriId, int ulke, int sehir, int ilce, int mahalle, int postaKodu, string? adresBilgisi, Guid olusturanKullaniciId) => new()
     {
         MusteriId = musteriId,
         Ulke = ulke,
         Sehir = sehir,
         Ilce = ilce,
+        Mahalle = mahalle,
         PostaKodu = postaKodu,
         AdresBilgisi = adresBilgisi,
         OlusturanKullaniciId = olusturanKullaniciId,
         OlusturmaTarihi = DateTime.UtcNow
     };
 
-    public void Guncelle(int ulke, int sehir, int ilce, string postaKodu, string? adresBilgisi, Guid guncelleyenKullaniciId)
+    public void Guncelle(int ulke, int sehir, int ilce, int mahalle, int postaKodu, string? adresBilgisi, Guid guncelleyenKullaniciId)
     {
         Ulke = ulke;
         Sehir = sehir;
         Ilce = ilce;
+        Mahalle = mahalle;
         PostaKodu = postaKodu;
         AdresBilgisi = adresBilgisi;
         GuncelleyenKullaniciId = guncelleyenKullaniciId;

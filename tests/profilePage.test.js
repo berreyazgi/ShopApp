@@ -259,13 +259,13 @@ test('createProfileSidebar renders dynamic initials avatar, customer name, and e
   const initialsEl = sidebar.querySelector('.profile-sidebar__avatar-initials');
   assert.equal(initialsEl.textContent, 'BY');
 
-  // Verify sidebar links: "Adres Bilgilerim" should not exist
+  // Verify sidebar links: "Adres Bilgilerim" and "Sıkça Sorulan Sorular" should not exist
   const sidebarText = sidebar.textContent;
   assert.equal(sidebarText.includes('Adres Bilgilerim'), false, 'Adres Bilgilerim must be removed from sidebar');
+  assert.equal(sidebarText.includes('Sıkça Sorulan Sorular'), false, 'Sıkça Sorulan Sorular must be removed from sidebar');
   assert.ok(sidebarText.includes('Hesabım'));
   assert.ok(sidebarText.includes('Siparişlerim'));
   assert.ok(sidebarText.includes('Bize Ulaşın'));
-  assert.ok(sidebarText.includes('Sıkça Sorulan Sorular'));
 });
 
 test('createWelcomeBanner greets customer by real first name', () => {
@@ -414,7 +414,7 @@ test('formatTurkishPhone formats domestic 10 digits as (5XX) XXX XX XX', () => {
   assert.equal(formatTurkishPhone(null), '');
 });
 
-test('createAddressModal renders all 8 target rows in exact order with responsive classes', () => {
+test('createAddressModal renders target rows with responsive classes and without phone or billing type', () => {
   const modal = createAddressModal({
     onSave: async () => {},
     onClose: () => {},
@@ -434,31 +434,37 @@ test('createAddressModal renders all 8 target rows in exact order with responsiv
   assert.ok(form, 'Form should be rendered');
 
   // Row 1: Ad and Soyad in 2-col row
-  const nameRow = form.querySelector('.profile-form-row');
+  const nameRow = form.querySelectorAll('.profile-form-row')[0];
   assert.ok(nameRow, 'Row 1 should use .profile-form-row');
-  assert.ok(form.querySelector('#profile-address-ad'), 'Ad input exists');
-  assert.ok(form.querySelector('#profile-address-soyad'), 'Soyad input exists');
+  assert.ok(nameRow.querySelector('#profile-address-ad'), 'Ad input exists');
+  assert.ok(nameRow.querySelector('#profile-address-soyad'), 'Soyad input exists');
 
-  // Row 2: Telefon with +90 prefix
-  const phoneGroup = form.querySelector('.profile-phone-group');
-  assert.ok(phoneGroup, 'Phone group exists');
-  const prefix = phoneGroup.querySelector('.profile-phone-prefix');
-  assert.equal(prefix.textContent, '+90');
-  assert.ok(phoneGroup.querySelector('#profile-address-phone'), 'Phone input exists');
+  // Telefon must be removed
+  assert.equal(form.querySelector('#profile-address-phone'), null, 'Phone input must not exist');
+  assert.equal(form.querySelector('.profile-phone-group'), null, 'Phone group must not exist');
 
-  // Row 3: İl and İlçe in 2-col row
-  const citySelect = form.querySelector('#profile-address-city');
-  const districtSelect = form.querySelector('#profile-address-district');
+  // Row 2: İl and İlçe in 2-col row
+  const locationRow = form.querySelectorAll('.profile-form-row')[1];
+  assert.ok(locationRow, 'Row 2 should use .profile-form-row');
+  const citySelect = locationRow.querySelector('#profile-address-city');
+  const districtSelect = locationRow.querySelector('#profile-address-district');
   assert.ok(citySelect, 'City select exists');
   assert.ok(districtSelect, 'District select exists');
   assert.equal(districtSelect.disabled, true, 'District select starts disabled');
 
-  // Row 4: Mahalle
-  const neighborhoodSelect = form.querySelector('#profile-address-neighborhood');
+  // Row 3: Mahalle & Posta Kodu in 2-col row
+  const areaRow = form.querySelectorAll('.profile-form-row')[2];
+  assert.ok(areaRow, 'Row 3 should use .profile-form-row');
+  const neighborhoodSelect = areaRow.querySelector('#profile-address-neighborhood');
   assert.ok(neighborhoodSelect, 'Neighborhood select exists');
   assert.equal(neighborhoodSelect.disabled, true, 'Neighborhood select starts disabled');
 
-  // Row 5: Delivery Warning Box
+  const postalInput = areaRow.querySelector('#profile-address-postal');
+  assert.ok(postalInput, 'Postal code input exists');
+  assert.equal(postalInput.placeholder, '34000');
+  assert.equal(postalInput.maxLength, 5);
+
+  // Row 4: Delivery Warning Box
   const warningBox = form.querySelector('.profile-address-warning');
   assert.ok(warningBox, 'Warning box exists');
   assert.ok(
@@ -466,26 +472,18 @@ test('createAddressModal renders all 8 target rows in exact order with responsiv
     'Warning message content present'
   );
 
-  // Row 6: Adres Textarea
+  // Row 5: Adres Textarea
   const addressTextarea = form.querySelector('#profile-address-line');
   assert.ok(addressTextarea, 'Address line textarea exists');
   assert.equal(addressTextarea.tagName, 'TEXTAREA');
 
-  // Row 7: Adres Başlığı
+  // Row 6: Adres Başlığı
   const titleInput = form.querySelector('#profile-address-title');
   assert.ok(titleInput, 'Address title input exists');
 
-  // Row 8: Fatura Türü Segmented Control
-  const segmentedWrap = form.querySelector('.profile-segmented-control');
-  assert.ok(segmentedWrap, 'Segmented control exists');
-  assert.equal(segmentedWrap.getAttribute('role'), 'radiogroup');
-
-  const bireyselBtn = form.querySelector('[data-value="Bireysel"]');
-  const kurumsalBtn = form.querySelector('[data-value="Kurumsal"]');
-  assert.ok(bireyselBtn, 'Bireysel option exists');
-  assert.ok(kurumsalBtn, 'Kurumsal option exists');
-  assert.equal(bireyselBtn.getAttribute('aria-checked'), 'true');
-  assert.equal(kurumsalBtn.getAttribute('aria-checked'), 'false');
+  // Fatura Türü must be removed
+  assert.equal(form.querySelector('.profile-segmented-control'), null, 'Segmented billing control must not exist');
+  assert.equal(form.querySelector('#profile-address-billing-label'), null, 'Billing label must not exist');
 
   // Footer: Full-width Kaydet button
   const saveBtn = form.querySelector('.profile-btn--full');
@@ -495,29 +493,19 @@ test('createAddressModal renders all 8 target rows in exact order with responsiv
   modal.destroy();
 });
 
-test('createAddressModal segmented radio control toggles Bireysel and Kurumsal', () => {
+test('createAddressModal postal code input filters non-digits and restricts to 5 digits', () => {
   const modal = createAddressModal({
     onSave: async () => {},
     onClose: () => {},
   });
 
   const form = modal.element.querySelector('.profile-form');
-  const bireyselBtn = form.querySelector('[data-value="Bireysel"]');
-  const kurumsalBtn = form.querySelector('[data-value="Kurumsal"]');
+  const postalInput = form.querySelector('#profile-address-postal');
+  assert.ok(postalInput, 'Postal input exists');
 
-  // Initially Bireysel is active
-  assert.equal(bireyselBtn.getAttribute('aria-checked'), 'true');
-  assert.equal(kurumsalBtn.getAttribute('aria-checked'), 'false');
-
-  // Click Kurumsal
-  kurumsalBtn.dispatchEvent({ type: 'click' });
-  assert.equal(bireyselBtn.getAttribute('aria-checked'), 'false');
-  assert.equal(kurumsalBtn.getAttribute('aria-checked'), 'true');
-
-  // Click Bireysel
-  bireyselBtn.dispatchEvent({ type: 'click' });
-  assert.equal(bireyselBtn.getAttribute('aria-checked'), 'true');
-  assert.equal(kurumsalBtn.getAttribute('aria-checked'), 'false');
+  postalInput.value = '34abc00099';
+  postalInput.dispatchEvent({ type: 'input' });
+  assert.equal(postalInput.value, '34000');
 
   modal.destroy();
 });
@@ -573,7 +561,7 @@ test('createAddressModal cascades and resets district and neighborhood upon city
   modal.destroy();
 });
 
-test('createAddressModal validates required fields and emits full backward-compatible payload', async () => {
+test('createAddressModal validates required fields and emits updated payload', async () => {
   let submittedPayload = null;
   let modalClosed = false;
 
@@ -594,36 +582,45 @@ test('createAddressModal validates required fields and emits full backward-compa
   assert.equal(errorAlert.style.display, 'block');
   assert.equal(submittedPayload, null);
 
-  // 2. Fill fields
+  // 2. Fill fields with invalid postal code (< 5 digits)
   form.querySelector('#profile-address-ad').value = 'Berre';
   form.querySelector('#profile-address-soyad').value = 'Yazgı';
-  form.querySelector('#profile-address-phone').value = '(532) 123 45 67';
   form.querySelector('#profile-address-city').value = '34';
+  form.querySelector('#profile-address-postal').value = '340';
   form.querySelector('#profile-address-line').value = 'Bağdat Cad. No: 42 D: 8';
   form.querySelector('#profile-address-title').value = 'Evim';
 
-  // 3. Submit valid
+  await form.dispatchEvent({ type: 'submit', preventDefault: () => {} });
+  assert.equal(errorAlert.style.display, 'block');
+  assert.ok(errorAlert.textContent.includes('posta kodu'));
+  assert.equal(submittedPayload, null);
+
+  // 3. Fix postal code and submit
+  form.querySelector('#profile-address-postal').value = '34710';
   await form.dispatchEvent({ type: 'submit', preventDefault: () => {} });
 
   assert.ok(submittedPayload, 'Payload should be emitted');
   assert.equal(submittedPayload.firstName, 'Berre');
   assert.equal(submittedPayload.lastName, 'Yazgı');
-  assert.equal(submittedPayload.phone, '+90 (532) 123 45 67');
-  assert.equal(submittedPayload.phoneRaw, '5321234567');
   assert.equal(submittedPayload.cityId, 34);
+  assert.equal(submittedPayload.postalCode, '34710');
   assert.equal(submittedPayload.addressLine, 'Bağdat Cad. No: 42 D: 8');
   assert.equal(submittedPayload.addressTitle, 'Evim');
-  assert.equal(submittedPayload.billingType, 'Bireysel');
 
-  // Backward compatibility fields for profileService & backend
+  // Phone and billing type must NOT be in payload
+  assert.equal(submittedPayload.phone, undefined);
+  assert.equal(submittedPayload.phoneRaw, undefined);
+  assert.equal(submittedPayload.telefon, undefined);
+  assert.equal(submittedPayload.billingType, undefined);
+  assert.equal(submittedPayload.faturaTuru, undefined);
+
+  // Compatibility fields for profileService & backend
   assert.equal(submittedPayload.sehir, 34);
-  assert.equal(submittedPayload.postaKodu, '34000');
+  assert.equal(submittedPayload.postaKodu, 34710);
   assert.equal(submittedPayload.adresBilgisi, 'Bağdat Cad. No: 42 D: 8');
   assert.equal(submittedPayload.ad, 'Berre');
   assert.equal(submittedPayload.soyad, 'Yazgı');
-  assert.equal(submittedPayload.telefon, '(532) 123 45 67');
   assert.equal(submittedPayload.adresBasligi, 'Evim');
-  assert.equal(submittedPayload.faturaTuru, 'Bireysel');
   assert.equal(submittedPayload.ulke, 90);
 
   assert.equal(modalClosed, true, 'Modal should close on success');
@@ -635,12 +632,10 @@ test('createAddressModal pre-populates in edit mode and shows Adresi Düzenle', 
     id: 'addr-42',
     firstName: 'Can',
     lastName: 'Demir',
-    phone: '5429876543',
     sehir: 35,
-    postaKodu: '35200',
+    postaKodu: 35200,
     adresBilgisi: 'Alsancak Mah. Kıbrıs Şehitleri Cad. No: 10',
     adresBasligi: 'İş Yeri',
-    faturaTuru: 'Kurumsal',
   };
 
   const modal = createAddressModal({
@@ -656,13 +651,13 @@ test('createAddressModal pre-populates in edit mode and shows Adresi Düzenle', 
   const form = overlay.querySelector('.profile-form');
   assert.equal(form.querySelector('#profile-address-ad').value, 'Can');
   assert.equal(form.querySelector('#profile-address-soyad').value, 'Demir');
-  assert.equal(form.querySelector('#profile-address-phone').value, '(542) 987 65 43');
   assert.equal(form.querySelector('#profile-address-city').value, '35');
+  assert.equal(form.querySelector('#profile-address-postal').value, '35200');
   assert.equal(form.querySelector('#profile-address-line').value, 'Alsancak Mah. Kıbrıs Şehitleri Cad. No: 10');
   assert.equal(form.querySelector('#profile-address-title').value, 'İş Yeri');
 
-  const kurumsalBtn = form.querySelector('[data-value="Kurumsal"]');
-  assert.equal(kurumsalBtn.getAttribute('aria-checked'), 'true');
+  assert.equal(form.querySelector('#profile-address-phone'), null);
+  assert.equal(form.querySelector('.profile-segmented-control'), null);
 
   const saveBtn = form.querySelector('.profile-btn--full');
   assert.equal(saveBtn.textContent, 'Güncelle');

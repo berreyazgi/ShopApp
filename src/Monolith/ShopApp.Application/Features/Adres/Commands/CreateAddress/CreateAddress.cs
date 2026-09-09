@@ -11,7 +11,8 @@ public sealed record CreateAddressCommand(
     int Ulke,
     int Sehir,
     int Ilce,
-    string PostaKodu
+    int Mahalle,
+    int PostaKodu
 ) : IRequest<AddressDto>;
 
 public sealed class CreateAddressCommandValidator : AbstractValidator<CreateAddressCommand>
@@ -19,14 +20,16 @@ public sealed class CreateAddressCommandValidator : AbstractValidator<CreateAddr
     public CreateAddressCommandValidator()
     {
         RuleFor(x => x.PostaKodu)
-            .NotEmpty().WithMessage("Posta kodu zorunludur.")
-            .MaximumLength(10).WithMessage("Posta kodu en fazla 10 karakter olabilir.");
+            .GreaterThan(0).WithMessage("Geçerli bir posta kodu giriniz.");
 
         RuleFor(x => x.AdresBilgisi)
             .MaximumLength(5000).WithMessage("Adres bilgisi en fazla 5000 karakter olabilir.");
 
         RuleFor(x => x.Sehir)
             .GreaterThan(0).WithMessage("Geçerli bir şehir seçiniz.");
+
+        RuleFor(x => x.Mahalle)
+            .GreaterThan(0).WithMessage("Geçerli bir mahalle seçiniz.");
     }
 }
 
@@ -43,7 +46,8 @@ public sealed class CreateAddressCommandHandler(
             ulke: request.Ulke > 0 ? request.Ulke : 90,
             sehir: request.Sehir,
             ilce: request.Ilce,
-            postaKodu: request.PostaKodu.Trim(),
+            mahalle: request.Mahalle,
+            postaKodu: request.PostaKodu,
             adresBilgisi: request.AdresBilgisi?.Trim(),
             olusturanKullaniciId: customer.KullaniciId
         );
@@ -58,6 +62,7 @@ public sealed class CreateAddressCommandHandler(
             address.Ulke,
             address.Sehir,
             address.Ilce,
+            address.Mahalle,
             address.PostaKodu,
             address.OlusturmaTarihi,
             address.GuncellemeTarihi

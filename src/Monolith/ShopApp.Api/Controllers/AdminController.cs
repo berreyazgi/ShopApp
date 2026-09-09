@@ -21,9 +21,7 @@ public sealed class AdminController : ControllerBase
     {
         _identityService = identityService;
     }
-
-    // A minimal protected endpoint used by the SPA/admin integration until
-    // business-specific administration endpoints are introduced.
+    
     [HttpGet("session")]
     public IActionResult GetSession() => Ok(new { message = "Admin erişimi doğrulandı." });
 

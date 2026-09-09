@@ -29,6 +29,7 @@ public class GetMyAddresses
                     a.Ulke,
                     a.Sehir,
                     a.Ilce,
+                    a.Mahalle,
                     a.PostaKodu,
                     a.OlusturmaTarihi,
                     a.GuncellemeTarihi))

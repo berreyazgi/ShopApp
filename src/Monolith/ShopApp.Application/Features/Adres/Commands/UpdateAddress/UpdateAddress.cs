@@ -13,7 +13,8 @@ public sealed record UpdateAddressCommand(
     int Ulke,
     int Sehir,
     int Ilce,
-    string PostaKodu
+    int Mahalle,
+    int PostaKodu
 ) : IRequest<AddressDto>;
 
 public sealed class UpdateAddressCommandValidator : AbstractValidator<UpdateAddressCommand>
@@ -24,14 +25,16 @@ public sealed class UpdateAddressCommandValidator : AbstractValidator<UpdateAddr
             .NotEmpty().WithMessage("Adres kimliği zorunludur.");
 
         RuleFor(x => x.PostaKodu)
-            .NotEmpty().WithMessage("Posta kodu zorunludur.")
-            .MaximumLength(10).WithMessage("Posta kodu en fazla 10 karakter olabilir.");
+            .GreaterThan(0).WithMessage("Geçerli bir posta kodu giriniz.");
 
         RuleFor(x => x.AdresBilgisi)
             .MaximumLength(5000).WithMessage("Adres bilgisi en fazla 5000 karakter olabilir.");
 
         RuleFor(x => x.Sehir)
             .GreaterThan(0).WithMessage("Geçerli bir şehir seçiniz.");
+
+        RuleFor(x => x.Mahalle)
+            .GreaterThan(0).WithMessage("Geçerli bir mahalle seçiniz.");
     }
 }
 
@@ -51,7 +54,8 @@ public sealed class UpdateAddressCommandHandler(
             ulke: request.Ulke > 0 ? request.Ulke : 90,
             sehir: request.Sehir,
             ilce: request.Ilce,
-            postaKodu: request.PostaKodu.Trim(),
+            mahalle: request.Mahalle,
+            postaKodu: request.PostaKodu,
             adresBilgisi: request.AdresBilgisi?.Trim(),
             guncelleyenKullaniciId: customer.KullaniciId
         );
@@ -65,6 +69,7 @@ public sealed class UpdateAddressCommandHandler(
             address.Ulke,
             address.Sehir,
             address.Ilce,
+            address.Mahalle,
             address.PostaKodu,
             address.OlusturmaTarihi,
             address.GuncellemeTarihi

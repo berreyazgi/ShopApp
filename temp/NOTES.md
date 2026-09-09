@@ -6,7 +6,7 @@
   - `AdresController` is mapped to `[Route("api/adres")]` and requires `[Authorize]`. It exposes `GET /api/adres`, `POST /api/adres`, `PUT /api/adres/{id:guid}`, and `DELETE /api/adres/{id:guid}`.
   - Ownership security: When updating or deleting addresses, handlers always verify that `address.MusteriId == currentCustomer.MusteriId` derived from `ICurrentCustomerContext`.
 - **Database Schema for Addresses**:
-  - The table is `kimlik.Adresler` with columns `Id`, `MusteriId`, `AdresBilgisi`, `Ulke`, `Sehir` (integer plate code 1–81), `Ilce` (integer), `PostaKodu` (string max 10), `OlusturmaTarihi`, `GuncellemeTarihi`.
+  - The table is `kimlik.Adresler` with columns `Id`, `MusteriId`, `AdresBilgisi`, `Ulke`, `Sehir` (integer plate code 1–81), `Ilce` (integer), `Mahalle` (integer), `PostaKodu` (integer), `OlusturmaTarihi`, `GuncellemeTarihi`.
   - There is no `IsDefault` column in the database, so the "Varsayılan" badge is omitted cleanly without faking or running database migrations.
 - **Orders Integration**:
   - `GET /api/siparis` (`SiparisController`) is reused for order history.
@@ -17,7 +17,7 @@
   - Profile, address, and recent order data are strictly retrieved from real backend APIs. If an API request fails, clean error/retry states are displayed.
 - **Profile Layout & Navigation**:
   - "Hızlı İşlemler" (`QuickActionsCard.js`) was removed per user request. To maintain layout balance, "Kayıtlı Adreslerim" now spans the full grid width (`grid-column: 1 / -1;`) with a responsive grid (`repeat(auto-fill, minmax(280px, 1fr))`).
-  - "Adres Bilgilerim" was removed from the profile sidebar (`ProfileSidebar.js`), leaving 4 navigation items: "Hesabım", "Siparişlerim", "Bize Ulaşın", and "Sıkça Sorulan Sorular".
+  - "Adres Bilgilerim" and "Sıkça Sorulan Sorular" were removed from the profile sidebar (`ProfileSidebar.js`), leaving 3 navigation items: "Hesabım", "Siparişlerim", and "Bize Ulaşın".
 
 ## Admin Architecture & Dynamic Data Rules
 - **Workspace Layout Isolation (Option A)**:
@@ -71,34 +71,36 @@
   - Absolutely no `fetch()`, `apiClient`, `axios`, or `XMLHttpRequest` calls were added. Ready for future backend/API integration by the developer.
 
 ## Modern Address Modal UI Refactor (`createAddressModal`)
-- **8-Row Exact Sequence (Option A Layout)**:
+- **6-Row Exact Sequence (Option A Layout)**:
   - Row 1: `Ad *` (50%) | `Soyad *` (50%) in `.profile-form-row` (2-column desktop grid, stacks on mobile <640px).
-  - Row 2: `Telefon *` with static `+90` country code prefix box and custom Vanilla JS phone input mask formatting digits dynamically as `(5XX) XXX XX XX`.
-  - Row 3: `İl *` (50%) | `İlçe *` (50%) in `.profile-form-row`. İl is populated via approved `TURKEY_CITIES` (plate codes 1–81). İlçe is dynamically populated from supplied provider or cleanly disabled with placeholder (*"Önce il seçiniz"*).
-  - Row 4: `Mahalle *` (full width). Dynamically populated from supplied provider or cleanly disabled with placeholder (*"Önce ilçe seçiniz"*).
-  - Row 5: Delivery Warning Box (`.profile-address-warning`) featuring a soft pale orange container (`#fff9f2`), alert circle SVG icon, and instructional delivery guidance text.
-  - Row 6: `Adres *` multiline `<textarea>` for detailed street, building, and door information.
-  - Row 7: `Adres Başlığı *` text input (e.g. "Evim", "İş Yeri").
-  - Row 8: `Fatura Türü` accessible segmented radio control (`role="radiogroup"`, `role="radio"`, `aria-checked`, arrow key navigation) with "Bireysel" (default active) and "Kurumsal".
+  - Row 2: `İl *` (50%) | `İlçe *` (50%) in `.profile-form-row`. İl is populated via approved `TURKEY_CITIES` (plate codes 1–81). İlçe is dynamically populated from supplied provider or cleanly disabled with placeholder (*"Önce il seçiniz"*).
+  - Row 3: `Mahalle *` (50%) | `Posta Kodu *` (50%) in `.profile-form-row`. Mahalle is dynamically populated from supplied provider or cleanly disabled with placeholder (*"Önce ilçe seçiniz"*). Posta Kodu has 5-digit numeric input filtering and validation.
+  - Row 4: Delivery Warning Box (`.profile-address-warning`) featuring a soft pale orange container (`#fff9f2`), alert circle SVG icon, and instructional delivery guidance text.
+  - Row 5: `Adres *` multiline `<textarea>` for detailed street, building, and door information.
+  - Row 6: `Adres Başlığı *` text input (e.g. "Evim", "İş Yeri").
   - Footer: Dedicated footer (`.profile-modal-footer--full`) with full-width primary button (`.profile-btn--full`, "Kaydet" or "Güncelle").
+- **Removed Elements**:
+  - `Telefon *` input field, prefix box (`+90`), and phone input mask have been removed.
+  - `Fatura Türü` segmented toggle control ("Bireysel" / "Kurumsal") has been removed.
 - **Zero Fake Location Data Rule**:
   - Zero mock districts, fake neighborhoods, or sample postal codes were hardcoded.
   - Cascading resets: selecting an İl clears and resets İlçe and Mahalle; selecting an İlçe clears and resets Mahalle.
 - **Dedicated Sizing Modifier (Option A)**:
   - Uses `.profile-modal-container--address` (`max-width: 620px; width: 95vw; border-radius: var(--radius-xl);`), preserving the 480px width for smaller dialogs (such as Delete Confirmation).
 - **Network Safety & Backward Compatibility**:
-  - Emits full modern payload while preserving compatibility fields expected by `profileService.createAddress` and `updateAddress`:
+  - Emits modern payload omitting phone and billing type while sending `postalCode` / `postaKodu`:
     ```js
     {
-      firstName, lastName, phone, cityId, districtId, neighborhoodId,
-      addressLine, addressTitle, billingType,
+      firstName, lastName, cityId, districtId, neighborhoodId,
+      postalCode, addressLine, addressTitle,
       // Backward compatibility fields:
       sehir: Number(cityId),
       ilce: districtId ? Number(districtId) : 0,
-      postaKodu: address?.postaKodu || '34000',
+      mahalle: neighborhoodId ? Number(neighborhoodId) : 0,
+      postaKodu: Number(postalCode),
       adresBilgisi: addressLine,
-      ad: firstName, soyad: lastName, telefon: phone,
-      adresBasligi: addressTitle, faturaTuru: billingType, ulke: 90
+      ad: firstName, soyad: lastName,
+      adresBasligi: addressTitle, ulke: 90
     }
     ```
   - Backend and database were left 100% untouched. No new `fetch()` or `apiClient` calls were created.
@@ -152,3 +154,6 @@
 - **Dynamic Mobile Harmony**:
   - Mobile accordion in `Header.js` consumes the same normalized hierarchy via `loadDropdownCategories()`, rendering each parent with its children and a `Tümünü Gör →` link.
 
+## Address Integer Location Migration (2026-09-09)
+- `Mahalle` and `PostaKodu` are required integer fields throughout the domain, API contracts, and profile payloads.
+- Migration `20260909071129_AddMahalleAndConvertPostaKoduToInteger` uses PostgreSQL's explicit `"PostaKodu"::integer` cast. Existing non-numeric postal-code values must be corrected before it is applied; the migration intentionally fails rather than silently altering them.

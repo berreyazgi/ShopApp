@@ -16,7 +16,12 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
 
         builder.Property(x => x.PostaKodu)
             .HasColumnName("PostaKodu")
-            .HasMaxLength(10)
+            .HasColumnType("integer")
+            .IsRequired();
+
+        builder.Property(x => x.Mahalle)
+            .HasColumnName("Mahalle")
+            .HasColumnType("integer")
             .IsRequired();
 
         builder.HasOne(x => x.Musteri)

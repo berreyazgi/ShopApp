@@ -214,14 +214,12 @@ export function createAddressModal({
   const isEditing = Boolean(address);
   const initialFirstName = address?.firstName || address?.ad || '';
   const initialLastName = address?.lastName || address?.soyad || '';
-  const initialPhoneRaw = address?.phone || address?.telefon || '';
-  const initialPhone = formatTurkishPhone(initialPhoneRaw);
+  const initialPostalCode = address?.postaKodu || address?.postalCode || '';
   const initialCityId = address?.sehir || address?.cityId || '';
   const initialDistrictId = address?.ilce || address?.districtId || '';
   const initialNeighborhoodId = address?.mahalle || address?.neighborhoodId || '';
   const initialAddressLine = address?.adresBilgisi || address?.addressLine || '';
   const initialAddressTitle = address?.adresBasligi || address?.addressTitle || address?.title || '';
-  let selectedBillingType = address?.faturaTuru || address?.billingType || 'Bireysel';
 
   const form = document.createElement('form');
   form.className = 'profile-form profile-form--address';
@@ -279,43 +277,7 @@ export function createAddressModal({
 
   form.appendChild(nameRow);
 
-  // ── Row 2: Telefon (+90 + Input Mask) ────────────────────────────────────
-  const phoneGroup = document.createElement('div');
-  phoneGroup.className = 'profile-form-group';
-
-  const phoneLabel = document.createElement('label');
-  phoneLabel.className = 'profile-form-label';
-  phoneLabel.htmlFor = 'profile-address-phone';
-  phoneLabel.innerHTML = 'Telefon <span class="required">*</span>';
-  phoneGroup.appendChild(phoneLabel);
-
-  const phoneInputGroup = document.createElement('div');
-  phoneInputGroup.className = 'profile-phone-group';
-
-  const phonePrefix = document.createElement('span');
-  phonePrefix.className = 'profile-phone-prefix';
-  phonePrefix.setAttribute('aria-hidden', 'true');
-  phonePrefix.textContent = '+90';
-  phoneInputGroup.appendChild(phonePrefix);
-
-  const phoneInput = document.createElement('input');
-  phoneInput.type = 'tel';
-  phoneInput.id = 'profile-address-phone';
-  phoneInput.className = 'profile-form-input profile-phone-input';
-  phoneInput.placeholder = '(5__) ___ __ __';
-  phoneInput.maxLength = 15;
-  phoneInput.required = true;
-  phoneInput.value = initialPhone;
-
-  phoneInput.addEventListener('input', () => {
-    phoneInput.value = formatTurkishPhone(phoneInput.value);
-  });
-
-  phoneInputGroup.appendChild(phoneInput);
-  phoneGroup.appendChild(phoneInputGroup);
-  form.appendChild(phoneGroup);
-
-  // ── Row 3: İl & İlçe (50% | 50%) ─────────────────────────────────────────
+  // ── Row 2: İl & İlçe (50% | 50%) ─────────────────────────────────────────
   const locationRow = document.createElement('div');
   locationRow.className = 'profile-form-row';
 
@@ -383,7 +345,11 @@ export function createAddressModal({
 
   form.appendChild(locationRow);
 
-  // ── Row 4: Mahalle (Full Width) ──────────────────────────────────────────
+  // ── Row 3: Mahalle & Posta Kodu (50% | 50%) ──────────────────────────────
+  const areaRow = document.createElement('div');
+  areaRow.className = 'profile-form-row';
+
+  // Mahalle
   const neighborhoodGroup = document.createElement('div');
   neighborhoodGroup.className = 'profile-form-group';
 
@@ -405,7 +371,37 @@ export function createAddressModal({
   neighborhoodSelect.appendChild(defaultNeighborhoodOpt);
 
   neighborhoodGroup.appendChild(neighborhoodSelect);
-  form.appendChild(neighborhoodGroup);
+  areaRow.appendChild(neighborhoodGroup);
+
+  // Posta Kodu
+  const postalGroup = document.createElement('div');
+  postalGroup.className = 'profile-form-group';
+
+  const postalLabel = document.createElement('label');
+  postalLabel.className = 'profile-form-label';
+  postalLabel.htmlFor = 'profile-address-postal';
+  postalLabel.innerHTML = 'Posta Kodu <span class="required">*</span>';
+  postalGroup.appendChild(postalLabel);
+
+  const postalInput = document.createElement('input');
+  postalInput.type = 'text';
+  postalInput.id = 'profile-address-postal';
+  postalInput.className = 'profile-form-input';
+  postalInput.placeholder = '34000';
+  postalInput.maxLength = 5;
+  postalInput.inputMode = 'numeric';
+  postalInput.pattern = '[0-9]{5}';
+  postalInput.required = true;
+  postalInput.value = initialPostalCode ? String(initialPostalCode) : '';
+
+  postalInput.addEventListener('input', () => {
+    postalInput.value = postalInput.value.replace(/\D/g, '').slice(0, 5);
+  });
+
+  postalGroup.appendChild(postalInput);
+  areaRow.appendChild(postalGroup);
+
+  form.appendChild(areaRow);
 
   // ── Cascading State Providers & Resets ───────────────────────────────────
   async function updateDistrictOptions(cityId, preserveSelected = null) {
@@ -573,68 +569,6 @@ export function createAddressModal({
 
   form.appendChild(titleGroup);
 
-  // ── Row 8: Fatura Türü (Segmented Control) ────────────────────────────────
-  const billingGroup = document.createElement('div');
-  billingGroup.className = 'profile-form-group';
-
-  const billingLabel = document.createElement('label');
-  billingLabel.className = 'profile-form-label';
-  billingLabel.id = 'profile-address-billing-label';
-  billingLabel.textContent = 'Fatura Türü';
-  billingGroup.appendChild(billingLabel);
-
-  const segmentedWrap = document.createElement('div');
-  segmentedWrap.className = 'profile-segmented-control';
-  segmentedWrap.setAttribute('role', 'radiogroup');
-  segmentedWrap.setAttribute('aria-labelledby', 'profile-address-billing-label');
-
-  const bireyselBtn = document.createElement('button');
-  bireyselBtn.type = 'button';
-  bireyselBtn.className = 'profile-segmented-btn';
-  bireyselBtn.dataset.value = 'Bireysel';
-  bireyselBtn.setAttribute('role', 'radio');
-  bireyselBtn.textContent = 'Bireysel';
-
-  const kurumsalBtn = document.createElement('button');
-  kurumsalBtn.type = 'button';
-  kurumsalBtn.className = 'profile-segmented-btn';
-  kurumsalBtn.dataset.value = 'Kurumsal';
-  kurumsalBtn.setAttribute('role', 'radio');
-  kurumsalBtn.textContent = 'Kurumsal';
-
-  segmentedWrap.appendChild(bireyselBtn);
-  segmentedWrap.appendChild(kurumsalBtn);
-  billingGroup.appendChild(segmentedWrap);
-  form.appendChild(billingGroup);
-
-  function setBillingType(val) {
-    selectedBillingType = val;
-    const isBireysel = val === 'Bireysel';
-    bireyselBtn.setAttribute('aria-checked', isBireysel ? 'true' : 'false');
-    bireyselBtn.classList.toggle('profile-segmented-btn--active', isBireysel);
-    kurumsalBtn.setAttribute('aria-checked', !isBireysel ? 'true' : 'false');
-    kurumsalBtn.classList.toggle('profile-segmented-btn--active', !isBireysel);
-  }
-
-  setBillingType(selectedBillingType);
-
-  bireyselBtn.addEventListener('click', () => setBillingType('Bireysel'));
-  kurumsalBtn.addEventListener('click', () => setBillingType('Kurumsal'));
-
-  [bireyselBtn, kurumsalBtn].forEach((btn) => {
-    btn.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-        e.preventDefault();
-        setBillingType('Kurumsal');
-        kurumsalBtn.focus();
-      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-        e.preventDefault();
-        setBillingType('Bireysel');
-        bireyselBtn.focus();
-      }
-    });
-  });
-
   // ── Footer: Kaydet Butonu ────────────────────────────────────────────────
   const footer = document.createElement('div');
   footer.className = 'profile-modal-footer profile-modal-footer--full';
@@ -654,22 +588,15 @@ export function createAddressModal({
 
     const firstName = form.querySelector('#profile-address-ad').value.trim();
     const lastName = form.querySelector('#profile-address-soyad').value.trim();
-    const phoneFormatted = form.querySelector('#profile-address-phone').value.trim();
-    const phoneDigits = phoneFormatted.replace(/\D/g, '');
     const cityId = citySelect.value;
     const districtId = districtSelect.disabled ? null : districtSelect.value;
     const neighborhoodId = neighborhoodSelect.disabled ? null : neighborhoodSelect.value;
+    const postalCode = form.querySelector('#profile-address-postal').value.trim();
     const addressLine = form.querySelector('#profile-address-line').value.trim();
     const addressTitle = form.querySelector('#profile-address-title').value.trim();
 
     if (!firstName || !lastName) {
       errorAlert.textContent = 'Lütfen ad ve soyad alanlarını doldurun.';
-      errorAlert.style.display = 'block';
-      return;
-    }
-
-    if (!phoneDigits || phoneDigits.length < 10) {
-      errorAlert.textContent = 'Lütfen geçerli bir telefon numarası girin. (Örn: 5XX XXX XX XX)';
       errorAlert.style.display = 'block';
       return;
     }
@@ -692,6 +619,12 @@ export function createAddressModal({
       return;
     }
 
+    if (!postalCode || !/^\d{5}$/.test(postalCode)) {
+      errorAlert.textContent = 'Lütfen geçerli 5 haneli bir posta kodu giriniz (Örn: 34000).';
+      errorAlert.style.display = 'block';
+      return;
+    }
+
     if (!addressLine) {
       errorAlert.textContent = 'Lütfen açık adres bilginizi girin.';
       errorAlert.style.display = 'block';
@@ -707,25 +640,22 @@ export function createAddressModal({
     const payload = {
       firstName,
       lastName,
-      phone: `+90 ${phoneFormatted}`,
-      phoneRaw: phoneDigits,
       cityId: Number(cityId),
       districtId: districtId ? Number(districtId) : null,
       neighborhoodId: neighborhoodId ? Number(neighborhoodId) : null,
+      postalCode,
       addressLine,
       addressTitle,
-      billingType: selectedBillingType,
 
       // Backward compatibility fields for profileService and backend:
       sehir: Number(cityId),
       ilce: districtId ? Number(districtId) : 0,
-      postaKodu: address?.postaKodu || '34000',
+      mahalle: neighborhoodId ? Number(neighborhoodId) : 0,
+      postaKodu: Number(postalCode),
       adresBilgisi: addressLine,
       ad: firstName,
       soyad: lastName,
-      telefon: phoneFormatted,
       adresBasligi: addressTitle,
-      faturaTuru: selectedBillingType,
       ulke: 90,
     };
 

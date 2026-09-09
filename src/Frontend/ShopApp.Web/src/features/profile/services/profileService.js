@@ -54,7 +54,8 @@ export async function updateProfile(payload) {
  * @property {number} ulke
  * @property {number} sehir
  * @property {number} ilce
- * @property {string} postaKodu
+ * @property {number} mahalle
+ * @property {number} postaKodu
  * @property {string} olusturmaTarihi
  * @property {string|null} guncellemeTarihi
  */
@@ -74,7 +75,8 @@ export async function getAddresses() {
  *   ulke?: number,
  *   sehir: number,
  *   ilce?: number,
- *   postaKodu: string,
+ *   mahalle: number,
+ *   postaKodu: number,
  * }} payload
  * @returns {Promise<AddressDto>}
  */
@@ -83,7 +85,8 @@ export async function createAddress(payload) {
     ulke: payload.ulke ?? 90,
     sehir: Number(payload.sehir),
     ilce: Number(payload.ilce ?? 0),
-    postaKodu: payload.postaKodu,
+    mahalle: Number(payload.mahalle),
+    postaKodu: Number(payload.postaKodu),
     adresBilgisi: payload.adresBilgisi ?? '',
   });
 }
@@ -96,7 +99,8 @@ export async function createAddress(payload) {
  *   ulke?: number,
  *   sehir: number,
  *   ilce?: number,
- *   postaKodu: string,
+ *   mahalle: number,
+ *   postaKodu: number,
  * }} payload
  * @returns {Promise<AddressDto>}
  */
@@ -106,7 +110,8 @@ export async function updateAddress(id, payload) {
     ulke: payload.ulke ?? 90,
     sehir: Number(payload.sehir),
     ilce: Number(payload.ilce ?? 0),
-    postaKodu: payload.postaKodu,
+    mahalle: Number(payload.mahalle),
+    postaKodu: Number(payload.postaKodu),
     adresBilgisi: payload.adresBilgisi ?? '',
   });
 }
