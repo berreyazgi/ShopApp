@@ -18,6 +18,7 @@ import { createAdminStatusBadge } from '../components/AdminStatusBadge.js';
 import { createAdminPagination } from '../components/AdminPagination.js';
 import { createIcon } from '../../../shared/components/Icon/Icon.js';
 import { formatPrice } from '../../../shared/utils/format.js';
+import { getAdminOrders, updateAdminOrderStatus } from '../../orders/services/orderService.js';
 
 /**
  * @param {{
@@ -82,7 +83,7 @@ export default function AdminOrdersPage(props = {}) {
     searchInput.placeholder = 'Sipariş No veya Müşteri ara...';
     searchInput.value = searchQuery;
     searchInput.addEventListener('input', (e) => {
-      searchQuery = e.target.value.trim().toLowerCase();
+      searchQuery = String(e?.target?.value ?? searchInput.value ?? '').trim().toLowerCase();
       currentPage = 1;
       renderTable();
     });
@@ -100,7 +101,7 @@ export default function AdminOrdersPage(props = {}) {
     `;
     filterSelect.value = selectedFilter;
     filterSelect.addEventListener('change', (e) => {
-      selectedFilter = e.target.value;
+      selectedFilter = e?.target?.value ?? filterSelect.value;
       currentPage = 1;
       renderTable();
     });
@@ -232,6 +233,45 @@ export default function AdminOrdersPage(props = {}) {
         });
         actionsWrap.appendChild(viewBtn);
 
+        const statusSelect = document.createElement('select');
+        statusSelect.className = 'admin-order-status-select admin-table-toolbar__filter';
+        statusSelect.style.padding = '2px 8px';
+        statusSelect.style.fontSize = 'var(--text-xs)';
+        statusSelect.style.height = '28px';
+        statusSelect.setAttribute('aria-label', `${orderNo} durumunu güncelle`);
+        statusSelect.title = 'Sipariş durumunu güncelle';
+        statusSelect.innerHTML = `
+          <option value="1">Bekleyen Ödeme</option>
+          <option value="2">Ödenmiş</option>
+          <option value="3">Hazırlanıyor</option>
+          <option value="4">Kargoda</option>
+          <option value="5">Teslim Edildi</option>
+          <option value="6">İptal Edildi</option>
+        `;
+        const currentStatusId = getStatusId(o);
+        statusSelect.value = String(currentStatusId);
+        statusSelect.addEventListener('change', async (e) => {
+          const newStatusId = Number(e.target.value);
+          const orderId = o.id;
+          try {
+            statusSelect.disabled = true;
+            const res = await updateAdminOrderStatus(orderId, newStatusId);
+            const updatedStatusName = res?.durum || statusSelect.options[statusSelect.selectedIndex].text;
+            o.durumId = newStatusId;
+            o.status = updatedStatusName;
+            o.durum = updatedStatusName;
+            if (typeof props.onUpdateOrderStatus === 'function') {
+              props.onUpdateOrderStatus(orderId, newStatusId, updatedStatusName);
+            }
+            renderTable();
+          } catch (err) {
+            alert(err?.message || 'Sipariş durumu güncellenemedi.');
+            statusSelect.disabled = false;
+            statusSelect.value = String(currentStatusId);
+          }
+        });
+        actionsWrap.appendChild(statusSelect);
+
         actionsTd.appendChild(actionsWrap);
         row.appendChild(actionsTd);
 
@@ -258,10 +298,38 @@ export default function AdminOrdersPage(props = {}) {
     container.appendChild(card);
   }
 
+  function getStatusId(order) {
+    if (order.durumId) return Number(order.durumId);
+    const s = String(order.status || order.durum || '').toLowerCase();
+    if (s.includes('hazır')) return 3;
+    if (s.includes('kargo') || s.includes('gönder')) return 4;
+    if (s.includes('teslim')) return 5;
+    if (s.includes('iptal')) return 6;
+    if (s.includes('iade')) return 7;
+    if (s.includes('öden')) return 2;
+    return 1;
+  }
+
   renderPage();
+
+  let destroyed = false;
+  if (!props.orders) {
+    getAdminOrders()
+      .then((fetched) => {
+        if (destroyed) return;
+        orders = fetched ?? [];
+        renderPage();
+      })
+      .catch((err) => console.error('[AdminOrdersPage] failed to load orders:', err));
+  }
+
+  function destroy() {
+    destroyed = true;
+    layout.destroy();
+  }
 
   return {
     element: layout.element,
-    destroy: layout.destroy,
+    destroy,
   };
 }

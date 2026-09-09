@@ -9,6 +9,7 @@ namespace ShopApp.Application.Common.Interfaces;
 public interface IShopAppDbContext
 {
     DbSet<SiparisEntity> Siparisler { get; }
+    DbSet<SiparisDurumLookup> SiparisDurumlar { get; }
     DbSet<SepetEntity>  Sepetler { get; }
     DbSet<SepetUrunu> SepetUrunleri { get; }
     DbSet<SiparisUrunleri> SiparisUrunleri { get; }

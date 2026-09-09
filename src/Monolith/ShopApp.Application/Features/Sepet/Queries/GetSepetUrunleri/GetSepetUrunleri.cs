@@ -1,8 +1,8 @@
-using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Application.Common.Interfaces;
 using ShopApp.Application.Features.Sepet.Dtos;
+using ShopApp.Application.Features.Urun.Dtos;
 
 namespace ShopApp.Application.Features.Sepet.Queries;
 
@@ -12,8 +12,7 @@ public class GetSepetUrunleri
 
     public sealed class GetSepetUrunleriQueryHandler(
         IShopAppDbContext context,
-        ICurrentCustomerContext currentCustomerContext,
-        IMapper mapper) : IRequestHandler<GetSepetUrunleriQuery, List<ResultSepetUrunDto>>
+        ICurrentCustomerContext currentCustomerContext) : IRequestHandler<GetSepetUrunleriQuery, List<ResultSepetUrunDto>>
     {
         public async Task<List<ResultSepetUrunDto>> Handle(GetSepetUrunleriQuery request, CancellationToken cancellationToken)
         {
@@ -30,7 +29,30 @@ public class GetSepetUrunleri
                 .Where(x => x.SepetId == request.SepetId)
                 .ToListAsync(cancellationToken);
 
-            return mapper.Map<List<ResultSepetUrunDto>>(urunler);
+            if (urunler.Count == 0)
+                return [];
+
+            var urunTurIds = urunler.Select(u => u.UrunTurId).Distinct().ToList();
+            var urunTurler = await context.UrunTur
+                .AsNoTracking()
+                .Include(t => t.Urun)
+                .Include(t => t.Ozellikler)
+                .Where(t => urunTurIds.Contains(t.Id))
+                .ToDictionaryAsync(t => t.Id, cancellationToken);
+
+            return urunler.Select(u => ToDto(u, urunTurler.GetValueOrDefault(u.UrunTurId))).ToList();
         }
     }
+
+    internal static ResultSepetUrunDto ToDto(src.Monolith.ShopApp.Domain.Sepet.Entities.SepetUrunu sepetUrunu, ShopApp.Domain.Urun.Entities.UrunTur? urunTur) =>
+        new(
+            sepetUrunu.Id,
+            sepetUrunu.SepetId,
+            sepetUrunu.UrunTurId,
+            urunTur?.UrunId ?? Guid.Empty,
+            urunTur?.Urun.UrunAd ?? "Ürün bulunamadı",
+            urunTur?.Urun.GorselUrl,
+            urunTur?.Ozellikler.Select(o => new ResultUrunOzellikDto(o.Id, o.UrunTurId, o.OzellikAd, o.OzellikDeger)).ToList() ?? [],
+            sepetUrunu.UrunMiktar,
+            sepetUrunu.FiyatGecmis);
 }

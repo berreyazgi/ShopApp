@@ -1,13 +1,13 @@
 /**
  * CartPage.js — Shopping Cart Page
  *
- * Renders whatever cart items are supplied to it dynamically.
- * Zero demo products, zero fake data fixtures.
- * Displays a genuine empty-cart state when no items exist.
+ * Loads the authenticated customer's active basket from the real backend
+ * (cartService.js -> SepetController) and keeps it in sync with every
+ * quantity change / removal — this is not a frontend-only cart.
  *
  * Full-featured cart page with:
  *  - Breadcrumb navigation
- *  - Cart items with quantity controls (frontend-only)
+ *  - Cart items with quantity controls (persisted server-side)
  *  - Order summary with coupon input (frontend-only)
  *  - Dynamic price recalculation
  *  - Item deletion with animation
@@ -20,9 +20,26 @@ import { createIcon } from '../../../shared/components/Icon/Icon.js';
 import { navigate }   from '../../../app/router.js';
 import { createCartItemRow } from '../components/CartItem.js';
 import { createCartSummary } from '../components/CartSummary.js';
+import { createLoadingState, createErrorState } from '../../../shared/components/StateView/StateView.js';
+import { getOrCreateActiveCart, getCartItems, updateCartItem, removeCartItem } from '../services/cartService.js';
 
 const FREE_SHIPPING_THRESHOLD = 500;
 
+/** Maps a backend ResultSepetUrunDto to the shape CartItem.js renders. */
+function mapCartLine(dto) {
+  const variant = (dto.ozellikler ?? [])
+    .map((o) => `${o.ozellikAd}: ${o.ozellikDeger}`)
+    .join(', ');
+
+  return {
+    id: dto.id,
+    name: dto.urunAd,
+    variant,
+    unitPrice: dto.fiyatGecmis,
+    quantity: dto.urunMiktar,
+    image: dto.gorselUrl || '',
+  };
+}
 
 function createEmptyState() {
   const empty = document.createElement('div');
@@ -55,15 +72,17 @@ function createEmptyState() {
 
 
 /**
- * @param {{ params?: object, items?: Array }} [options] - `items` accepts dynamic cart items.
+ * @param {{ params?: object, items?: Array }} [options] - `items` accepts pre-supplied cart items (used by tests); otherwise the page loads the real active cart itself.
  * @returns {{ element: HTMLElement, destroy: () => void }}
  */
 export default function CartPage({ items } = {}) {
   const element = document.createElement('div');
   element.className = 'cart-page';
 
+  let cartId = null;
   let cartItems = (items ?? []).map((item) => ({ ...item }));
   const itemRows = new Map();
+  let destroyed = false;
 
   // ── Breadcrumbs
   const breadcrumbs = document.createElement('nav');
@@ -127,7 +146,12 @@ export default function CartPage({ items } = {}) {
     summary.update({ subtotal, shipping, grandTotal: subtotal + shipping });
 
     const count = cartItems.reduce((s, i) => s + (Number(i.quantity) || 0), 0);
-    titleEl.innerHTML = `Alışveriş Sepetim <span class="cart-card__count">(${count} Ürün)</span>`;
+    titleEl.innerHTML = '';
+    titleEl.append('Alışveriş Sepetim ');
+    const countSpan = document.createElement('span');
+    countSpan.className = 'cart-card__count';
+    countSpan.textContent = `(${count} Ürün)`;
+    titleEl.appendChild(countSpan);
   }
 
   function renderItems() {
@@ -148,14 +172,31 @@ export default function CartPage({ items } = {}) {
 
     cartItems.forEach((item) => {
       const row = createCartItemRow(item, {
-        onQuantityChange: (id, quantity) => {
+        onQuantityChange: async (id, quantity) => {
           const target = cartItems.find((i) => i.id === id);
           if (!target) return;
+          const previousQuantity = target.quantity;
           target.quantity = quantity;
           itemRows.get(id)?.updateQuantity(quantity);
           updateSummary();
+
+          try {
+            await updateCartItem(cartId, id, { urunMiktar: quantity });
+          } catch (error) {
+            target.quantity = previousQuantity;
+            itemRows.get(id)?.updateQuantity(previousQuantity);
+            updateSummary();
+            alert(error?.message || 'Adet güncellenemedi.');
+          }
         },
-        onRemove: (id) => {
+        onRemove: async (id) => {
+          try {
+            await removeCartItem(cartId, id);
+          } catch (error) {
+            alert(error?.message || 'Ürün sepetten kaldırılamadı.');
+            return;
+          }
+
           const rowEntry = itemRows.get(id);
           if (!rowEntry) return;
           rowEntry.element.classList.add('cart-item--removing');
@@ -177,8 +218,49 @@ export default function CartPage({ items } = {}) {
     });
   }
 
-  renderItems();
-  updateSummary();
+  // ── Load real cart data from the backend ────────────────────────────────
 
-  return { element, destroy: () => {} };
+  async function load() {
+    itemsContainer.innerHTML = '';
+    itemsContainer.appendChild(createLoadingState({ message: 'Sepetiniz yükleniyor...' }));
+    header.style.display = 'none';
+    summary.element.style.display = 'none';
+
+    try {
+      const cart = await getOrCreateActiveCart();
+      if (destroyed) return;
+      cartId = cart.id;
+
+      const dtos = await getCartItems(cartId);
+      if (destroyed) return;
+
+      cartItems = (dtos ?? []).map(mapCartLine);
+      renderItems();
+      updateSummary();
+    } catch (error) {
+      if (destroyed) return;
+      itemsContainer.innerHTML = '';
+      itemsContainer.appendChild(createErrorState({
+        title: 'Sepetiniz yüklenemedi',
+        message: error?.message ?? 'Bir hata oluştu. Lütfen daha sonra tekrar deneyin.',
+        onRetry: load,
+      }));
+      console.error('[CartPage] load failed:', error);
+    }
+  }
+
+  if (items) {
+    // Pre-supplied items (tests / previews) — render as-is, no network call.
+    renderItems();
+    updateSummary();
+  } else {
+    load();
+  }
+
+  return {
+    element,
+    destroy: () => {
+      destroyed = true;
+    },
+  };
 }

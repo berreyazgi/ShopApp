@@ -33,11 +33,25 @@ export function createCartItemRow(item, { onQuantityChange, onRemove }) {
 
   const info = document.createElement('div');
   info.className = 'cart-item__info';
-  info.innerHTML = `
-    <span class="cart-item__name">${item.name}</span>
-    <span class="cart-item__variant">${item.variant}</span>
-    <span class="cart-item__unit-price">Birim Fiyat: <strong>${formatPrice(item.unitPrice)}</strong></span>
-  `;
+
+  const nameEl = document.createElement('span');
+  nameEl.className = 'cart-item__name';
+  nameEl.textContent = item.name;
+  info.appendChild(nameEl);
+
+  const variantEl = document.createElement('span');
+  variantEl.className = 'cart-item__variant';
+  variantEl.textContent = item.variant;
+  info.appendChild(variantEl);
+
+  const unitPriceEl = document.createElement('span');
+  unitPriceEl.className = 'cart-item__unit-price';
+  unitPriceEl.append('Birim Fiyat: ');
+  const unitPriceStrong = document.createElement('strong');
+  unitPriceStrong.textContent = formatPrice(item.unitPrice);
+  unitPriceEl.appendChild(unitPriceStrong);
+  info.appendChild(unitPriceEl);
+
   body.appendChild(info);
 
   const qty = document.createElement('div');

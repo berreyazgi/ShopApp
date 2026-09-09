@@ -13,6 +13,13 @@ namespace ShopApp.Infrastructure.Identity.Services;
 
 public sealed class IdentityService : IIdentityService
 {
+    // The only roles this application understands. Role-change operations are
+    // restricted to this set — no new Identity role is ever created from
+    // caller-supplied/request input, and only these roles are ever removed
+    // when replacing a user's role (external/system roles, if any exist, are
+    // left untouched).
+    private static readonly string[] ManagedRoles = ["Admin", "User", "Musteri"];
+
     private readonly UserManager<KayitliKullanici> _userManager;
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly ShopAppDbContext _dbContext;
@@ -46,6 +53,19 @@ public sealed class IdentityService : IIdentityService
     {
         var user = await _userManager.FindByIdAsync(id.ToString());
         return user is null ? null : ToUserInfo(user);
+    }
+
+    public async Task<IReadOnlyDictionary<Guid, IdentityUserInfo>> FindByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
+    {
+        var idList = ids.Distinct().ToList();
+        if (idList.Count == 0)
+            return new Dictionary<Guid, IdentityUserInfo>();
+
+        var users = await _userManager.Users
+            .Where(u => idList.Contains(u.Id))
+            .ToListAsync(cancellationToken);
+
+        return users.ToDictionary(u => u.Id, ToUserInfo);
     }
 
     public async Task<bool> CheckPasswordAsync(Guid userId, string password)
@@ -93,26 +113,35 @@ public sealed class IdentityService : IIdentityService
         return ToUserInfo(user);
     }
 
-    public async Task EnsureRoleExistsAsync(string role)
+    public async Task<int> CountUsersInRoleAsync(string role)
     {
-        if (await _roleManager.RoleExistsAsync(role))
-            return;
-
-        var result = await _roleManager.CreateAsync(new IdentityRole<Guid>(role));
-        EnsureSucceeded(result, "Rol oluşturulamadı.");
+        var users = await _userManager.GetUsersInRoleAsync(role);
+        return users.Count;
     }
 
-    public async Task AddToRoleAsync(Guid userId, string role)
+    public async Task SetRoleAsync(Guid userId, string role, CancellationToken cancellationToken = default)
     {
+        var normalizedRole = role.Trim();
+        if (!ManagedRoles.Contains(normalizedRole, StringComparer.OrdinalIgnoreCase))
+            throw new InvalidOperationException("Desteklenmeyen rol.");
+
         var user = await GetRequiredUserAsync(userId);
-        await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-        if (!await _userManager.IsInRoleAsync(user, role))
-            EnsureSucceeded(await _userManager.AddToRoleAsync(user, role), "Kullanıcı rolü atanamadı.");
+        var currentRoles = await _userManager.GetRolesAsync(user);
+        var managedRolesToRemove = currentRoles
+            .Where(r => ManagedRoles.Contains(r, StringComparer.OrdinalIgnoreCase))
+            .ToArray();
 
-        await EnsureProfileForRoleAsync(userId, role);
-        await _dbContext.SaveChangesAsync();
-        await transaction.CommitAsync();
+        if (managedRolesToRemove.Length > 0)
+            EnsureSucceeded(await _userManager.RemoveFromRolesAsync(user, managedRolesToRemove), "Önceki rol kaldırılamadı.");
+
+        await EnsureRoleExistsAsync(normalizedRole);
+        EnsureSucceeded(await _userManager.AddToRoleAsync(user, normalizedRole), "Rol atanamadı.");
+
+        await EnsureProfileForRoleAsync(userId, normalizedRole);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
     }
 
     public async Task<IReadOnlyCollection<string>> GetRolesAsync(Guid userId)
@@ -133,29 +162,52 @@ public sealed class IdentityService : IIdentityService
         EnsureSucceeded(result, "Profil bilgileri güncellenemedi.");
     }
 
+    public async Task UpdateManagedUserAsync(Guid id, string? ad, string? soyad, string? telefon, bool? isActive, CancellationToken cancellationToken = default)
+    {
+        var user = await GetRequiredUserAsync(id);
+
+        if (!string.IsNullOrWhiteSpace(ad)) user.Ad = ad.Trim();
+        if (!string.IsNullOrWhiteSpace(soyad)) user.Soyad = soyad.Trim();
+        if (telefon != null) user.PhoneNumber = string.IsNullOrWhiteSpace(telefon) ? null : telefon.Trim();
+        if (isActive.HasValue) user.Durum = isActive.Value ? "Aktif" : "Pasif";
+
+        user.GuncellemeTarihi = DateTime.UtcNow;
+        EnsureSucceeded(await _userManager.UpdateAsync(user), "Kullanıcı güncellenemedi.");
+    }
+
     private async Task<KayitliKullanici> GetRequiredUserAsync(Guid userId) =>
         await _userManager.FindByIdAsync(userId.ToString())
             ?? throw new InvalidOperationException("Kimlik kullanıcısı bulunamadı.");
 
     private static IdentityUserInfo ToUserInfo(KayitliKullanici user) =>
-        new(user.Id, user.Email!, user.Ad, user.Soyad, user.PhoneNumber, user.OlusturmaTarihi);
+        new(user.Id, user.Email!, user.Ad, user.Soyad, user.PhoneNumber, user.OlusturmaTarihi, string.Equals(user.Durum, "Aktif", StringComparison.OrdinalIgnoreCase));
 
     private async Task EnsureProfileForRoleAsync(Guid userId, string role)
     {
+        // Admin authorization is derived purely from the native Identity role
+        // membership (RoleManager / AspNetUserRoles) — no separate profile
+        // entity is created for the "Admin" role.
         if (string.Equals(role, "User", StringComparison.OrdinalIgnoreCase)
             || string.Equals(role, "Musteri", StringComparison.OrdinalIgnoreCase))
         {
             if (!await _dbContext.Musteriler.AnyAsync(x => x.KullaniciId == userId))
                 _dbContext.Musteriler.Add(Musteri.Olustur(userId));
+        }
+    }
 
+    /// <summary>
+    /// Provisions an application-managed role row if it doesn't already exist.
+    /// Intentionally private: only ever called with one of the fixed <see cref="ManagedRoles"/>
+    /// (registration's default role, or SetRoleAsync's already-allowlisted role) — never with
+    /// arbitrary caller-supplied role names.
+    /// </summary>
+    private async Task EnsureRoleExistsAsync(string role)
+    {
+        if (await _roleManager.RoleExistsAsync(role))
             return;
-        }
 
-        if (string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase)
-            && !await _dbContext.AdminProfilleri.AnyAsync(x => x.KullaniciId == userId))
-        {
-            _dbContext.AdminProfilleri.Add(AdminProfile.Olustur(userId));
-        }
+        var result = await _roleManager.CreateAsync(new IdentityRole<Guid>(role));
+        EnsureSucceeded(result, "Rol oluşturulamadı.");
     }
 
     private static void EnsureUserCreated(IdentityResult result)

@@ -11,16 +11,20 @@
 
 import { createIcon } from '../../../shared/components/Icon/Icon.js';
 import { getState } from '../../auth/state/authStore.js';
+import { openConfirmModal } from '../../../shared/components/ConfirmModal/ConfirmModal.js';
+import { logout } from '../../auth/services/authService.js';
+import { navigate } from '../../../app/router.js';
 
 /**
  * @param {{
  *   user?: { fullName?: string, firstName?: string, lastName?: string, email?: string, avatarUrl?: string, roles?: string[] } | null,
  *   onToggleSidebar?: () => void,
  *   onSearch?: (query: string) => void,
+ *   onLogout?: (triggerEl?: HTMLElement) => void,
  * }} [options]
  * @returns {HTMLElement}
  */
-export function createAdminHeader({ user = null, onToggleSidebar, onSearch } = {}) {
+export function createAdminHeader({ user = null, onToggleSidebar, onSearch, onLogout } = {}) {
   const currentUser = user ?? getState().user;
 
   const header = document.createElement('header');
@@ -131,6 +135,34 @@ export function createAdminHeader({ user = null, onToggleSidebar, onSearch } = {
 
   userCard.appendChild(userMeta);
   right.appendChild(userCard);
+
+  // Logout action button
+  const logoutBtn = document.createElement('button');
+  logoutBtn.type = 'button';
+  logoutBtn.className = 'admin-topbar__logout-btn';
+  logoutBtn.id = 'admin-topbar-logout';
+  logoutBtn.setAttribute('aria-label', 'Çıkış Yap');
+  logoutBtn.setAttribute('title', 'Çıkış Yap');
+  logoutBtn.appendChild(createIcon('log-out', { size: 18 }));
+  logoutBtn.addEventListener('click', (e) => {
+    if (typeof onLogout === 'function') {
+      onLogout(e.currentTarget);
+    } else {
+      openConfirmModal({
+        title: 'Çıkış Yap',
+        message: 'Hesabınızdan çıkış yapmak istediğinize emin misiniz?',
+        confirmLabel: 'Çıkış Yap',
+        cancelLabel: 'İptal',
+        confirmVariant: 'danger',
+        triggerElement: e.currentTarget,
+        onConfirm: async () => {
+          await logout();
+          navigate('/');
+        },
+      });
+    }
+  });
+  right.appendChild(logoutBtn);
 
   header.appendChild(right);
   return header;

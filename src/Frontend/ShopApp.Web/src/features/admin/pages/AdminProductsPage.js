@@ -38,6 +38,7 @@ import { createAdminProductDetailModal } from '../components/AdminProductDetailM
 import { createLoadingState, createEmptyState, createErrorState } from '../../../shared/components/StateView/StateView.js';
 import { createIcon } from '../../../shared/components/Icon/Icon.js';
 import { getCategoriesSync } from '../../categories/services/categoryService.js';
+import { getProducts, getCategories, createProduct, updateProduct, deleteProduct } from '../../products/services/productsService.js';
 
 /**
  * @param {{
@@ -60,8 +61,18 @@ export default function AdminProductsPage(props = {}) {
   let products = props.products ? [...props.products] : [];
   let categories = props.categories ? [...props.categories] : getCategoriesSync();
   const pageSize = props.pageSize ?? 12;
-  const isLoading = !!props.loading;
-  const hasError = !!props.error;
+  // Loads from the real backend (GET /api/urun, GET /api/kategori) unless the
+  let hasError = !!props.error;
+  let isLoading = props.loading !== undefined ? !!props.loading : (!props.products && !hasError);
+
+  function enrichWithCategoryNames(prods, cats) {
+    const byId = new Map(cats.map((c) => [String(c.id ?? c.kategoriId), c]));
+    return prods.map((p) => {
+      const cat = byId.get(String(p.categoryId ?? p.kategoriId ?? ''));
+      const catName = cat?.name ?? cat?.ad ?? p.category ?? null;
+      return { ...p, category: catName, kategori: catName };
+    });
+  }
 
   // Local UI State
   let searchQuery = '';
@@ -212,31 +223,55 @@ export default function AdminProductsPage(props = {}) {
       title: 'Ürünü Sil',
       message: `"${name}" ürününü silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`,
       confirmLabel: 'Sil',
-      onConfirm: () => {
-        if (typeof props.onDeleteProduct === 'function') {
-          props.onDeleteProduct(pid);
+      onConfirm: async () => {
+        try {
+          // Persist to the real backend (DELETE /api/admin/urun/{id})
+          await deleteProduct(pid);
+          if (typeof props.onDeleteProduct === 'function') {
+            props.onDeleteProduct(pid);
+          }
+          products = products.filter((p) => (p.id ?? p.urunId) !== pid);
+          renderPage();
+        } catch (err) {
+          alert(err?.message || 'Ürün silinemedi.');
         }
-        // Local removal for responsive UI feedback
-        products = products.filter((p) => (p.id ?? p.urunId) !== pid);
-        renderPage();
       },
       onCancel: () => { activeModalInstance = null; },
     });
     document.body.appendChild(activeModalInstance.element);
   }
 
-  function handleSaveProduct(savedProduct) {
-    if (typeof props.onSaveProduct === 'function') {
-      props.onSaveProduct(savedProduct);
+  async function handleSaveProduct(payload) {
+    const isNew = !payload.id && !payload.urunId;
+
+    try {
+      let saved = payload;
+      if (isNew) {
+        // Persist to the real backend (POST /api/admin/urun)
+        saved = await createProduct(payload);
+        saved = enrichWithCategoryNames([saved], categories)[0];
+      } else {
+        // Persist to the real backend (PUT /api/admin/urun/{id})
+        const pid = String(payload.id ?? payload.urunId);
+        saved = await updateProduct(pid, payload);
+        saved = enrichWithCategoryNames([saved], categories)[0];
+      }
+
+      if (typeof props.onSaveProduct === 'function') {
+        props.onSaveProduct(saved);
+      }
+
+      const pid = saved.id ?? saved.urunId;
+      const existingIndex = products.findIndex((p) => (p.id ?? p.urunId) === pid);
+      if (existingIndex !== -1) {
+        products[existingIndex] = saved;
+      } else {
+        products.unshift(saved);
+      }
+      renderPage();
+    } catch (err) {
+      alert(err?.message || 'Ürün kaydedilemedi.');
     }
-    const pid = savedProduct.id ?? savedProduct.urunId;
-    const existingIndex = products.findIndex((p) => (p.id ?? p.urunId) === pid);
-    if (existingIndex !== -1) {
-      products[existingIndex] = savedProduct;
-    } else {
-      products.unshift(savedProduct);
-    }
-    renderPage();
   }
 
   function closeActiveModal() {
@@ -279,6 +314,7 @@ export default function AdminProductsPage(props = {}) {
         retryLabel: 'Tekrar Dene',
         onRetry: () => {
           if (typeof props.onRetry === 'function') props.onRetry();
+          loadData();
         },
       });
       container.appendChild(errorEl);
@@ -604,11 +640,39 @@ export default function AdminProductsPage(props = {}) {
     updateDisplayArea();
   }
 
-  renderPage();
+  let destroyed = false;
+
+  // Loads from the real backend (GET /api/urun, GET /api/kategori).
+  async function loadData() {
+    isLoading = true;
+    hasError = false;
+    renderPage();
+    try {
+      const [fetchedProducts, fetchedCategories] = await Promise.all([getProducts(), getCategories()]);
+      if (destroyed) return;
+      categories = fetchedCategories;
+      products = enrichWithCategoryNames(fetchedProducts, categories);
+      isLoading = false;
+      renderPage();
+    } catch (err) {
+      if (destroyed) return;
+      console.error('[AdminProductsPage] failed to load products:', err);
+      isLoading = false;
+      hasError = true;
+      renderPage();
+    }
+  }
+
+  if (props.products || props.loading !== undefined || props.error) {
+    renderPage();
+  } else {
+    loadData();
+  }
 
   return {
     element: layout.element,
     destroy: () => {
+      destroyed = true;
       closeActiveModal();
       layout.destroy();
     },

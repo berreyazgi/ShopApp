@@ -47,8 +47,17 @@ public sealed class SiparisController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CancellationToken cancellationToken)
     {
-        var id = await _mediator.Send(new CreateSiparisCommand(), cancellationToken);
-        return CreatedAtAction(nameof(GetById), new { id }, new { id });
+        try
+        {
+            var id = await _mediator.Send(new CreateSiparisCommand(), cancellationToken);
+            return CreatedAtAction(nameof(GetById), new { id }, new { id });
+        }
+        catch (InvalidOperationException exception)
+        {
+            // Empty basket, or a line item that failed re-validation
+            // (inactive product/variant, insufficient stock).
+            return Conflict(new { message = exception.Message });
+        }
     }
 
     [HttpPut("{id:guid}")]

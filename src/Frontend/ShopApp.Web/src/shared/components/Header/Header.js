@@ -17,6 +17,7 @@
  */
 
 import { createIcon }  from '../Icon/Icon.js';
+import { openConfirmModal } from '../ConfirmModal/ConfirmModal.js';
 import { subscribe }   from '../../state/store.js';
 import { navigate }    from '../../../app/router.js';
 import { logout }      from '../../../features/auth/services/authService.js';
@@ -179,9 +180,19 @@ export function createHeader() {
       '<a class="header-auth-link" href="/siparisler">Siparişler</a>' +
       '<button class="header-auth-link" type="button" id="btn-logout">Çıkış Yap</button>';
 
-    actions.querySelector('#btn-logout')?.addEventListener('click', async () => {
-      await logout();
-      navigate('/');
+    actions.querySelector('#btn-logout')?.addEventListener('click', (e) => {
+      openConfirmModal({
+        title: 'Çıkış Yap',
+        message: 'Hesabınızdan çıkış yapmak istediğinize emin misiniz?',
+        confirmLabel: 'Çıkış Yap',
+        cancelLabel: 'İptal',
+        confirmVariant: 'danger',
+        triggerElement: e.currentTarget,
+        onConfirm: async () => {
+          await logout();
+          navigate('/');
+        },
+      });
     });
   }
 

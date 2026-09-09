@@ -131,6 +131,12 @@ public sealed class SepetController : ControllerBase
         {
             return BadRequest(new { errors = exception.Errors.Select(e => new { field = e.PropertyName, message = e.ErrorMessage }) });
         }
+        catch (InvalidOperationException exception)
+        {
+            // Inactive variant/product or insufficient stock — a current-state
+            // conflict, not a malformed request.
+            return Conflict(new { message = exception.Message });
+        }
     }
 
     [HttpPut("{sepetId:guid}/urunler/{urunId:guid}")]

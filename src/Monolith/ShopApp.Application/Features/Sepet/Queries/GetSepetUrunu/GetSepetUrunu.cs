@@ -1,8 +1,8 @@
-using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Application.Common.Interfaces;
 using ShopApp.Application.Features.Sepet.Dtos;
+using ShopApp.Application.Features.Sepet.Queries;
 
 namespace ShopApp.Application.Features.Sepet.Queries;
 
@@ -12,8 +12,7 @@ public class GetSepetUrunu
 
     public sealed class GetSepetUrunuQueryHandler(
         IShopAppDbContext context,
-        ICurrentCustomerContext currentCustomerContext,
-        IMapper mapper) : IRequestHandler<GetSepetUrunuQuery, ResultSepetUrunDto>
+        ICurrentCustomerContext currentCustomerContext) : IRequestHandler<GetSepetUrunuQuery, ResultSepetUrunDto>
     {
         public async Task<ResultSepetUrunDto> Handle(GetSepetUrunuQuery request, CancellationToken cancellationToken)
         {
@@ -25,7 +24,13 @@ public class GetSepetUrunu
                 .FirstOrDefaultAsync(cancellationToken)
                 ?? throw new KeyNotFoundException($"Sepet Ürünü '{request.Id}' bulunamadı.");
 
-            return mapper.Map<ResultSepetUrunDto>(urun);
+            var urunTur = await context.UrunTur
+                .AsNoTracking()
+                .Include(t => t.Urun)
+                .Include(t => t.Ozellikler)
+                .FirstOrDefaultAsync(t => t.Id == urun.UrunTurId, cancellationToken);
+
+            return GetSepetUrunleri.ToDto(urun, urunTur);
         }
     }
 }

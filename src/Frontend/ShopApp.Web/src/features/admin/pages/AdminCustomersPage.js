@@ -16,6 +16,7 @@ import { createAdminPageHeader } from '../components/AdminPageHeader.js';
 import { createAdminStatusBadge } from '../components/AdminStatusBadge.js';
 import { createAdminPagination } from '../components/AdminPagination.js';
 import { createIcon } from '../../../shared/components/Icon/Icon.js';
+import { getAdminCustomers, updateCustomerStatus } from '../../customers/services/customerService.js';
 
 /**
  * @param {{
@@ -71,7 +72,7 @@ export default function AdminCustomersPage(props = {}) {
     searchInput.placeholder = 'Müşteri adı veya e-posta ara...';
     searchInput.value = searchQuery;
     searchInput.addEventListener('input', (e) => {
-      searchQuery = e.target.value.trim().toLowerCase();
+      searchQuery = String(e?.target?.value ?? searchInput.value ?? '').trim().toLowerCase();
       currentPage = 1;
       renderTable();
     });
@@ -213,6 +214,31 @@ export default function AdminCustomersPage(props = {}) {
         });
         actionsWrap.appendChild(viewBtn);
 
+        const toggleBtn = document.createElement('button');
+        toggleBtn.type = 'button';
+        toggleBtn.className = 'admin-table-btn';
+        const targetStatus = !isActive;
+        toggleBtn.setAttribute('aria-label', `${name} hesabını ${targetStatus ? 'aktif' : 'pasif'} yap`);
+        toggleBtn.title = isActive ? 'Hesabı Pasife Al' : 'Hesabı Aktifleştir';
+        toggleBtn.appendChild(createIcon(isActive ? 'close' : 'check', { size: 14 }));
+        toggleBtn.addEventListener('click', async () => {
+          const custId = c.id ?? c.musteriId;
+          try {
+            toggleBtn.disabled = true;
+            await updateCustomerStatus(custId, { isActive: targetStatus });
+            c.isActive = targetStatus;
+            c.durum = targetStatus ? 'Aktif' : 'Pasif';
+            if (typeof props.onUpdateCustomerStatus === 'function') {
+              props.onUpdateCustomerStatus(custId, targetStatus);
+            }
+            renderTable();
+          } catch (err) {
+            alert(err?.message || 'Müşteri durumu güncellenemedi.');
+            toggleBtn.disabled = false;
+          }
+        });
+        actionsWrap.appendChild(toggleBtn);
+
         actionsTd.appendChild(actionsWrap);
         row.appendChild(actionsTd);
 
@@ -241,8 +267,24 @@ export default function AdminCustomersPage(props = {}) {
 
   renderPage();
 
+  let destroyed = false;
+  if (!props.customers) {
+    getAdminCustomers()
+      .then((fetched) => {
+        if (destroyed) return;
+        customers = fetched ?? [];
+        renderPage();
+      })
+      .catch((err) => console.error('[AdminCustomersPage] failed to load customers:', err));
+  }
+
+  function destroy() {
+    destroyed = true;
+    layout.destroy();
+  }
+
   return {
     element: layout.element,
-    destroy: layout.destroy,
+    destroy,
   };
 }

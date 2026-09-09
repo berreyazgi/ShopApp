@@ -157,3 +157,55 @@
 ## Address Integer Location Migration (2026-09-09)
 - `Mahalle` and `PostaKodu` are required integer fields throughout the domain, API contracts, and profile payloads.
 - Migration `20260909071129_AddMahalleAndConvertPostaKoduToInteger` uses PostgreSQL's explicit `"PostaKodu"::integer` cast. Existing non-numeric postal-code values must be corrected before it is applied; the migration intentionally fails rather than silently altering them.
+
+## Admin Management & Backend Endpoints Integration (2026-09-09)
+- **Admin Customer Management**:
+  - `AdminController.cs`:
+    - `GET /api/admin/musteriler`: Returns all registered customers by joining `IdentityDbContext.Users` with `kimlik.Musteriler` and counting orders in `satis.Siparisler`. Returns `id`, `musteriId`, `fullName`, `ad`, `soyad`, `email`, `phone`, `durum`, `isActive`, `olusturmaTarihi`, `siparisSayisi`.
+    - `PUT /api/admin/musteriler/{id}`: Supports updating customer status (`isActive` / `durum`) and personal details (`ad`, `soyad`, `phoneNumber`).
+  - Frontend:
+    - Service `customerService.js` under `src/features/customers/services/` provides `getAdminCustomers()` and `updateCustomerStatus()`.
+    - `AdminCustomersPage.js`: Dynamically fetches real customer data on mount when `props.customers` is omitted. Provides an inline status toggle button ("Hesabı Pasife Al" / "Hesabı Aktifleştir") in the actions column.
+- **Admin Order Management**:
+  - `AdminController.cs`:
+    - `GET /api/admin/siparisler`: Returns all orders across all customers with order number, customer name, date, item count, total price, and status.
+    - `PUT /api/admin/siparisler/{id}/durum`: Accepts `{ yeniDurumId }` and updates the order status using `siparis.DurumGuncelle(newStatusId, adminUserId)` without requiring the caller to be the customer who placed the order.
+  - Frontend:
+    - `orderService.js`: Exposes `getAdminOrders()` and `updateAdminOrderStatus()`.
+    - `AdminOrdersPage.js`: Dynamically fetches real orders on mount when `props.orders` is omitted. Provides an inline interactive status dropdown (`.admin-order-status-select`) allowing quick one-click status transitions (Hazırlanıyor, Kargoda, Teslim Edildi, İptal).
+- **Admin Category & Product Update Persistence**:
+  - `categoryService.js`: `updateCategory()` now dispatches `PUT /api/admin/kategori/{id}` (`UpdateKategoriCommand`) to `AdminKategoriController.cs` and refreshes the category store.
+  - `productsService.js`: Added `updateProduct()` dispatching `PUT /api/admin/urun/{id}` (`UpdateUrunCommand`) to `AdminUrunController.cs`.
+  - `AdminProductsPage.js`: `handleSaveProduct` dispatches `updateProduct(pid, payload)` when editing an existing product.
+  - `endpoints.js`: Added `adminKategori.update(id)`, `adminUrun.update(id)`, `adminMusteri.list()`, `adminMusteri.update(id)`, `adminSiparis.list()`, and `adminSiparis.updateStatus(id)`.
+- **Architectural Boundary Integrity**:
+  - Admin presentation components (`src/features/admin/`) remain clean with zero direct `apiClient` or `fetch()` invocations, consuming dedicated feature domain services (`categoryService.js`, `productsService.js`, `orderService.js`, `customerService.js`).
+
+## AdminController Security/Validation Hardening & CQRS Migration (2026-09-09)
+The two bullets above are now **superseded** by this pass — kept above for history, corrected here:
+- `AdminController` is now a thin controller: `GET/PUT musteriler`, `GET/PUT siparisler/{id}/durum`, and `POST users/{id}/roles` all delegate to MediatR commands/queries under `ShopApp.Application/Features/Admin/*` instead of querying `ShopAppDbContext`/`UserManager` directly.
+- `PUT /api/admin/musteriler/{id}`: `{id}` is now **only** interpreted as `MusteriId` (never as an Identity user id) — resolved via `Musteri.Id → Musteri.KullaniciId → KayitliKullanici`. `Durum` free-text is no longer accepted; only `{ ad?, soyad?, phoneNumber?, isActive? }`, with an empty update (`{}`) rejected as 400. `orderService.js`'s admin update payload was already `{ isActive }`-only, so no frontend change was needed there.
+- `PUT /api/admin/siparisler/{id}/durum` now accepts **one** canonical field: `{ durumId }` — the `{ yeniDurumId }` alias described above is gone. `orderService.js.updateAdminOrderStatus` was updated to send `durumId`. The requested status id is validated against `SiparisDurumlar` before the order is touched (400 if it doesn't exist), instead of relying on the FK constraint.
+- `POST /api/admin/users/{userId}/roles` now **replaces** the user's managed role (Admin/User/Musteri) instead of adding to it — old managed roles are removed first. Demoting the last Admin is rejected (409), and an admin can never change their own role via this endpoint (409).
+- The audit actor on order-status updates can never be `Guid.Empty` — if the authenticated admin's id can't be resolved, the request fails (401) instead of writing a blank actor.
+- `AdminProfile` entity/table removed entirely (see the change below) — Admin authorization is derived purely from the Identity role membership.
+
+## Logout Confirmation Modal Architecture (2026-09-09)
+- **Shared Modal Component (`ConfirmModal.js` & `ConfirmModal.css`)**:
+  - Created reusable, fully accessible confirmation modal under `src/Frontend/ShopApp.Web/src/shared/components/ConfirmModal/`.
+  - Supports `role="dialog"`, `aria-modal="true"`, `aria-labelledby`, `aria-describedby`, focus trapping, initial focus placement, and focus restoration to trigger element on cancel.
+  - Double-click prevention: Disables confirm, cancel, and close buttons and displays loading status while async `onConfirm` executes.
+  - Cancellation: `Escape` key, backdrop click, or `İptal` button closes modal and cleanly preserves the current active session without calling `logout()` or clearing tokens.
+- **Customer Header Integration (`Header.js`)**:
+  - Customer `#btn-logout` no longer terminates session immediately. Instead, invokes `openConfirmModal(...)`.
+  - Upon explicit confirmation, invokes `await logout()` via `authService.js` and navigates to `/`.
+- **Admin Dashboard Integration (`AdminSidebar.js`, `AdminHeader.js`, `AdminLayout.js`)**:
+  - Admin layout supports `Çıkış Yap` in two natural touchpoints:
+    - In `AdminSidebar.js` under the `SİTE` section alongside "Anasayfaya Dön" with an accessible `log-out` SVG icon.
+    - In `AdminHeader.js` in the topbar right action area alongside the admin user card (`#admin-topbar-logout`).
+  - Both triggers open the confirmation modal with the same dialog prompt (*"Hesabınızdan çıkış yapmak istediğinize emin misiniz?"*).
+  - Optional `onLogout` prop can be passed to `createAdminLayout`, `createAdminSidebar`, and `createAdminHeader` for testability, falling back to default `openConfirmModal` + `logout()` + `navigate('/')`.
+- **Architectural Boundary & Audit Integrity**:
+  - Strictly zero `apiClient`, `fetch`, `axios`, or `XMLHttpRequest` calls added to `src/features/admin/`.
+  - Backend `src/Monolith/` remained 100% untouched.
+  - Unit and integration tests added in `tests/logoutConfirmation.test.js` (10/10 passing).

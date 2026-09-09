@@ -117,3 +117,18 @@
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
+
+/* Danger — destructive actions */
+.btn--danger {
+  background: var(--color-danger, #e53935);
+  color: var(--color-white);
+}
+.btn--danger:hover {
+  background: #c62828;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(229, 57, 53, 0.35);
+}
+.btn--danger:active {
+  transform: translateY(0);
+  box-shadow: none;
+}

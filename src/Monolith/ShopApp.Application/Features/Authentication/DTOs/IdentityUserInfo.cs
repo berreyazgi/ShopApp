@@ -6,4 +6,5 @@ public sealed record IdentityUserInfo(
     string Ad,
     string Soyad,
     string? Telefon = null,
-    DateTime? OlusturmaTarihi = null);
+    DateTime? OlusturmaTarihi = null,
+    bool IsActive = true);

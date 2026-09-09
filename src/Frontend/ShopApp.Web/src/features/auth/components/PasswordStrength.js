@@ -74,8 +74,38 @@ export function createPasswordStrength() {
   barRow.appendChild(barContainer);
   barRow.appendChild(labelEl);
 
+  // Missing-requirements alert box — lists only the unmet rules.
+  // Reuses the shared alert visual language (icon, colored border/background).
+  const missingBox = document.createElement('div');
+  missingBox.className = 'alert alert--warning password-strength__missing';
+  missingBox.hidden = true;
+  missingBox.setAttribute('role', 'alert');
+  missingBox.setAttribute('aria-live', 'polite');
+  missingBox.setAttribute('aria-atomic', 'true');
+
+  const missingIcon = document.createElement('span');
+  missingIcon.className = 'alert__icon';
+  missingIcon.setAttribute('aria-hidden', 'true');
+  missingIcon.textContent = '⚠';
+
+  const missingBody = document.createElement('div');
+  missingBody.className = 'alert__message';
+
+  const missingTitle = document.createElement('p');
+  missingTitle.className = 'password-strength__missing-title';
+  missingTitle.textContent = 'Şifreniz şu gereksinimleri karşılamalıdır:';
+
+  const missingList = document.createElement('ul');
+  missingList.className = 'password-strength__missing-list';
+
+  missingBody.appendChild(missingTitle);
+  missingBody.appendChild(missingList);
+  missingBox.appendChild(missingIcon);
+  missingBox.appendChild(missingBody);
+
   wrapper.appendChild(barRow);
   wrapper.appendChild(rulesList);
+  wrapper.appendChild(missingBox);
 
   // ── Update ──────────────────────────────────────────────────────────────
 
@@ -132,6 +162,21 @@ export function createPasswordStrength() {
       li.classList.toggle('password-strength__rule--failed', !passed);
       iconEl.textContent = passed ? '✓' : '○';
     });
+
+    // Missing-requirements alert — only the unmet rules, dynamically listed.
+    const missingRules = PASSWORD_RULE_LABELS.filter((rule) => !ruleResults[rule.key]);
+    if (missingRules.length > 0) {
+      missingList.innerHTML = '';
+      missingRules.forEach((rule) => {
+        const li = document.createElement('li');
+        li.textContent = rule.label;
+        missingList.appendChild(li);
+      });
+      missingBox.hidden = false;
+    } else {
+      missingBox.hidden = true;
+      missingList.innerHTML = '';
+    }
   }
 
   function reset() {
@@ -144,6 +189,8 @@ export function createPasswordStrength() {
       li.className  = 'password-strength__rule';
       iconEl.textContent = '○';
     });
+    missingBox.hidden = true;
+    missingList.innerHTML = '';
   }
 
   function destroy() {

@@ -22,6 +22,7 @@ import { createRecentCategoriesCard } from '../components/RecentCategoriesCard.j
 import { createAdminConfirmModal } from '../components/AdminConfirmModal.js';
 import {
   getCategoriesSync,
+  getCategories,
   addCategory,
   updateCategory,
   deleteCategory,
@@ -104,14 +105,19 @@ export default function AdminCategoriesPage(props = {}) {
           message: `"${catName}" kategorisini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`,
           confirmLabel: 'Sil',
           onConfirm: async () => {
-            // Persist to dynamic category single source of truth
-            await deleteCategory(catId);
-            categories = getCategoriesSync();
-            recentCategories = recentCategories.filter((c) => (c.id ?? c.kategoriId) !== catId);
-            if (typeof props.onDeleteCategory === 'function') {
-              props.onDeleteCategory(catId);
+            try {
+              // Persist to the real backend (DELETE /api/admin/kategori/{id})
+              await deleteCategory(catId);
+              categories = getCategoriesSync();
+              recentCategories = recentCategories.filter((c) => (c.id ?? c.kategoriId) !== catId);
+              if (typeof props.onDeleteCategory === 'function') {
+                props.onDeleteCategory(catId);
+              }
+              renderPage();
+            } catch (err) {
+              // e.g. 409 Conflict: category still has child categories or products
+              alert(err?.message || 'Kategori silinemedi.');
             }
-            renderPage();
           },
         });
         document.body.appendChild(activeConfirmModal.element);
@@ -123,20 +129,25 @@ export default function AdminCategoriesPage(props = {}) {
     formPanel = createCategoryFormPanel({
       categories,
       onSave: async (payload) => {
-        let savedCategory;
-        if (payload.id) {
-          savedCategory = await updateCategory(payload);
-        } else {
-          savedCategory = await addCategory(payload);
-          recentCategories = [savedCategory, ...recentCategories].slice(0, 5);
-        }
-        categories = getCategoriesSync();
+        try {
+          let savedCategory;
+          if (payload.id) {
+            savedCategory = await updateCategory(payload);
+          } else {
+            // Persist to the real backend (POST /api/admin/kategori)
+            savedCategory = await addCategory(payload);
+            recentCategories = [savedCategory, ...recentCategories].slice(0, 5);
+          }
+          categories = getCategoriesSync();
 
-        if (typeof props.onSaveCategory === 'function') {
-          props.onSaveCategory(savedCategory || payload);
-        }
+          if (typeof props.onSaveCategory === 'function') {
+            props.onSaveCategory(savedCategory || payload);
+          }
 
-        renderPage();
+          renderPage();
+        } catch (err) {
+          alert(err?.message || 'Kategori kaydedilemedi.');
+        }
       },
       onCancel: () => {
         formPanel?.reset();
@@ -159,7 +170,21 @@ export default function AdminCategoriesPage(props = {}) {
 
   renderPage();
 
+  let destroyed = false;
+  if (!props.categories) {
+    // Refresh from the real backend (GET /api/kategori) after the initial render.
+    getCategories()
+      .then((fetched) => {
+        if (destroyed) return;
+        categories = fetched;
+        recentCategories = [...categories].slice(0, 5);
+        renderPage();
+      })
+      .catch((err) => console.error('[AdminCategoriesPage] failed to load categories:', err));
+  }
+
   function destroy() {
+    destroyed = true;
     activeConfirmModal?.close();
     layout.destroy();
   }

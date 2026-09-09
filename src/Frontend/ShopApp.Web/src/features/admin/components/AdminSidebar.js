@@ -10,6 +10,9 @@
  */
 
 import { createIcon } from '../../../shared/components/Icon/Icon.js';
+import { openConfirmModal } from '../../../shared/components/ConfirmModal/ConfirmModal.js';
+import { logout } from '../../auth/services/authService.js';
+import { navigate } from '../../../app/router.js';
 
 const NAV_SECTIONS = [
   {
@@ -40,10 +43,11 @@ const NAV_SECTIONS = [
  *   currentPath?: string,
  *   isOpen?: boolean,
  *   onNavigate?: (path: string) => void,
+ *   onLogout?: (triggerEl?: HTMLElement) => void,
  * }} [options]
  * @returns {HTMLElement & { toggle: (open?: boolean) => void }}
  */
-export function createAdminSidebar({ currentPath = window.location.pathname, isOpen = false, onNavigate } = {}) {
+export function createAdminSidebar({ currentPath = window.location.pathname, isOpen = false, onNavigate, onLogout } = {}) {
   const aside = document.createElement('aside');
   aside.className = `admin-sidebar${isOpen ? ' admin-sidebar--open' : ''}`;
   aside.setAttribute('aria-label', 'Yönetim Menüsü');
@@ -92,6 +96,45 @@ export function createAdminSidebar({ currentPath = window.location.pathname, isO
 
       group.appendChild(link);
     });
+
+    if (section.heading === 'SİTE') {
+      const logoutBtn = document.createElement('button');
+      logoutBtn.type = 'button';
+      logoutBtn.className = 'admin-sidebar__link admin-sidebar__link--logout';
+      logoutBtn.id = 'admin-sidebar-logout';
+      logoutBtn.setAttribute('aria-label', 'Çıkış Yap');
+
+      const iconSpan = document.createElement('span');
+      iconSpan.className = 'admin-sidebar__link-icon';
+      iconSpan.appendChild(createIcon('log-out', { size: 18 }));
+      logoutBtn.appendChild(iconSpan);
+
+      const textSpan = document.createElement('span');
+      textSpan.textContent = 'Çıkış Yap';
+      logoutBtn.appendChild(textSpan);
+
+      logoutBtn.addEventListener('click', (e) => {
+        aside.classList.remove('admin-sidebar--open');
+        if (typeof onLogout === 'function') {
+          onLogout(e.currentTarget);
+        } else {
+          openConfirmModal({
+            title: 'Çıkış Yap',
+            message: 'Hesabınızdan çıkış yapmak istediğinize emin misiniz?',
+            confirmLabel: 'Çıkış Yap',
+            cancelLabel: 'İptal',
+            confirmVariant: 'danger',
+            triggerElement: e.currentTarget,
+            onConfirm: async () => {
+              await logout();
+              navigate('/');
+            },
+          });
+        }
+      });
+
+      group.appendChild(logoutBtn);
+    }
 
     nav.appendChild(group);
   });

@@ -534,6 +534,26 @@
   flex-shrink: 0;
 }
 
+.password-strength__missing {
+  margin-top: var(--space-3);
+  align-items: flex-start;
+}
+
+.password-strength__missing-title {
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+}
+
+.password-strength__missing-list {
+  margin: 0;
+  padding-left: var(--space-4);
+  font-size: var(--text-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 /* ============================================================
    CHECKBOX
    ============================================================ */

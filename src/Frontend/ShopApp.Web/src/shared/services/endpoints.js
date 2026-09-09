@@ -39,6 +39,50 @@ export const endpoints = {
     search:         () => '/api/catalog/products/search',
   },
 
+  // ── Kategori (public reads) ──────────────────────────────────────────────
+  //
+  // ARCHITECTURE NOTE:
+  //  These paths match KategoriController ([Route("api/kategori")], read-only)
+  //  and AdminKategoriController ([Route("api/admin/kategori")], Admin-only
+  //  create/delete) in ShopApp.Api.
+  //
+  kategori: {
+    list:           () => '/api/kategori',
+    byId:           (id) => `/api/kategori/${id}`,
+  },
+  adminKategori: {
+    create:         () => '/api/admin/kategori',
+    update:         (id) => `/api/admin/kategori/${id}`,
+    delete:         (id) => `/api/admin/kategori/${id}`,
+  },
+
+  // ── Ürün (public reads) ──────────────────────────────────────────────────
+  //
+  // ARCHITECTURE NOTE:
+  //  These paths match UrunController ([Route("api/urun")], read-only) and
+  //  AdminUrunController ([Route("api/admin/urun")], Admin-only create/update/delete)
+  //  in ShopApp.Api.
+  //
+  urun: {
+    list:           (kategoriId) => kategoriId ? `/api/urun?kategoriId=${kategoriId}` : '/api/urun',
+    byId:           (id) => `/api/urun/${id}`,
+  },
+  adminUrun: {
+    create:         () => '/api/admin/urun',
+    update:         (id) => `/api/admin/urun/${id}`,
+    delete:         (id) => `/api/admin/urun/${id}`,
+  },
+
+  // ── Admin Müşteri & Sipariş ──────────────────────────────────────────────
+  adminMusteri: {
+    list:           () => '/api/admin/musteriler',
+    update:         (id) => `/api/admin/musteriler/${id}`,
+  },
+  adminSiparis: {
+    list:           () => '/api/admin/siparisler',
+    updateStatus:   (id) => `/api/admin/siparisler/${id}/durum`,
+  },
+
   // ── Cart ─────────────────────────────────────────────────────────────────
   //
   // ARCHITECTURE NOTE:
