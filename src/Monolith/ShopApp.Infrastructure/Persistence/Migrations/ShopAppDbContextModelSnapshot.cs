@@ -491,6 +491,10 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<int>("Ilce")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Mahalle")
+                        .HasColumnType("integer")
+                        .HasColumnName("Mahalle");
+
                     b.Property<Guid>("MusteriId")
                         .HasColumnType("uuid");
 
@@ -500,10 +504,8 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("OlusturmaTarihi")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("PostaKodu")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)")
+                    b.Property<int>("PostaKodu")
+                        .HasColumnType("integer")
                         .HasColumnName("PostaKodu");
 
                     b.Property<int>("Sehir")

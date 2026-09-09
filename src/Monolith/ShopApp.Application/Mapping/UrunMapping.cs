@@ -13,5 +13,12 @@ public class UrunMapping : Profile
         CreateMap<UrunGorsel, ResultUrunGorselDto>().ReverseMap();
         CreateMap<UrunTur, ResultUrunTurDto>().ReverseMap();
         CreateMap<UrunOzellik, ResultUrunOzellikDto>().ReverseMap();
+
+        CreateMap<Kategori, GetByIdKategoriDto>();
+        CreateMap<Urun, GetByIdUrunDto>()
+            .ForCtorParam(nameof(GetByIdUrunDto.KategoriAd), opt => opt.MapFrom(src => src.Kategori.KategoriAd));
+        CreateMap<UrunGorsel, GetByIdUrunGorselDto>();
+        CreateMap<UrunTur, GetByIdUrunTurDto>();
+        CreateMap<UrunOzellik, GetByIdUrunOzellikDto>();
     }
 }

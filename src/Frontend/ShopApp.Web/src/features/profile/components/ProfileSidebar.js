@@ -78,7 +78,6 @@ export function createProfileSidebar({ user, onNavigateSection }) {
     { id: 'account', label: 'Hesabım', icon: 'profile', active: true, href: '#hesabim' },
     { id: 'orders', label: 'Siparişlerim', icon: 'cart', href: '/siparisler' },
     { id: 'contact', label: 'Bize Ulaşın', icon: 'mail', href: '/hakkimizda' },
-    { id: 'faq', label: 'Sıkça Sorulan Sorular', icon: 'info', href: '#sss' },
   ];
 
   const ul = document.createElement('ul');

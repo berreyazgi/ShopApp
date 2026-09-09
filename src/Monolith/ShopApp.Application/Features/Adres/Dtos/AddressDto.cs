@@ -7,7 +7,8 @@ public record AddressDto(
     int Ulke,
     int Sehir,
     int Ilce,
-    string PostaKodu,
+    int Mahalle,
+    int PostaKodu,
     DateTime OlusturmaTarihi,
     DateTime? GuncellemeTarihi
 );
