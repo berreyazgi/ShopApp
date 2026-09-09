@@ -502,6 +502,12 @@
   transform: translateY(-1px);
 }
 
+.pdp-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* ── Lower Content ── */
 .pdp-lower {
   display: grid;

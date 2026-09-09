@@ -1,24 +1,44 @@
 /**
  * categoryService.js — Category Single Source of Truth
  *
- * Frontend service managing the dynamic category collection across all consumers:
+ * Frontend service managing the category collection across all consumers:
  *  - AdminCategoriesPage (/admin/kategoriler)
  *  - AdminProductsPage (/admin/urunler)
  *  - CategoryListPage (/kategoriler)
  *  - Header.js Category Mega Menu & Mobile Accordion
  *
+ * Backed by the real ShopApp.Api endpoints:
+ *  - GET    /api/kategori          (KategoriController)
+ *  - GET    /api/kategori/{id}     (KategoriController)
+ *  - POST   /api/admin/kategori    (AdminKategoriController, Admin only)
+ *  - DELETE /api/admin/kategori/{id} (AdminKategoriController, Admin only)
+ *
  * ZERO demo categories, ZERO hardcoded arrays, ZERO automatic seeds.
- * Starts strictly empty ([]).
- * Pure frontend presentation/state layer ready for developer's backend API integration.
+ * Starts strictly empty ([]) until the first successful fetch from the API.
+ *
+ * Frontend <-> Backend field mapping (kept local to this module so other
+ * components never have to deal with more than one property-name variant):
+ *
+ *   Frontend    Backend
+ *   -----------------------------
+ *   id          Id
+ *   name        KategoriAd
+ *   parentId    UstKategoriId
+ *   description Detay
+ *   imageUrl    GorselUrl
+ *   isActive    AktifMi
  */
+
+import { apiClient } from '../../../shared/services/apiClient.js';
+import { endpoints } from '../../../shared/services/endpoints.js';
 
 /**
  * @typedef {{
- *   id: string | number,
+ *   id: string,
  *   name: string,
  *   slug?: string,
  *   description?: string,
- *   parentId?: string | number | null,
+ *   parentId?: string | null,
  *   parentName?: string | null,
  *   imageUrl?: string | null,
  *   isActive?: boolean,
@@ -61,8 +81,70 @@ function slugify(text) {
     .replace(/-+/g, '-');
 }
 
+/** Maps a backend ResultKategoriDto / GetByIdKategoriDto to the frontend CategoryItem shape. */
+function mapFromBackend(dto) {
+  const name = dto.kategoriAd ?? dto.name ?? '';
+  const parentId = dto.ustKategoriId ?? null;
+  return {
+    id: dto.id,
+    kategoriId: dto.id,
+    name,
+    ad: name,
+    slug: slugify(name),
+    href: `/urunler/${slugify(name)}`,
+    description: dto.detay ?? '',
+    aciklama: dto.detay ?? '',
+    parentId,
+    ustKategoriId: parentId,
+    parentName: null,
+    ustKategoriAdi: null,
+    imageUrl: dto.gorselUrl ?? null,
+    gorselUrl: dto.gorselUrl ?? null,
+    isActive: dto.aktifMi ?? true,
+    aktiflik: dto.aktifMi ?? true,
+    productCount: null,
+    urunSayisi: null,
+    children: [],
+  };
+}
+
+/** Maps a frontend save payload (CategoryFormPanel output) to the backend CreateKategoriCommand shape. */
+function mapToBackend(item, imageUrl) {
+  const name = item.name || item.ad || '';
+  const parentId = item.parentId || item.ustKategoriId || null;
+  return {
+    kategoriAd: name,
+    ustKategoriId: parentId || null,
+    detay: item.description ?? item.aciklama ?? null,
+    gorselUrl: imageUrl ?? item.imageUrl ?? item.gorselUrl ?? null,
+    aktifMi: item.isActive !== undefined ? item.isActive : (item.aktiflik ?? true),
+  };
+}
+
+/** Converts a browser File to a data URL (used since no dedicated image-upload endpoint exists yet). */
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
+function attachParentNames(list) {
+  const byId = new Map(list.map((c) => [String(c.id), c]));
+  return list.map((c) => {
+    const parent = c.parentId ? byId.get(String(c.parentId)) : null;
+    return {
+      ...c,
+      parentName: parent ? parent.name : null,
+      ustKategoriAdi: parent ? parent.name : null,
+    };
+  });
+}
+
 /**
- * Synchronous read of current category collection.
+ * Synchronous read of the last-fetched category collection.
  * @returns {CategoryItem[]}
  */
 export function getCategoriesSync() {
@@ -70,122 +152,81 @@ export function getCategoriesSync() {
 }
 
 /**
- * Retrieves the category collection. Returns a Promise for API compatibility.
+ * Fetches the category collection from GET /api/kategori.
  * @returns {Promise<CategoryItem[]>}
  */
 export async function getCategories() {
-  // Integration point for future Catalog API:
-  // return apiClient.get(endpoints.catalog.categories());
+  const dtos = await apiClient.get(endpoints.kategori.list());
+  categories = attachParentNames((dtos ?? []).map(mapFromBackend));
+  notify();
   return getCategoriesSync();
 }
 
 /**
- * Retrieves a single category by ID.
- * @param {string | number} id
+ * Retrieves a single category by ID (cache first, falls back to GET /api/kategori/{id}).
+ * @param {string} id
  * @returns {Promise<CategoryItem | null>}
  */
 export async function getCategoryById(id) {
-  const match = categories.find((c) => String(c.id) === String(id));
-  return match ? { ...match } : null;
+  const cached = categories.find((c) => String(c.id) === String(id));
+  if (cached) return { ...cached };
+
+  try {
+    const dto = await apiClient.get(endpoints.kategori.byId(id));
+    return dto ? mapFromBackend(dto) : null;
+  } catch {
+    return null;
+  }
 }
 
 /**
- * Adds a new category to the collection.
- * @param {Omit<CategoryItem, 'id'> & { id?: string | number }} item
+ * Creates a new category via POST /api/admin/kategori (Admin only), then
+ * refreshes the local collection from the persisted backend state.
+ * @param {Omit<CategoryItem, 'id'> & { id?: string, imageFile?: File | null }} item
  * @returns {Promise<CategoryItem>}
  */
 export async function addCategory(item) {
-  const id = item.id ?? Date.now();
-  const name = item.name || item.ad || 'Yeni Kategori';
-  const slug = item.slug || slugify(name);
-  const parentId = item.parentId || item.ustKategoriId || null;
+  const imageUrl = item.imageFile ? await fileToDataUrl(item.imageFile) : (item.imageUrl || item.gorselUrl || null);
+  const body = mapToBackend(item, imageUrl);
 
-  let parentName = null;
-  if (parentId) {
-    const parent = categories.find((c) => String(c.id) === String(parentId));
-    parentName = parent ? (parent.name || parent.ad) : null;
-  }
+  const { id } = await apiClient.post(endpoints.adminKategori.create(), body);
+  await getCategories();
 
-  const newCategory = {
-    id,
-    kategoriId: id,
-    name,
-    ad: name,
-    slug,
-    href: `/urunler/${slug}`,
-    description: item.description || item.aciklama || '',
-    aciklama: item.description || item.aciklama || '',
-    parentId,
-    ustKategoriId: parentId,
-    parentName,
-    ustKategoriAdi: parentName,
-    imageUrl: item.imageUrl || item.gorselUrl || null,
-    gorselUrl: item.imageUrl || item.gorselUrl || null,
-    isActive: item.isActive !== undefined ? item.isActive : true,
-    aktiflik: item.isActive !== undefined ? item.isActive : true,
-    productCount: item.productCount ?? null,
-    urunSayisi: item.productCount ?? null,
-    children: [],
-  };
-
-  categories = [newCategory, ...categories];
-  notify();
-  return { ...newCategory };
+  const created = categories.find((c) => String(c.id) === String(id));
+  return created ? { ...created } : mapFromBackend({ id, kategoriAd: body.kategoriAd, ustKategoriId: body.ustKategoriId, detay: body.detay, gorselUrl: body.gorselUrl, aktifMi: body.aktifMi });
 }
 
 /**
- * Updates an existing category in the collection.
- * @param {CategoryItem} item
+ * Updates an existing category via PUT /api/admin/kategori/{id} (Admin only),
+ * then refreshes the local collection from the persisted backend state.
+ * @param {CategoryItem & { imageFile?: File | null }} item
  * @returns {Promise<CategoryItem>}
  */
 export async function updateCategory(item) {
   const targetId = String(item.id ?? item.kategoriId);
-  const name = item.name || item.ad || '';
-  const parentId = item.parentId || item.ustKategoriId || null;
+  const imageUrl = item.imageFile ? await fileToDataUrl(item.imageFile) : (item.imageUrl || item.gorselUrl || null);
+  const body = {
+    id: targetId,
+    ...mapToBackend(item, imageUrl),
+  };
 
-  let parentName = null;
-  if (parentId) {
-    const parent = categories.find((c) => String(c.id) === String(parentId));
-    parentName = parent ? (parent.name || parent.ad) : null;
-  }
+  await apiClient.put(endpoints.adminKategori.update(targetId), body);
+  await getCategories();
 
-  categories = categories.map((c) => {
-    if (String(c.id ?? c.kategoriId) === targetId) {
-      return {
-        ...c,
-        ...item,
-        name: name || c.name,
-        ad: name || c.ad,
-        slug: item.slug || slugify(name || c.name),
-        parentId,
-        ustKategoriId: parentId,
-        parentName,
-        ustKategoriAdi: parentName,
-        description: item.description !== undefined ? item.description : c.description,
-        aciklama: item.aciklama !== undefined ? item.aciklama : c.aciklama,
-        isActive: item.isActive !== undefined ? item.isActive : c.isActive,
-        aktiflik: item.aktiflik !== undefined ? item.aktiflik : c.aktiflik,
-        imageUrl: item.imageUrl !== undefined ? item.imageUrl : c.imageUrl,
-        gorselUrl: item.gorselUrl !== undefined ? item.gorselUrl : c.gorselUrl,
-      };
-    }
-    return c;
-  });
-
-  notify();
   const updated = categories.find((c) => String(c.id ?? c.kategoriId) === targetId);
-  return updated ? { ...updated } : { ...item };
+  return updated ? { ...updated } : mapFromBackend(body);
 }
 
 /**
- * Deletes a category by ID.
- * @param {string | number} id
+ * Deletes a category via DELETE /api/admin/kategori/{id} (Admin only).
+ * The backend rejects deletion (409 Conflict) when the category still has
+ * child categories or products referencing it.
+ * @param {string} id
  * @returns {Promise<void>}
  */
 export async function deleteCategory(id) {
-  const targetId = String(id);
-  categories = categories.filter((c) => String(c.id ?? c.kategoriId) !== targetId);
-  notify();
+  await apiClient.delete(endpoints.adminKategori.delete(id));
+  await getCategories();
 }
 
 /**
@@ -199,7 +240,7 @@ export function subscribeCategories(fn) {
 }
 
 /**
- * Resets the in-memory categories collection to empty.
+ * Resets the in-memory categories cache to empty (does not affect the backend).
  */
 export function resetCategories() {
   categories = [];

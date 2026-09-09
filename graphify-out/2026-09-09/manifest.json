@@ -1,0 +1,2792 @@
+{
+  ".codex/hooks.json": {
+    "mtime": 1786304990.927222,
+    "seen": 1788433316.5987659,
+    "ast_hash": "5c5043fb9a534aab6add58c7a71108fd",
+    "semantic_hash": ""
+  },
+  "ShopApp.sln": {
+    "mtime": 1788778537.3731685,
+    "seen": 1788854503.0228603,
+    "ast_hash": "2077d1ef1c2602d5325f7b9af9b0ec6e",
+    "semantic_hash": ""
+  },
+  "ShopApp/appsettings.json": {
+    "mtime": 1784709750.4351096,
+    "seen": 1788433316.5987759,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/app/App.js": {
+    "mtime": 1788420540.8750675,
+    "seen": 1788433316.5987806,
+    "ast_hash": "191fe46e67db76f967b394249f390998",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/app/appConfig.js": {
+    "mtime": 1788200606.5486577,
+    "seen": 1788433316.5987823,
+    "ast_hash": "dcfcd9eefd5af5d80f99daee76f70125",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/app/bootstrap.js": {
+    "mtime": 1786593801.355032,
+    "seen": 1788433316.5987835,
+    "ast_hash": "72c42d84f91ebf4a5afcda1d467175bd",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/app/router.js": {
+    "mtime": 1786593801.355032,
+    "seen": 1788433316.5987852,
+    "ast_hash": "b5ca1d87cec445a8b8eef49d6f56c33f",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/app/routes.js": {
+    "mtime": 1788727473.7352664,
+    "seen": 1788764188.8259325,
+    "ast_hash": "920f76d8e98ccaa7b7bea3f5c367697f",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/pages/AdminDashboardPage.js": {
+    "mtime": 1788870200.2502854,
+    "seen": 1788941202.1783,
+    "ast_hash": "39011f39377a2ea34fb10de1ceb3b81f",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/auth/components/AuthForm.js": {
+    "mtime": 1785232274.4688883,
+    "seen": 1788433316.5987902,
+    "ast_hash": "437914c0871afd695a91a2f108d40e9a",
+    "semantic_hash": "437914c0871afd695a91a2f108d40e9a"
+  },
+  "src/Frontend/ShopApp.Web/src/features/auth/components/AuthLayout.js": {
+    "mtime": 1785233637.9209857,
+    "seen": 1788433316.5987918,
+    "ast_hash": "a3521ab621264b74fa54d459795e04c9",
+    "semantic_hash": "a3521ab621264b74fa54d459795e04c9"
+  },
+  "src/Frontend/ShopApp.Web/src/features/auth/components/FormField.js": {
+    "mtime": 1785232166.618494,
+    "seen": 1788433316.5987935,
+    "ast_hash": "b3414b1f425d21173985776c3b96d3b6",
+    "semantic_hash": "b3414b1f425d21173985776c3b96d3b6"
+  },
+  "src/Frontend/ShopApp.Web/src/features/auth/components/PasswordField.js": {
+    "mtime": 1785232217.8336766,
+    "seen": 1788433316.5987947,
+    "ast_hash": "937daacc1cdc4e4d8a4f828f91f82bea",
+    "semantic_hash": "937daacc1cdc4e4d8a4f828f91f82bea"
+  },
+  "src/Frontend/ShopApp.Web/src/features/auth/components/PasswordStrength.js": {
+    "mtime": 1788947093.6157203,
+    "seen": 1788947315.8205917,
+    "ast_hash": "4c6d3fc1047c5e95cf3a624a654950a4",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/auth/components/SocialLoginButtons.js": {
+    "mtime": 1785232248.9767916,
+    "seen": 1788433316.5987978,
+    "ast_hash": "cf14a46bb16fbb72416e6f1b9e3a70ab",
+    "semantic_hash": "cf14a46bb16fbb72416e6f1b9e3a70ab"
+  },
+  "src/Frontend/ShopApp.Web/src/features/auth/constants/authConstants.js": {
+    "mtime": 1785231970.3178935,
+    "seen": 1788433316.598799,
+    "ast_hash": "62acff6f78440730f03b05f63845dd0a",
+    "semantic_hash": "62acff6f78440730f03b05f63845dd0a"
+  },
+  "src/Frontend/ShopApp.Web/src/features/auth/pages/LoginPage.js": {
+    "mtime": 1788728693.7777615,
+    "seen": 1788764188.826006,
+    "ast_hash": "7c67ce4716859fe9409f706503ef7950",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/auth/pages/RegisterPage.js": {
+    "mtime": 1788626075.9162974,
+    "seen": 1788643951.6597626,
+    "ast_hash": "b5a08613a592c3f467f76f564d3a5207",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/auth/services/authService.js": {
+    "mtime": 1788200571.3276465,
+    "seen": 1788433316.5988057,
+    "ast_hash": "aecf0a327823344d440712878782e279",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/auth/state/authStore.js": {
+    "mtime": 1786593801.355032,
+    "seen": 1788433316.5988073,
+    "ast_hash": "db24d23636913696bf8b5ce07e109135",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/auth/validation/loginValidation.js": {
+    "mtime": 1785232008.335996,
+    "seen": 1788433316.5988088,
+    "ast_hash": "62a0c8274d199bad1db148693d7450fe",
+    "semantic_hash": "62a0c8274d199bad1db148693d7450fe"
+  },
+  "src/Frontend/ShopApp.Web/src/features/auth/validation/registerValidation.js": {
+    "mtime": 1785232025.321044,
+    "seen": 1788433316.5988104,
+    "ast_hash": "80194d25af5c6bc7403974723a1c2b2e",
+    "semantic_hash": "80194d25af5c6bc7403974723a1c2b2e"
+  },
+  "src/Frontend/ShopApp.Web/src/features/auth/validation/validationHelpers.js": {
+    "mtime": 1785231988.980943,
+    "seen": 1788433316.598812,
+    "ast_hash": "79f97c1d1cb1f13fa99ff6feae50695b",
+    "semantic_hash": "79f97c1d1cb1f13fa99ff6feae50695b"
+  },
+  "src/Frontend/ShopApp.Web/src/features/cart/pages/CartPage.js": {
+    "mtime": 1788865546.3120012,
+    "seen": 1788868358.230781,
+    "ast_hash": "8a685915ea01b9bdf6ab918b5058516e",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/cart/services/cartService.js": {
+    "mtime": 1788435854.645892,
+    "seen": 1788441541.6542902,
+    "ast_hash": "8b873a369e77810a5d914eb10d4fda6d",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/home/components/CategoryCard.js": {
+    "mtime": 1785178328.5509093,
+    "seen": 1788433316.5988169,
+    "ast_hash": "e2a21d437a7b23eef9e85e6dad35aa7a",
+    "semantic_hash": "e2a21d437a7b23eef9e85e6dad35aa7a"
+  },
+  "src/Frontend/ShopApp.Web/src/features/home/components/FeatureBenefits.js": {
+    "mtime": 1788698067.717168,
+    "seen": 1788764188.8260288,
+    "ast_hash": "a286cf357d638e6ef867049485fbc54e",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/home/components/HeroCategoryGrid.js": {
+    "mtime": 1788643699.5659387,
+    "seen": 1788643951.6597934,
+    "ast_hash": "36e08576e7007ed9e368650ce32ce22b",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/home/data/homeCategories.js": {
+    "mtime": 1788697887.0160873,
+    "seen": 1788764188.8260322,
+    "ast_hash": "cc043c6e13f7c62d9b9809a5846442b5",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/home/pages/HomePage.js": {
+    "mtime": 1788763949.5433712,
+    "seen": 1788764188.8260338,
+    "ast_hash": "d1eaa449d94a44a953121903e4ea4b25",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/home/pages/NotFoundPage.js": {
+    "mtime": 1788338844.0946841,
+    "seen": 1788433316.5988247,
+    "ast_hash": "c70ecdbfd565417ae9cc8607b3911ef0",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/home/services/homeService.js": {
+    "mtime": 1785178326.541981,
+    "seen": 1788433316.5988262,
+    "ast_hash": "b87c212168237c3da998243c09af3ea7",
+    "semantic_hash": "b87c212168237c3da998243c09af3ea7"
+  },
+  "src/Frontend/ShopApp.Web/src/features/orders/pages/OrderListPage.js": {
+    "mtime": 1788764096.4390361,
+    "seen": 1788764188.8260422,
+    "ast_hash": "374ce2cb20d0c3fc86ea166a604f3a6f",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/products/pages/CategoryListPage.js": {
+    "mtime": 1788625553.331361,
+    "seen": 1788643951.6598213,
+    "ast_hash": "f4e02a39069828bff4a1ad92ff78003f",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/products/pages/ProductDetailPage.js": {
+    "mtime": 1788625601.9945664,
+    "seen": 1788643951.6598234,
+    "ast_hash": "d1983bc8eb8eb31990334a7baadbdc16",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/products/pages/ProductListPage.js": {
+    "mtime": 1788625562.5218563,
+    "seen": 1788643951.6598253,
+    "ast_hash": "3b248b371e90c38653bcd9cc1ab5b7fa",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/profile/pages/ProfilePage.js": {
+    "mtime": 1788764170.5263317,
+    "seen": 1788764188.8260667,
+    "ast_hash": "4f42e98f8bdc82777b163f8e7f0b397d",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/shared/components/Alert/Alert.js": {
+    "mtime": 1785232128.7993655,
+    "seen": 1788433316.5988436,
+    "ast_hash": "3a9c108b3c4b71b03bf8bc0c20a239ab",
+    "semantic_hash": "3a9c108b3c4b71b03bf8bc0c20a239ab"
+  },
+  "src/Frontend/ShopApp.Web/src/shared/components/Button/Button.js": {
+    "mtime": 1785178208.866305,
+    "seen": 1788433316.5988452,
+    "ast_hash": "0121f6d7db45643bcfbad10e16008fec",
+    "semantic_hash": "0121f6d7db45643bcfbad10e16008fec"
+  },
+  "src/Frontend/ShopApp.Web/src/shared/components/Header/Header.js": {
+    "mtime": 1788868856.5135424,
+    "seen": 1788941202.1783361,
+    "ast_hash": "ef5a86487dd4fb3c430d3960df10fd23",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/shared/components/Icon/Icon.js": {
+    "mtime": 1788728122.271369,
+    "seen": 1788764188.8260798,
+    "ast_hash": "21ad5eb6309b465fd5820557cea8829c",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/shared/constants/appConstants.js": {
+    "mtime": 1785178449.6581056,
+    "seen": 1788433316.5988514,
+    "ast_hash": "db2b70ba966b52944c48f5c331bc2a15",
+    "semantic_hash": "db2b70ba966b52944c48f5c331bc2a15"
+  },
+  "src/Frontend/ShopApp.Web/src/shared/services/apiClient.js": {
+    "mtime": 1788200606.5277612,
+    "seen": 1788433316.5988529,
+    "ast_hash": "0038857f8e02e5551fb1a450f411aae2",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/shared/services/endpoints.js": {
+    "mtime": 1788949981.2582266,
+    "seen": 1788951648.7330754,
+    "ast_hash": "1a500e2c5b53c9d77b92ff7be6b6692d",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/shared/services/serviceRegistry.js": {
+    "mtime": 1785178153.0547824,
+    "seen": 1788433316.598856,
+    "ast_hash": "316bf5b6efe9ea457d87b6bad591a77f",
+    "semantic_hash": "316bf5b6efe9ea457d87b6bad591a77f"
+  },
+  "src/Frontend/ShopApp.Web/src/shared/state/eventBus.js": {
+    "mtime": 1785178121.823492,
+    "seen": 1788433316.5988574,
+    "ast_hash": "7b4ffeca9107a713d8ff7da7c5913ea3",
+    "semantic_hash": "7b4ffeca9107a713d8ff7da7c5913ea3"
+  },
+  "src/Frontend/ShopApp.Web/src/shared/state/store.js": {
+    "mtime": 1785178110.7783897,
+    "seen": 1788433316.598859,
+    "ast_hash": "63c067601d46a6b9ed668e460627fd8c",
+    "semantic_hash": "63c067601d46a6b9ed668e460627fd8c"
+  },
+  "src/Frontend/ShopApp.Web/src/shared/utils/dom.js": {
+    "mtime": 1785178155.0628011,
+    "seen": 1788433316.5988603,
+    "ast_hash": "ddf42a698a1a44d4ed61b01bf29fc81c",
+    "semantic_hash": "ddf42a698a1a44d4ed61b01bf29fc81c"
+  },
+  "src/Frontend/ShopApp.Web/src/shared/utils/storage.js": {
+    "mtime": 1788200606.5321474,
+    "seen": 1788433316.598862,
+    "ast_hash": "ce3ab4edf26043eb880dd328a961a513",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Api/Program.cs": {
+    "mtime": 1788854130.0853329,
+    "seen": 1788854503.0231133,
+    "ast_hash": "3aa4b4cf65f326e3772d9d7687a8ad97",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Api/ShopApp.Api.csproj": {
+    "mtime": 1788432190.4914672,
+    "seen": 1788433316.5988767,
+    "ast_hash": "44ecb2f6a07787a9797f373843568a39",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Api/appsettings.json": {
+    "mtime": 1788638703.5461283,
+    "seen": 1788643951.6599112,
+    "ast_hash": "00e74de901770198f4d3b7245dcaab3a",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/ShopApp.Application.csproj": {
+    "mtime": 1788855961.776,
+    "seen": 1788864186.3424845,
+    "ast_hash": "8c299579487c6dd9c475f61868982cab",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Domain/Common/BaseEntity.cs": {
+    "mtime": 1788779261.4866939,
+    "seen": 1788854503.0233319,
+    "ast_hash": "e880b43978a622b3743962ddbf5672f9",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Domain/Kullanici/Address.cs": {
+    "mtime": 1788937725.249734,
+    "seen": 1788941202.1784625,
+    "ast_hash": "5c08b2d450020ba4c6801b304a0a0d94",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Domain/Kullanici/Musteri.cs": {
+    "mtime": 1788779261.4865463,
+    "seen": 1788854503.0233378,
+    "ast_hash": "b769c5e1537e0399b3a02346019edb17",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Domain/ShopApp.Domain.csproj": {
+    "mtime": 1788775544.123,
+    "seen": 1788854503.0233474,
+    "ast_hash": "24d04953b28553b5a8427e945ac39b5e",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/DependencyInjection.cs": {
+    "mtime": 1788868260.8756223,
+    "seen": 1788868358.2310982,
+    "ast_hash": "f19a207c46854da64e1cdb15bc3fff12",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260727173708_CreateMonolithTables.Designer.cs": {
+    "mtime": 1788779261.494519,
+    "seen": 1788854503.0234249,
+    "ast_hash": "b1a729254782aa1f5d9c3500152a0947",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260727173708_CreateMonolithTables.cs": {
+    "mtime": 1788779261.4935977,
+    "seen": 1788854503.0234265,
+    "ast_hash": "d7c5beda3dd6f30e2b95f0c4bc2e7629",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260729080403_UpdateMonolithTables.Designer.cs": {
+    "mtime": 1788779261.4929924,
+    "seen": 1788854503.0234287,
+    "ast_hash": "019430516dfae355e4b0fc0c74911a19",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260729080403_UpdateMonolithTables.cs": {
+    "mtime": 1788779261.4927692,
+    "seen": 1788854503.0234306,
+    "ast_hash": "e4ba5ff6833fc04c63c1d2599f031d10",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260805093659_DatabaseChanges.Designer.cs": {
+    "mtime": 1788779261.4942427,
+    "seen": 1788854503.0234325,
+    "ast_hash": "4a99c898e9172c7a0d022722722c5213",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260805093659_DatabaseChanges.cs": {
+    "mtime": 1788779261.4932926,
+    "seen": 1788854503.0234342,
+    "ast_hash": "84e5314b3bdb314513114ff0a13e89b6",
+    "semantic_hash": "84e5314b3bdb314513114ff0a13e89b6"
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/ShopAppDbContextModelSnapshot.cs": {
+    "mtime": 1788946157.6015003,
+    "seen": 1788946219.7294242,
+    "ast_hash": "d7474c0a7632481cf85acc3675ecf1c8",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/ShopApp.Infrastructure.csproj": {
+    "mtime": 1788777898.025,
+    "seen": 1788854503.0234683,
+    "ast_hash": "527f291b590ed30f5725c298b100ec44",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Identity/IdentityRoleClaimConfiguration.cs": {
+    "mtime": 1788779261.4986448,
+    "seen": 1788854503.0233839,
+    "ast_hash": "b380e137f666aab69f9e9968f1cf06fd",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Identity/IdentityRoleConfiguration.cs": {
+    "mtime": 1788779261.498505,
+    "seen": 1788854503.0233858,
+    "ast_hash": "6764b9ad455cc9f8f35be71ecef9b6f8",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Identity/IdentityUserClaimConfiguration.cs": {
+    "mtime": 1788779261.4988627,
+    "seen": 1788854503.023388,
+    "ast_hash": "eeb6cc1747eae0653008d3d71d96305a",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Identity/IdentityUserLoginConfiguration.cs": {
+    "mtime": 1788779261.498717,
+    "seen": 1788854503.0233896,
+    "ast_hash": "a0bc97a6507967da29ba11afbdef4977",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Identity/IdentityUserRoleConfiguration.cs": {
+    "mtime": 1788779261.4985757,
+    "seen": 1788854503.0233915,
+    "ast_hash": "54d63c4d9cd7c56d9485d2a2ad4c650d",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Identity/IdentityUserTokenConfiguration.cs": {
+    "mtime": 1788779261.498932,
+    "seen": 1788854503.0233936,
+    "ast_hash": "e20fc125ea8b342caf90847d76bbd7fb",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Identity/KayitliKullaniciConfiguration.cs": {
+    "mtime": 1788779261.4987934,
+    "seen": 1788854503.0233953,
+    "ast_hash": "991c5a04a06c4f7fe720da6d946f937b",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260810082116_MakeApplicationUserUpdatedAtRequired.Designer.cs": {
+    "mtime": 1788779261.4954002,
+    "seen": 1788854503.0234365,
+    "ast_hash": "32e3478c8fd8191722a1c6cf867de94b",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260810082116_MakeApplicationUserUpdatedAtRequired.cs": {
+    "mtime": 1788779261.4938262,
+    "seen": 1788854503.0234385,
+    "ast_hash": "c7cb105948307f9ffca91ae1f115c44f",
+    "semantic_hash": ""
+  },
+  ".codex/skills/graphify/SKILL.md": {
+    "mtime": 1786304990.9268866,
+    "seen": 1788433316.599187,
+    "ast_hash": "212b55d95333d84e14262f8ec83faa2b",
+    "semantic_hash": ""
+  },
+  ".codex/skills/graphify/references/add-watch.md": {
+    "mtime": 1786304892.6501603,
+    "seen": 1788433316.5991886,
+    "ast_hash": "d59d027fe449f06aa03905a01184e779",
+    "semantic_hash": ""
+  },
+  ".codex/skills/graphify/references/exports.md": {
+    "mtime": 1786304892.650201,
+    "seen": 1788433316.59919,
+    "ast_hash": "9da2a2152e60a22f07f05fed5158f287",
+    "semantic_hash": ""
+  },
+  ".codex/skills/graphify/references/extraction-spec.md": {
+    "mtime": 1786304892.6502447,
+    "seen": 1788433316.5991917,
+    "ast_hash": "bf895ec4d4e40f5f66f7d31c2a9bd4a7",
+    "semantic_hash": ""
+  },
+  ".codex/skills/graphify/references/github-and-merge.md": {
+    "mtime": 1786304892.6502817,
+    "seen": 1788433316.599193,
+    "ast_hash": "cde13df085e4c492aeb7ba298a996d0d",
+    "semantic_hash": ""
+  },
+  ".codex/skills/graphify/references/hooks.md": {
+    "mtime": 1786304892.6503134,
+    "seen": 1788433316.5991945,
+    "ast_hash": "3f545db6ce646650bb9de588f5512a27",
+    "semantic_hash": ""
+  },
+  ".codex/skills/graphify/references/query.md": {
+    "mtime": 1786304892.6503797,
+    "seen": 1788433316.5991962,
+    "ast_hash": "3c46f8ad006874260614ed8657d02307",
+    "semantic_hash": ""
+  },
+  ".codex/skills/graphify/references/transcribe.md": {
+    "mtime": 1786304892.650423,
+    "seen": 1788433316.5991979,
+    "ast_hash": "67b6a5fa6c0974e18f60db9f8932fbd8",
+    "semantic_hash": ""
+  },
+  ".codex/skills/graphify/references/update.md": {
+    "mtime": 1786304892.6504807,
+    "seen": 1788433316.5991995,
+    "ast_hash": "9378bd03d56baaf78bd738ab3848f142",
+    "semantic_hash": ""
+  },
+  "AGENTS.md": {
+    "mtime": 1788339334.424328,
+    "seen": 1788433316.5992012,
+    "ast_hash": "7c23a5f99b5da97f3b66ac148c2c2c03",
+    "semantic_hash": ""
+  },
+  "docker-compose.yml": {
+    "mtime": 1788381913.9229598,
+    "seen": 1788433316.5992064,
+    "ast_hash": "f24d8244a870457b4c568a8e333d0fe8",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/index.html": {
+    "mtime": 1788703311.1720068,
+    "seen": 1788764188.826557,
+    "ast_hash": "0b67d5bce309992faa472143bff706ca",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/assets/images/auth/login-cover.webp": {
+    "mtime": 1785231947.6209462,
+    "seen": 1788433316.59922,
+    "ast_hash": "78ab05d51589e14b4eef883627600343",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/assets/images/auth/register-cover.webp": {
+    "mtime": 1785231947.6234639,
+    "seen": 1788433316.5992217,
+    "ast_hash": "78ab05d51589e14b4eef883627600343",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KargoServis/Domain/Common/BaseEntity.cs": {
+    "mtime": 1788355359.699,
+    "seen": 1788433316.5990727,
+    "ast_hash": "e59d9ecf6dfccc9ca7a5526ee649cfc5",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KargoServis/Domain/Entities/KargoDurumGecmisi.cs": {
+    "mtime": 1786591331.164,
+    "seen": 1788433316.5990744,
+    "ast_hash": "f479882246169c4793207b8fa5ee841d",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KargoServis/Domain/Entities/KargoGonderisi.cs": {
+    "mtime": 1786594582.8245945,
+    "seen": 1788433316.5990758,
+    "ast_hash": "03d0e09de79dd2603e3682da83b304a7",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KargoServis/Domain/Enums/KargoDurumu.cs": {
+    "mtime": 1786564767.8540912,
+    "seen": 1788433316.599079,
+    "ast_hash": "dbde30fbd4765dd9571a70abe1be92dc",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KargoServis/Infrastructure/Persistence/KargoDbContext.cs": {
+    "mtime": 1788355224.2318087,
+    "seen": 1788433316.5990863,
+    "ast_hash": "7359843ad8e92d1eaad91a89c642b35f",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KargoServis/KargoServis.csproj": {
+    "mtime": 1788359199.182,
+    "seen": 1788433316.5990894,
+    "ast_hash": "22dbd628a89e41cfd668d6a40506176f",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KargoServis/Program.cs": {
+    "mtime": 1786564833.395616,
+    "seen": 1788433316.5990953,
+    "ast_hash": "4ddbf0e8aaa61438fb42b5b2debe11fc",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/Domain/Common/BaseEntity.cs": {
+    "mtime": 1786564639.461035,
+    "seen": 1788433316.5990994,
+    "ast_hash": "cd95391cca7d7ef48ad7a8d662f6b72f",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/Domain/Entities/Kategori.cs": {
+    "mtime": 1788726551.779,
+    "seen": 1788764188.8264189,
+    "ast_hash": "ace29d7439048a785d16a13565abf642",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/Domain/Entities/Urun.cs": {
+    "mtime": 1788726563.373,
+    "seen": 1788764188.8264205,
+    "ast_hash": "437141b887a61d29ad677295f3a93fc0",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/Domain/Entities/UrunGorseli.cs": {
+    "mtime": 1788726591.092,
+    "seen": 1788764188.826422,
+    "ast_hash": "fc14780c444bc75ed2712c78941e2452",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/Domain/Entities/UrunOzelligi.cs": {
+    "mtime": 1787136366.9500644,
+    "seen": 1788433316.5991056,
+    "ast_hash": "c83bdef509a44ffed036e446c99a9722",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/Infrastructure/Persistence/KategoriDbContext.cs": {
+    "mtime": 1788355253.7183928,
+    "seen": 1788433316.5991178,
+    "ast_hash": "4814f38e9f6a3c56bbaa6230cd18359d",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/KategoriServis.csproj": {
+    "mtime": 1788505308.919,
+    "seen": 1788509472.1231918,
+    "ast_hash": "391d7a85f3e61045fc4d2e2bb0af9687",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/Program.cs": {
+    "mtime": 1786564696.1575065,
+    "seen": 1788433316.5991273,
+    "ast_hash": "b8c58d9981f82ce4cda8dc6652373c9a",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/StokServis/Domain/Common/BaseEntity.cs": {
+    "mtime": 1786564711.4336321,
+    "seen": 1788433316.5991306,
+    "ast_hash": "2417249de1da10b93dfd68c836208b3f",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/StokServis/Domain/Entities/Depo.cs": {
+    "mtime": 1788353913.8944335,
+    "seen": 1788433316.5991323,
+    "ast_hash": "8cbaa37b96f4c1cc50f4400013e3b3c6",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/StokServis/Domain/Entities/StokHareketi.cs": {
+    "mtime": 1788353928.876285,
+    "seen": 1788433316.5991342,
+    "ast_hash": "664d86807b2982d8248dc69b37952dc5",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/StokServis/Domain/Enums/HareketTipi.cs": {
+    "mtime": 1786592245.46,
+    "seen": 1788433316.5991373,
+    "ast_hash": "cd638e14f02ffe8c3da93c3362045fe1",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/StokServis/Infrastructure/Persistence/StokDbContext.cs": {
+    "mtime": 1788353930.9382653,
+    "seen": 1788433316.599144,
+    "ast_hash": "efe246bf2136d940fb919110f87ac57b",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/StokServis/Program.cs": {
+    "mtime": 1786564749.2289405,
+    "seen": 1788433316.5991523,
+    "ast_hash": "c999e4e46548330141cafb6682508f94",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/StokServis/StokServis.csproj": {
+    "mtime": 1788359936.62,
+    "seen": 1788433316.5991538,
+    "ast_hash": "de75b853cb0cce791103900b250816d6",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/auth/pages/AccessDeniedPage.js": {
+    "mtime": 1786593801.355032,
+    "seen": 1788433316.5988011,
+    "ast_hash": "0f94ebcfe89c0f799041a539d69f9a7b",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260813071003_AddMonolithDomainChanges.Designer.cs": {
+    "mtime": 1788779261.4964173,
+    "seen": 1788854503.0234401,
+    "ast_hash": "bac2acba606932bcac7e3f4ecab7e438",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260813071003_AddMonolithDomainChanges.cs": {
+    "mtime": 1788779261.4956667,
+    "seen": 1788854503.0234425,
+    "ast_hash": "ef924735c760c546d8949b8f85adf57f",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KargoServis/Domain/Entities/Sevkiyat.cs": {
+    "mtime": 1786594582.8243134,
+    "seen": 1788433316.5990775,
+    "ast_hash": "db279d8ceb3a547835be45a53a8da188",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/StokServis/Domain/Entities/StokUrunleri.cs": {
+    "mtime": 1788353916.9904022,
+    "seen": 1788433316.5991356,
+    "ast_hash": "c1e1f0c23905209b83470c8efb2c3248",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260813074442_TurkcheIdentityVeMusteriGuncellemesi.Designer.cs": {
+    "mtime": 1788779261.4960046,
+    "seen": 1788854503.0234447,
+    "ast_hash": "a366415e68bbf647cf1a45ab660e9ff6",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260813074442_TurkcheIdentityVeMusteriGuncellemesi.cs": {
+    "mtime": 1788779261.4934633,
+    "seen": 1788854503.0234463,
+    "ast_hash": "4df0895fb063ddad174835cc5982918d",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260813075654_AddRoleSpecificProfiles.Designer.cs": {
+    "mtime": 1788779261.4939365,
+    "seen": 1788854503.023448,
+    "ast_hash": "b265fb38d012d4824c42634c6c4824a7",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260813075654_AddRoleSpecificProfiles.cs": {
+    "mtime": 1788779261.4959059,
+    "seen": 1788854503.02345,
+    "ast_hash": "80c1cbccb6781d353d27801d84b90e21",
+    "semantic_hash": ""
+  },
+  "graphify-out/memory/query_20260813_071123_where_are_entity_framework_core_migrations__dbcont.md": {
+    "mtime": 1786605083.2929025,
+    "seen": 1788433316.5992079,
+    "ast_hash": "96807dbe6953a74510c7902a8cf98c4d",
+    "semantic_hash": ""
+  },
+  "graphify-out/memory/query_20260813_073453_scan_all_identity_related_entities_and_musteri_ent.md": {
+    "mtime": 1786606493.4208813,
+    "seen": 1788433316.5992098,
+    "ast_hash": "46c7a37e02b2a528507a73de6a0b1913",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/package.json": {
+    "mtime": 1788700393.7036393,
+    "seen": 1788764188.8259215,
+    "ast_hash": "cbdabdf1bb03b30dc86db70b62da7445",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Mapping/SepetMapping.cs": {
+    "mtime": 1788779261.4868517,
+    "seen": 1788854503.0233262,
+    "ast_hash": "9c30d377d07a350947b131b264cbb6cd",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Domain/Sepet/Entities/SepetDurumLookup.cs": {
+    "mtime": 1788864585.428,
+    "seen": 1788864692.5451996,
+    "ast_hash": "f78095b702ed3ec07272132ba3b3a6a7",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Domain/Sepet/Entities/SepetUrunu.cs": {
+    "mtime": 1788863736.766,
+    "seen": 1788864186.3424935,
+    "ast_hash": "f268b94a6ded420a33906e5ee7fa1021",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KargoServis/Infrastructure/Persistence/KargoDbContextFactory.cs": {
+    "mtime": 1788335652.9480932,
+    "seen": 1788433316.599088,
+    "ast_hash": "4ae5de0e67ecd5e3014e54fc6e61d930",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KargoServis/Migrations/20260813091617_IlkMigrasyon.Designer.cs": {
+    "mtime": 1786612577.4214308,
+    "seen": 1788433316.599091,
+    "ast_hash": "5863721f5a16bdd0206725f166336f37",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KargoServis/Migrations/20260813091617_IlkMigrasyon.cs": {
+    "mtime": 1786612577.4205549,
+    "seen": 1788433316.5990925,
+    "ast_hash": "f57db2b9c472912d87db99efd2cb54dc",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KargoServis/Migrations/KargoDbContextModelSnapshot.cs": {
+    "mtime": 1786612577.4215708,
+    "seen": 1788433316.5990937,
+    "ast_hash": "d399cf6940ff365c84cfb99ba082be68",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/Domain/Entities/UrunTur.cs": {
+    "mtime": 1787136232.2482235,
+    "seen": 1788433316.5991073,
+    "ast_hash": "48f63148cf0f69e04a60725f5778b108",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/Infrastructure/Persistence/KategoriDbContextFactory.cs": {
+    "mtime": 1788335652.9480932,
+    "seen": 1788433316.5991194,
+    "ast_hash": "a0423aa41b08c95302bea4c76839aba6",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/Migrations/20260813103828_InitialCreate.Designer.cs": {
+    "mtime": 1787136366.9537153,
+    "seen": 1788433316.5991225,
+    "ast_hash": "191bfd1a36d79dfb9b16b16785a33682",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/Migrations/20260813103828_InitialCreate.cs": {
+    "mtime": 1787136366.9463577,
+    "seen": 1788433316.5991242,
+    "ast_hash": "a801b6576d1915ba9879a2b2a66376ca",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/Migrations/KategoriDbContextModelSnapshot.cs": {
+    "mtime": 1787136366.9539526,
+    "seen": 1788433316.5991259,
+    "ast_hash": "562d4e5698127b4498d77ada8918a79d",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/StokServis/Infrastructure/Persistence/StokDbContextFactory.cs": {
+    "mtime": 1788335652.9480932,
+    "seen": 1788433316.5991454,
+    "ast_hash": "54b794b7c65890d5960acb1bd8426a46",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/StokServis/Migrations/20260813103914_InitialCreate.Designer.cs": {
+    "mtime": 1787136366.9541924,
+    "seen": 1788433316.599147,
+    "ast_hash": "90734846f1af522a202f693f6c06483e",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/StokServis/Migrations/20260813103914_InitialCreate.cs": {
+    "mtime": 1787136366.9466608,
+    "seen": 1788433316.5991488,
+    "ast_hash": "604331783cd2ac1d966a06d195afbe25",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/StokServis/Migrations/StokDbContextModelSnapshot.cs": {
+    "mtime": 1787136366.9543948,
+    "seen": 1788433316.5991507,
+    "ast_hash": "23d96cb642f859b1680a984ce52b69e7",
+    "semantic_hash": ""
+  },
+  "graphify-out/memory/query_20260813_075845_how_are_role_specific_customer_and_admin_profiles.md": {
+    "mtime": 1786607925.3535812,
+    "seen": 1788433316.5992115,
+    "ast_hash": "1b291ad03c403fdbe0f8832061309459",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/assets/images/products/nike-shoes.png": {
+    "mtime": 1788179369.9795806,
+    "seen": 1788433316.5992465,
+    "ast_hash": "717dba23a56a343089616eda4533005d",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/assets/images/products/yellow-tracksuit.png": {
+    "mtime": 1788179369.9812214,
+    "seen": 1788433316.5992498,
+    "ast_hash": "5dc9a3e910725e42dde432976eb7ac46",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/orders/pages/OrderConfirmationPage.js": {
+    "mtime": 1788865639.2952685,
+    "seen": 1788868358.2308016,
+    "ast_hash": "ecc328373c1a017118fff9288d9439e3",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/orders/services/orderService.js": {
+    "mtime": 1788951562.4147437,
+    "seen": 1788951648.7330282,
+    "ast_hash": "2c667219a0aa6ed3a43f9634be1cc86e",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/products/data/productData.js": {
+    "mtime": 1788865739.7245262,
+    "seen": 1788868358.2308116,
+    "ast_hash": "22be42b8831df8333c26d8f54014dab6",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/shared/components/Footer/Footer.js": {
+    "mtime": 1788420362.2229304,
+    "seen": 1788433316.5988467,
+    "ast_hash": "ad378d0b43289db6d181dd1d1480a226",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Mapping/SiparisMapping.cs": {
+    "mtime": 1788872463.217,
+    "seen": 1788941202.1784534,
+    "ast_hash": "0d64cba086d836ffac8cecdcea08574c",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Domain/Sepet/Entities/SepetEntity.cs": {
+    "mtime": 1788859805.435,
+    "seen": 1788864186.3424923,
+    "ast_hash": "c8bbc3b6b62d909321cf727773ac8788",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260902194332_SyncIdentityModels.Designer.cs": {
+    "mtime": 1788779261.495082,
+    "seen": 1788854503.0234516,
+    "ast_hash": "badee6a23f12b09c2d520345bf8a5b37",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260902194332_SyncIdentityModels.cs": {
+    "mtime": 1788779261.4962838,
+    "seen": 1788854503.0234537,
+    "ast_hash": "d876879c76ed9315622d972f3ca49117",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KargoServis/Infrastructure/Persistence/Configurations/KargoDurumGecmisiConfiguration.cs": {
+    "mtime": 1788355161.9495277,
+    "seen": 1788433316.5990808,
+    "ast_hash": "816b126324043a2832d426c1af6b7207",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KargoServis/Infrastructure/Persistence/Configurations/KargoGonderisiConfiguration.cs": {
+    "mtime": 1788355161.9484518,
+    "seen": 1788433316.5990825,
+    "ast_hash": "0ae9b02412f4c689020e6e5a56518c63",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KargoServis/Infrastructure/Persistence/Configurations/SevkiyatConfiguration.cs": {
+    "mtime": 1788355128.5442975,
+    "seen": 1788433316.5990844,
+    "ast_hash": "24754c3429bfe86ec53241327ebbbc88",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/Infrastructure/Persistence/Configurations/KategoriConfiguration.cs": {
+    "mtime": 1788355161.9495277,
+    "seen": 1788433316.5991094,
+    "ast_hash": "8d463555ec186d7686b8e1e9e7785bf8",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/Infrastructure/Persistence/Configurations/UrunConfiguration.cs": {
+    "mtime": 1788355161.9497442,
+    "seen": 1788433316.599111,
+    "ast_hash": "c5041ff4f9aa971630640aa44a6c67aa",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/Infrastructure/Persistence/Configurations/UrunGorseliConfiguration.cs": {
+    "mtime": 1788355161.9498818,
+    "seen": 1788433316.5991127,
+    "ast_hash": "99b869d9b44d33c82b00248e71fbaddc",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/Infrastructure/Persistence/Configurations/UrunOzelligiConfiguration.cs": {
+    "mtime": 1788355161.949839,
+    "seen": 1788433316.5991144,
+    "ast_hash": "d18704bdefd58042a2b14a816106bd4a",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/Infrastructure/Persistence/Configurations/UrunTurConfiguration.cs": {
+    "mtime": 1788355161.9497938,
+    "seen": 1788433316.5991163,
+    "ast_hash": "859a32d9ed6547d290802e7386f4e755",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/StokServis/Infrastructure/Persistence/Configurations/DepoConfiguration.cs": {
+    "mtime": 1788353891.7756658,
+    "seen": 1788433316.5991387,
+    "ast_hash": "ce1b1e5ffa6f3c8b83ef2f3cd9b437d9",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/StokServis/Infrastructure/Persistence/Configurations/StokHareketiConfiguration.cs": {
+    "mtime": 1788353897.8696,
+    "seen": 1788433316.5991406,
+    "ast_hash": "4043a6ecbc3f6847f8b6f72c7a50c95a",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/StokServis/Infrastructure/Persistence/Configurations/StokUrunleriConfiguration.cs": {
+    "mtime": 1788353895.8606217,
+    "seen": 1788433316.5991423,
+    "ast_hash": "e4f8738842b00c48b853529bd9b25818",
+    "semantic_hash": ""
+  },
+  ".claude/settings.json": {
+    "mtime": 1788432782.5044742,
+    "seen": 1788433316.5987554,
+    "ast_hash": "dbe039a15c5c2eb60e34dccc1af0cbb5",
+    "semantic_hash": ""
+  },
+  ".vscode/settings.json": {
+    "mtime": 1786458045.84786,
+    "seen": 1788433316.5987701,
+    "ast_hash": "27bbd2e830e76aa08eee61a43e7c49dd",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Api/Properties/launchSettings.json": {
+    "mtime": 1784709423.1194565,
+    "seen": 1788433316.5988746,
+    "ast_hash": "4fa62053a1cf3804f7b587c70910ea5e",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Api/appsettings.Development.json": {
+    "mtime": 1784709423.114461,
+    "seen": 1788433316.5988784,
+    "ast_hash": "477a525a47fc9bdbbf94690e6633d843",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KargoServis/appsettings.json": {
+    "mtime": 1788335719.114716,
+    "seen": 1788433316.599097,
+    "ast_hash": "d8ccd994d23a34069527061f210bf08e",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/KategoriServis/appsettings.json": {
+    "mtime": 1788335719.118716,
+    "seen": 1788433316.5991287,
+    "ast_hash": "1a4cf1e1c3c2b7d80bca0a023b7a4fcf",
+    "semantic_hash": ""
+  },
+  "src/Services/Servisler/StokServis/appsettings.json": {
+    "mtime": 1788371846.123,
+    "seen": 1788433316.5991554,
+    "ast_hash": "ba5e679493450838172ea58e25a7548f",
+    "semantic_hash": ""
+  },
+  ".claude/CLAUDE.md": {
+    "mtime": 1788432782.503493,
+    "seen": 1788433316.5991695,
+    "ast_hash": "9b31786b637be3c13978bec4c2330752",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/SKILL.md": {
+    "mtime": 1788432782.5033238,
+    "seen": 1788433316.5991714,
+    "ast_hash": "1656a8a8e4a05bbe69f32cd15de81e87",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/add-watch.md": {
+    "mtime": 1788432751.8062046,
+    "seen": 1788433316.599173,
+    "ast_hash": "d59d027fe449f06aa03905a01184e779",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/exports.md": {
+    "mtime": 1788432751.8063047,
+    "seen": 1788433316.599175,
+    "ast_hash": "9da2a2152e60a22f07f05fed5158f287",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/extraction-spec.md": {
+    "mtime": 1788432751.806445,
+    "seen": 1788433316.5991764,
+    "ast_hash": "42fef56a01698118f7fd722acdadea34",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/github-and-merge.md": {
+    "mtime": 1788432751.8065355,
+    "seen": 1788433316.5991783,
+    "ast_hash": "cde13df085e4c492aeb7ba298a996d0d",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/hooks.md": {
+    "mtime": 1788432751.8066144,
+    "seen": 1788433316.5991797,
+    "ast_hash": "3f545db6ce646650bb9de588f5512a27",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/query.md": {
+    "mtime": 1788432751.8067768,
+    "seen": 1788433316.599182,
+    "ast_hash": "3c46f8ad006874260614ed8657d02307",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/transcribe.md": {
+    "mtime": 1788432751.8068779,
+    "seen": 1788433316.5991836,
+    "ast_hash": "67b6a5fa6c0974e18f60db9f8932fbd8",
+    "semantic_hash": ""
+  },
+  ".claude/skills/graphify/references/update.md": {
+    "mtime": 1788432751.8070123,
+    "seen": 1788433316.5991852,
+    "ast_hash": "9378bd03d56baaf78bd738ab3848f142",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1788432782.504056,
+    "seen": 1788433316.5992029,
+    "ast_hash": "82efb97a359f5c7290bf2513d14686be",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/assets/images/products/adidas-ultraboost-22.webp": {
+    "mtime": 1788426843.876218,
+    "seen": 1788433316.5992336,
+    "ast_hash": "fe74eff8db463296fd241f3481b67179",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/assets/images/products/asics-novablast-3.webp": {
+    "mtime": 1788426843.882026,
+    "seen": 1788433316.599235,
+    "ast_hash": "11f5c1ef58a2f1a4a7da80d82a6f95b5",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/assets/images/products/new-balance-fuelcell.webp": {
+    "mtime": 1788426843.8802779,
+    "seen": 1788433316.5992367,
+    "ast_hash": "cab9f728c8fe32d6066dc00bb07e783e",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/assets/images/products/nike-alphafly/angle-1.webp": {
+    "mtime": 1788426843.8686712,
+    "seen": 1788433316.5992384,
+    "ast_hash": "f4b8a8272869d0c0fc19573018d312ff",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/assets/images/products/nike-alphafly/angle-2.webp": {
+    "mtime": 1788426843.870911,
+    "seen": 1788433316.5992403,
+    "ast_hash": "b53c4dbeaca7f15918ee060f4a56bfd9",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/assets/images/products/nike-alphafly/angle-3.webp": {
+    "mtime": 1788426843.8728194,
+    "seen": 1788433316.5992417,
+    "ast_hash": "b90e7fa1038cc5bccc80cac3bdef74b0",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/assets/images/products/nike-alphafly/main.webp": {
+    "mtime": 1788426843.8663006,
+    "seen": 1788433316.5992432,
+    "ast_hash": "b693e5cc95dfc75f3bdfbce916a86f26",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/assets/images/products/nike-pegasus-39.webp": {
+    "mtime": 1788426843.8744423,
+    "seen": 1788433316.5992448,
+    "ast_hash": "19c91bdf76f9e1befe8d0af5c4bdfe36",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/assets/images/products/puma-velocity-nitro-2.webp": {
+    "mtime": 1788426843.8783343,
+    "seen": 1788433316.5992482,
+    "ast_hash": "a184334b25c3da362c534c57f378646b",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application.Tests/ShopApp.Application.Tests.csproj": {
+    "mtime": 1788868260.8761973,
+    "seen": 1788868358.230904,
+    "ast_hash": "04a1f41adf5e60a00c9c4e7b01ab2172",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application.Tests/TestSupport/CustomerContextFactory.cs": {
+    "mtime": 1788779261.4873695,
+    "seen": 1788854503.0231445,
+    "ast_hash": "18640cd18214d2869a5adb65b1eb4839",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application.Tests/TestSupport/MapperFactory.cs": {
+    "mtime": 1788779261.48752,
+    "seen": 1788854503.0231464,
+    "ast_hash": "250dae0c2d581fd71517217f6f9d868f",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application.Tests/TestSupport/TestDbContext.cs": {
+    "mtime": 1788864559.6215672,
+    "seen": 1788864692.5450356,
+    "ast_hash": "01620830fb1a53511f0dc959333525f6",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application.Tests/Validation/CommandValidatorTests.cs": {
+    "mtime": 1788864548.7923403,
+    "seen": 1788864692.5450375,
+    "ast_hash": "547e36eca341f903999a06d3cddb4fa0",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Api/Controllers/AdminController.cs": {
+    "mtime": 1788951424.4506931,
+    "seen": 1788951648.7330887,
+    "ast_hash": "28743ed27ab13fc2f4b2c2983fc9dfa2",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Api/Controllers/AuthController.cs": {
+    "mtime": 1788779261.4882023,
+    "seen": 1788854503.0231044,
+    "ast_hash": "127fc44fe4e3bf89cc487de5c6d0c525",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Api/Controllers/SepetController.cs": {
+    "mtime": 1788779261.4878817,
+    "seen": 1788854503.023109,
+    "ast_hash": "180476187853f9037193780eafbe0c45",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Api/Controllers/SiparisController.cs": {
+    "mtime": 1788779261.488586,
+    "seen": 1788854503.0231109,
+    "ast_hash": "6cbec7a124d2ffbe4c0bd34618a44649",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Domain/Sepet/Enums/SepetDurum.cs": {
+    "mtime": 1788779261.4904323,
+    "seen": 1788854503.0233457,
+    "ast_hash": "c0cd93f2cf23a6188f9fd2716e8ed71b",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260904081045_StandardizeSepetUrunuQuantityField.Designer.cs": {
+    "mtime": 1788779261.4966805,
+    "seen": 1788854503.0234554,
+    "ast_hash": "f74a852d6e287a3ed27367bfa4d60665",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260904081045_StandardizeSepetUrunuQuantityField.cs": {
+    "mtime": 1788779261.4969437,
+    "seen": 1788854503.0234573,
+    "ast_hash": "4eebb56d6fc46799c0c37d9f4ce465f3",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/AdminMetricCard.js": {
+    "mtime": 1788726282.779777,
+    "seen": 1788764188.8259444,
+    "ast_hash": "20642d6e463b2facd5185f9a57ec73ec",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/services/adminService.js": {
+    "mtime": 1788726276.6557374,
+    "seen": 1788764188.8259888,
+    "ast_hash": "df72c1142e4a69132f3823324f0500ba",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/cart/components/CartItem.js": {
+    "mtime": 1788625641.0864816,
+    "seen": 1788643951.659777,
+    "ast_hash": "cd91451136dc5fe745794082e93042c4",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/cart/components/CartSummary.js": {
+    "mtime": 1788625657.9089212,
+    "seen": 1788643951.6597798,
+    "ast_hash": "ea1dc3f5ef8aa48bb05b47ff9bd0d8b1",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/products/components/CategoryCard.js": {
+    "mtime": 1788625532.9824061,
+    "seen": 1788643951.6598148,
+    "ast_hash": "89a1a96fc78798e4aecbe960c890ff69",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/products/components/ProductCard.js": {
+    "mtime": 1788625544.4516382,
+    "seen": 1788643951.659817,
+    "ast_hash": "d3523441376b21ae09d129eed5ef4b46",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/products/services/productsService.js": {
+    "mtime": 1788949993.6142445,
+    "seen": 1788951648.7330406,
+    "ast_hash": "30f6503972d65a35a3ea5fa41c0d04a4",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/shared/components/StateView/StateView.js": {
+    "mtime": 1788625492.6393125,
+    "seen": 1788643951.6598625,
+    "ast_hash": "72508470552c051ae6d8469a52ed4215",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/shared/utils/format.js": {
+    "mtime": 1788625476.4408123,
+    "seen": 1788643951.6598833,
+    "ast_hash": "8ebae58182657bab51f0a59e571959e5",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/FrontendAGENTS.md": {
+    "mtime": 1788865527.3409426,
+    "seen": 1788868358.2313428,
+    "ast_hash": "ddd033098ee4195a77232b3e64cb63e0",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/about/pages/AboutPage.js": {
+    "mtime": 1788764078.0953217,
+    "seen": 1788764188.825936,
+    "ast_hash": "d7d6648d09d28b5ec110ba91f45b1010",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/AdminConfirmModal.js": {
+    "mtime": 1788726311.9639606,
+    "seen": 1788764188.8259387,
+    "ast_hash": "f49738c7e7e1372055131eb8160a58fa",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/AdminHeader.js": {
+    "mtime": 1788726288.1478112,
+    "seen": 1788764188.8259401,
+    "ast_hash": "fdfa5abc2bb27c36ff5998b7cf904b95",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/AdminLayout.js": {
+    "mtime": 1788726299.6948843,
+    "seen": 1788764188.825942,
+    "ast_hash": "3e8fba1c3eb5190077150e3b1f0b3dd8",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/AdminPageHeader.js": {
+    "mtime": 1788726295.5978584,
+    "seen": 1788764188.825946,
+    "ast_hash": "513db6d236f1b1658909d1390504b027",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/AdminPagination.js": {
+    "mtime": 1788726308.0909367,
+    "seen": 1788764188.8259478,
+    "ast_hash": "125987daec5efe92a6014850116e9e43",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/AdminProductCard.js": {
+    "mtime": 1788728139.7626348,
+    "seen": 1788764188.8259494,
+    "ast_hash": "5201b41b85ae6c610e6c221b54cb7654",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/AdminProductDetailModal.js": {
+    "mtime": 1788728165.7050178,
+    "seen": 1788764188.8259506,
+    "ast_hash": "a4c7bc44d9dd94003c115d73071dff86",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/AdminProductFormModal.js": {
+    "mtime": 1788950186.8225815,
+    "seen": 1788951648.732935,
+    "ast_hash": "8de25c56aa96ef6463e2ac97c375899f",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/AdminProductGrid.js": {
+    "mtime": 1788728142.11367,
+    "seen": 1788764188.825954,
+    "ast_hash": "8f960d814c3102cd1f075304fb289863",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/AdminProductList.js": {
+    "mtime": 1788728270.5604427,
+    "seen": 1788764188.8259559,
+    "ast_hash": "2b11b10720c74a93586fcc0417acbaa7",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/AdminSidebar.js": {
+    "mtime": 1788726292.4268384,
+    "seen": 1788764188.8259575,
+    "ast_hash": "192feeed26b5f41c489a396bfee24574",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/AdminStatusBadge.js": {
+    "mtime": 1788726303.0309052,
+    "seen": 1788764188.8259594,
+    "ast_hash": "834635ef1dcbe00d80a8bde95c9d29be",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/CategoryFormPanel.js": {
+    "mtime": 1788946937.857152,
+    "seen": 1788947315.820564,
+    "ast_hash": "61a0c14bb1f8e14bd7a7e905e6923fde",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/CategoryStatistics.js": {
+    "mtime": 1788726339.8401299,
+    "seen": 1788764188.8259625,
+    "ast_hash": "fce3140f6f41afa24a77a8ad5c837d6c",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/CategoryTable.js": {
+    "mtime": 1788726327.1660535,
+    "seen": 1788764188.8259642,
+    "ast_hash": "12e0730ce5ca5bf2e524bf6b8fd819cb",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/CategoryTree.js": {
+    "mtime": 1788726318.9470036,
+    "seen": 1788764188.8259661,
+    "ast_hash": "b8ba42dd5652ce3d1f614cee222b8b76",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/components/RecentCategoriesCard.js": {
+    "mtime": 1788726343.6531525,
+    "seen": 1788764188.8259778,
+    "ast_hash": "a3f417b12c9dee4ec44a690210ffd1d3",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/pages/AdminCategoriesPage.js": {
+    "mtime": 1788941027.3112938,
+    "seen": 1788941202.1782985,
+    "ast_hash": "9e3b0195bbb59c1ed4c00c43bda40198",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/pages/AdminCustomersPage.js": {
+    "mtime": 1788950218.4176452,
+    "seen": 1788951648.7329566,
+    "ast_hash": "c87319a23d8c0460395b7ef5d0112512",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/pages/AdminOrdersPage.js": {
+    "mtime": 1788950243.1206963,
+    "seen": 1788951648.73296,
+    "ast_hash": "5bfea6da4ad84bdcda3ab5d55e4391b5",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/pages/AdminProductsPage.js": {
+    "mtime": 1788950155.8855212,
+    "seen": 1788951648.7329617,
+    "ast_hash": "acab484230c571a7be63994b6b51d67e",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/admin/pages/AdminRegisterPage.js": {
+    "mtime": 1788727467.7662516,
+    "seen": 1788764188.8259873,
+    "ast_hash": "cd2b4e22263e459e094ce366dc90dc3f",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/profile/components/PersonalInfoCard.js": {
+    "mtime": 1788705611.385341,
+    "seen": 1788764188.8260572,
+    "ast_hash": "07bab701abea040e281d0320129bf79a",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/profile/components/ProfileModals.js": {
+    "mtime": 1788937902.113006,
+    "seen": 1788941202.1783288,
+    "ast_hash": "227914f4c159725337592d7a2a28bf59",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/profile/components/ProfileSidebar.js": {
+    "mtime": 1788937854.7962875,
+    "seen": 1788941202.1783292,
+    "ast_hash": "be6bda93fc52162dffe30d2242f25c1a",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/profile/components/RecentOrdersCard.js": {
+    "mtime": 1788705618.856314,
+    "seen": 1788764188.8260617,
+    "ast_hash": "2da43ae0fe1ffd2d29a0307520e2335d",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/profile/components/SavedAddressesCard.js": {
+    "mtime": 1788705631.8742685,
+    "seen": 1788764188.8260634,
+    "ast_hash": "0b59e940ff2d34bb5c0a90789e171768",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/profile/components/WelcomeBanner.js": {
+    "mtime": 1788705606.2643595,
+    "seen": 1788764188.8260648,
+    "ast_hash": "98a62da696b7c2f64bf450b06f13c8dd",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/profile/services/profileService.js": {
+    "mtime": 1788937668.52698,
+    "seen": 1788941202.1783323,
+    "ast_hash": "ca21ce7a2bd9cfadb16705a0dab2a6e8",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/profile/utils/cityUtils.js": {
+    "mtime": 1788705593.266408,
+    "seen": 1788764188.8260698,
+    "ast_hash": "a661a7b051c49e14db6367f495a32ddf",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/shared/components/Header/CategoryMegaMenu.js": {
+    "mtime": 1788868917.962707,
+    "seen": 1788941202.1783354,
+    "ast_hash": "024f24376af0b07f8f09c776c158e7bd",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Api/Controllers/AdresController.cs": {
+    "mtime": 1788779261.4883811,
+    "seen": 1788854503.0231023,
+    "ast_hash": "15f0ebbdd70c023e7306a93b760bdc3f",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Api/Controllers/ProfilController.cs": {
+    "mtime": 1788779261.4880428,
+    "seen": 1788854503.0231066,
+    "ast_hash": "04a6653039314e04db0daf9fd47587b0",
+    "semantic_hash": ""
+  },
+  "tests/aboutPage.test.js": {
+    "mtime": 1788703366.3884523,
+    "seen": 1788764188.8264868,
+    "ast_hash": "489a76662aa2e5b0cfb9fa165d933de3",
+    "semantic_hash": ""
+  },
+  "tests/adminPages.test.js": {
+    "mtime": 1788950249.9607108,
+    "seen": 1788951648.7337523,
+    "ast_hash": "2a47dbe4dfbc074161fef14a81de9ea0",
+    "semantic_hash": ""
+  },
+  "tests/categoryMegaMenu.test.js": {
+    "mtime": 1788868909.0296834,
+    "seen": 1788941202.1785765,
+    "ast_hash": "5e00cf214940368c75b630ae69b74190",
+    "semantic_hash": ""
+  },
+  "tests/profilePage.test.js": {
+    "mtime": 1788937950.5986931,
+    "seen": 1788941202.1785781,
+    "ast_hash": "c3419c939e1d77b447bfb3a4a46424b3",
+    "semantic_hash": ""
+  },
+  "temp/NOTES.md": {
+    "mtime": 1788950283.146782,
+    "seen": 1788951648.7338095,
+    "ast_hash": "baef9c51181ba0d749d627796aa25d8c",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application.Tests/Features/Adres/AddressHandlerTests.cs": {
+    "mtime": 1788937700.5780866,
+    "seen": 1788941202.178355,
+    "ast_hash": "a52927f97eef4097e34529d290783b0d",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application.Tests/Features/Profil/ProfileHandlerTests.cs": {
+    "mtime": 1788779261.4978936,
+    "seen": 1788854503.0231268,
+    "ast_hash": "291728d75cce98548b01215360f76dca",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application.Tests/Features/Sepet/GetSepetQueryHandlerTests.cs": {
+    "mtime": 1788779261.4979813,
+    "seen": 1788854503.023129,
+    "ast_hash": "87d5e59ef66c1b28601be5c30997dbfd",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application.Tests/Features/Sepet/SepetCommandHandlerTests.cs": {
+    "mtime": 1788779261.498072,
+    "seen": 1788854503.0231314,
+    "ast_hash": "9f72230c2555428c28cef39ab2539a6f",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application.Tests/Features/Sepet/SepetUrunuCommandHandlerTests.cs": {
+    "mtime": 1788779261.4981754,
+    "seen": 1788854503.0231338,
+    "ast_hash": "8587eb5b5568f51d2447c75017f3d4b5",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application.Tests/Features/Siparis/GetSiparisQueryHandlerTests.cs": {
+    "mtime": 1788779261.4977276,
+    "seen": 1788854503.0231357,
+    "ast_hash": "f3f2041dca237d76d96bb4da3c6ec42e",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application.Tests/Features/Siparis/SiparisCommandHandlerTests.cs": {
+    "mtime": 1788779261.4975145,
+    "seen": 1788854503.0231378,
+    "ast_hash": "e9f20b366d969cb15a1c7349b14d85e1",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application.Tests/Features/Siparis/SiparisUrunuCommandHandlerTests.cs": {
+    "mtime": 1788864542.4664593,
+    "seen": 1788864692.545026,
+    "ast_hash": "032a034fa950d0e8a69e0ec214b1c739",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Common/Behaviors/ValidationBehavior.cs": {
+    "mtime": 1788779261.492653,
+    "seen": 1788854503.023152,
+    "ast_hash": "83b7ed96364b72b2dd41af6ce48c0751",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Common/Interfaces/ICurrentCustomerContext.cs": {
+    "mtime": 1788779261.49257,
+    "seen": 1788854503.0231543,
+    "ast_hash": "254c6b89e2e511f52cf651b635f76c89",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Common/Interfaces/IIdentityService.cs": {
+    "mtime": 1788951265.6607406,
+    "seen": 1788951648.733155,
+    "ast_hash": "f50dc5c4d9cacf77239141235f75c56a",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Common/Interfaces/IJwtTokenGenerator.cs": {
+    "mtime": 1788779261.4924948,
+    "seen": 1788854503.0231586,
+    "ast_hash": "6ca68b7cea13e7ae65657e870e9ef28f",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Common/Interfaces/ISepetRepository.cs": {
+    "mtime": 1788779261.4922538,
+    "seen": 1788854503.0231605,
+    "ast_hash": "35fa7fab95abb5ec9888fe1dedb1aede",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Common/Interfaces/IShopAppDbContext.cs": {
+    "mtime": 1788951450.0461447,
+    "seen": 1788951648.7331607,
+    "ast_hash": "907e7e98142c1ece19ae831c588f2c28",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Common/Interfaces/ISiparisRepository.cs": {
+    "mtime": 1788779261.4923322,
+    "seen": 1788854503.0231645,
+    "ast_hash": "cb9e62d82448f4e19a29debfecbeaf1f",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/DependencyInjection.cs": {
+    "mtime": 1788779261.4859865,
+    "seen": 1788854503.0231662,
+    "ast_hash": "b481d6e02d5c14fc3bf606f056681ddd",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Adres/Commands/CreateAddress/CreateAddress.cs": {
+    "mtime": 1788937668.5267024,
+    "seen": 1788941202.1783695,
+    "ast_hash": "388bd5ad014dc835c6e774f6ef3bc097",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Adres/Commands/DeleteAddress/DeleteAddress.cs": {
+    "mtime": 1788857969.198,
+    "seen": 1788864186.3423846,
+    "ast_hash": "e1da9731c98e3f8a9bdbb03db9d7c997",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Adres/Commands/UpdateAddress/UpdateAddress.cs": {
+    "mtime": 1788937668.5268028,
+    "seen": 1788941202.1783712,
+    "ast_hash": "14aa6ee0d35be9b2bc485159c8605ec9",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Adres/Dtos/AddressDto.cs": {
+    "mtime": 1788937668.526585,
+    "seen": 1788941202.178372,
+    "ast_hash": "7826067ae6178afac3649493a11258c3",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Adres/Queries/GetMyAddresses/GetMyAddresses.cs": {
+    "mtime": 1788937668.5268764,
+    "seen": 1788941202.1783724,
+    "ast_hash": "c172974edd48268f165d5a0c14400fc5",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Authentication/AuthenticationValidationException.cs": {
+    "mtime": 1788779261.4978042,
+    "seen": 1788854503.0231793,
+    "ast_hash": "6f8ed1e29b360aba95973e1218653008",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Authentication/DTOs/AssignRoleRequest.cs": {
+    "mtime": 1788779261.5050995,
+    "seen": 1788854503.0231812,
+    "ast_hash": "f904c370bdd4f16ad0a1007baa654715",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Authentication/DTOs/AuthRequest.cs": {
+    "mtime": 1788779261.5048964,
+    "seen": 1788854503.0231836,
+    "ast_hash": "898c5ced0d733de93cd76b91b6669201",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Authentication/DTOs/AuthResponse.cs": {
+    "mtime": 1788779261.5046933,
+    "seen": 1788854503.0231857,
+    "ast_hash": "40241dd2420c0c4e81bf0150d7158396",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Authentication/DTOs/CurrentUserResponse.cs": {
+    "mtime": 1788779261.5046241,
+    "seen": 1788854503.0231876,
+    "ast_hash": "2f21c119c702b08fdada299ec77b6871",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Authentication/DTOs/IdentityUserInfo.cs": {
+    "mtime": 1788951258.1921678,
+    "seen": 1788951648.7332056,
+    "ast_hash": "0b040551eb0dc7f9c53641aff6c50662",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Authentication/DTOs/JwtToken.cs": {
+    "mtime": 1788779261.5050328,
+    "seen": 1788854503.0231917,
+    "ast_hash": "b79ae4769e1b9c3fac30053b14e6b19d",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Authentication/DTOs/LoginRequest.cs": {
+    "mtime": 1788779261.504967,
+    "seen": 1788854503.0231936,
+    "ast_hash": "4d2355a39c3b09ede4616e893922668f",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Authentication/DTOs/RegisterRequest.cs": {
+    "mtime": 1788779261.5047617,
+    "seen": 1788854503.0231957,
+    "ast_hash": "34e191dc9aa355dacfcecaab772b746f",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Authentication/Services/AuthService.cs": {
+    "mtime": 1788779261.5044837,
+    "seen": 1788854503.0231977,
+    "ast_hash": "cad86bafb3ba6305a6b64a2ef573c620",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Authentication/Services/IAuthService.cs": {
+    "mtime": 1788779261.5045538,
+    "seen": 1788854503.0231996,
+    "ast_hash": "27ca702ed8d79a6b7aa77119c2e6c643",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Profil/Commands/UpdateMyProfile/UpdateMyProfile.cs": {
+    "mtime": 1788779261.5015483,
+    "seen": 1788854503.0232012,
+    "ast_hash": "151e5303aa83a1bb0898593909df7f5f",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Profil/Dtos/UserProfileDto.cs": {
+    "mtime": 1788779261.500192,
+    "seen": 1788854503.0232036,
+    "ast_hash": "d4212747489e96b69d52ca55b7b973e0",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Profil/Queries/GetMyProfile/GetMyProfile.cs": {
+    "mtime": 1788779261.5014663,
+    "seen": 1788854503.0232055,
+    "ast_hash": "d3374cba6887f81a7a97d4ce5f93a425",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Commands/CreateSepet/CreateSepet.cs": {
+    "mtime": 1788779261.5040758,
+    "seen": 1788854503.0232077,
+    "ast_hash": "4953a6920ce9925924cbf9ac728da382",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Commands/CreateSepet/CreateSepetCommandHandler.cs": {
+    "mtime": 1788779261.5041463,
+    "seen": 1788854503.02321,
+    "ast_hash": "f0084f5677dba43600ac473bb89549fa",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Commands/CreateSepetUrunu/CreateSepetUrunu.cs": {
+    "mtime": 1788779261.5043952,
+    "seen": 1788854503.0232122,
+    "ast_hash": "4ca7fd66c207bc17f7604910f6dffc2c",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Commands/CreateSepetUrunu/CreateSepetUrunuCommandHandler.cs": {
+    "mtime": 1788779261.5042202,
+    "seen": 1788854503.0232143,
+    "ast_hash": "07d5ebdd0a7908763c57fe386499211c",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Commands/CreateSepetUrunu/CreateSepetUrunuCommandValidator.cs": {
+    "mtime": 1788779261.5043125,
+    "seen": 1788854503.0232165,
+    "ast_hash": "0783c93a64132c27aba08291fd4706c1",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Commands/DeleteSepet/DeleteSepet.cs": {
+    "mtime": 1788779261.5019667,
+    "seen": 1788854503.0232186,
+    "ast_hash": "8d9f2586cb658072c8eee0813911543e",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Commands/DeleteSepet/DeleteSepetCommandHandler.cs": {
+    "mtime": 1788779261.5019007,
+    "seen": 1788854503.0232208,
+    "ast_hash": "35508fbeace928b155e6fabac0a08e54",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Commands/DeleteSepet/DeleteSepetCommandValidator.cs": {
+    "mtime": 1788779261.501832,
+    "seen": 1788854503.0232227,
+    "ast_hash": "98cdd36d59de5addbd7370ad094cad61",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Commands/DeleteSepetUrunu/DeleteSepetUrunu.cs": {
+    "mtime": 1788779261.5037947,
+    "seen": 1788854503.0232246,
+    "ast_hash": "20f4d60a35d93d76c3a9e05ff437dff8",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Commands/DeleteSepetUrunu/DeleteSepetUrunuCommandHandler.cs": {
+    "mtime": 1788779261.503659,
+    "seen": 1788854503.0232267,
+    "ast_hash": "a822ca6dafb30a816f946bef116e246b",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Commands/DeleteSepetUrunu/DeleteSepetUrunuCommandValidator.cs": {
+    "mtime": 1788779261.503728,
+    "seen": 1788854503.023229,
+    "ast_hash": "143af833d4a2a3c907d7a624853239c9",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Commands/UpdateSepet/UpdateSepet.cs": {
+    "mtime": 1788779261.5016932,
+    "seen": 1788854503.023231,
+    "ast_hash": "3308821af4bf1d7b7f021c32b9aacb53",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Commands/UpdateSepet/UpdateSepetCommandHandler.cs": {
+    "mtime": 1788779261.5016253,
+    "seen": 1788854503.023233,
+    "ast_hash": "1ac7567bc2a17e8e0da1cdabe205ee91",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Commands/UpdateSepet/UpdateSepetCommandValidator.cs": {
+    "mtime": 1788779261.5017626,
+    "seen": 1788854503.0232348,
+    "ast_hash": "80b8726025f478ca0025cfeccdcc9682",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Commands/UpdateSepetUrunu/UpdateSepetUrunu.cs": {
+    "mtime": 1788779261.5038626,
+    "seen": 1788854503.0232368,
+    "ast_hash": "db470cf6becdd460fa5b2ac6764521ab",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Commands/UpdateSepetUrunu/UpdateSepetUrunuCommandHandler.cs": {
+    "mtime": 1788779261.503934,
+    "seen": 1788854503.0232387,
+    "ast_hash": "826068e317cdbe85e136b15fb6b830f5",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Commands/UpdateSepetUrunu/UpdateSepetUrunuCommandValidator.cs": {
+    "mtime": 1788779261.5040035,
+    "seen": 1788854503.0232408,
+    "ast_hash": "432b71cc51e150875f319e042d016aa0",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Dtos/GetByIdSepetDto.cs": {
+    "mtime": 1788779261.5003433,
+    "seen": 1788854503.023243,
+    "ast_hash": "37f9132de082f52cd3c62b927b77b446",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Dtos/GetByIdSepetUrunDto.cs": {
+    "mtime": 1788779261.500481,
+    "seen": 1788854503.0232449,
+    "ast_hash": "7f6a2a4ff30f287fdfdb6e0f3c7bc8ac",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Dtos/ResultSepetDto.cs": {
+    "mtime": 1788779261.5004127,
+    "seen": 1788854503.0232468,
+    "ast_hash": "84ecfa00c0fcaf39ea4d6aff1de4a501",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Dtos/ResultSepetUrunDto.cs": {
+    "mtime": 1788779261.5002723,
+    "seen": 1788854503.0232487,
+    "ast_hash": "5f85a640a7fa838238bd7c37aa7eb656",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Queries/GetMySepetler/GetMySepetler.cs": {
+    "mtime": 1788857988.219,
+    "seen": 1788864186.3424346,
+    "ast_hash": "b73d81b296b98321f6662c1ecfb32b1d",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Queries/GetSepet/GetSepet.cs": {
+    "mtime": 1788857949.74,
+    "seen": 1788864186.3424358,
+    "ast_hash": "fc789defa8e8234030b84402965a4741",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Queries/GetSepetUrunleri/GetSepetUrunleri.cs": {
+    "mtime": 1788858024.653,
+    "seen": 1788864186.342437,
+    "ast_hash": "3b095c8f546fd4fb281fe7b5b4b361cb",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Sepet/Queries/GetSepetUrunu/GetSepetUrunu.cs": {
+    "mtime": 1788858031.893,
+    "seen": 1788864186.3424385,
+    "ast_hash": "c6f3e503d65c2bdc4b90dee0fcf5255d",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Commands/CreateSiparis/CreateSiparis.cs": {
+    "mtime": 1788779261.5026243,
+    "seen": 1788854503.0232587,
+    "ast_hash": "03d2025d5fbc048784f513d9a3183149",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Commands/CreateSiparis/CreateSiparisCommandHandler.cs": {
+    "mtime": 1788779261.502559,
+    "seen": 1788854503.0232606,
+    "ast_hash": "76f55f0da3ea020076bd5ec9f859c5a4",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Commands/CreateSiparisUrunu/CreateSiparisUrunu.cs": {
+    "mtime": 1788859016.401,
+    "seen": 1788864186.342442,
+    "ast_hash": "0a379d6b925f3c465f32c847119419e2",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Commands/CreateSiparisUrunu/CreateSiparisUrunuCommandHandler.cs": {
+    "mtime": 1788859016.387,
+    "seen": 1788864186.3424435,
+    "ast_hash": "c208c406babd44643653539a21636a6b",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Commands/CreateSiparisUrunu/CreateSiparisUrunuCommandValidator.cs": {
+    "mtime": 1788864510.3285768,
+    "seen": 1788864692.5451431,
+    "ast_hash": "0c6483d35faea881ddc72bc293998296",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Commands/DeleteSiparis/DeleteSiparis.cs": {
+    "mtime": 1788779261.5029788,
+    "seen": 1788854503.023269,
+    "ast_hash": "dae57d482bbc448d206d81eb67143c37",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Commands/DeleteSiparis/DeleteSiparisCommandHandler.cs": {
+    "mtime": 1788779261.502913,
+    "seen": 1788854503.0232706,
+    "ast_hash": "b11d2dc4242d7245715303305c45ad3d",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Commands/DeleteSiparis/DeleteSiparisCommandValidator.cs": {
+    "mtime": 1788779261.5030496,
+    "seen": 1788854503.0232728,
+    "ast_hash": "2022b0b25d8689c7ebcb4373b1cd52d4",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Commands/DeleteSiparisUrunu/DeleteSiparisUrunu.cs": {
+    "mtime": 1788779261.5031989,
+    "seen": 1788854503.0232747,
+    "ast_hash": "77fa6bc4231c8c8343ef217587147121",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Commands/DeleteSiparisUrunu/DeleteSiparisUrunuCommandHandler.cs": {
+    "mtime": 1788779261.5031226,
+    "seen": 1788854503.0232768,
+    "ast_hash": "f6396cf770b12f86dec56ad657dd3996",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Commands/DeleteSiparisUrunu/DeleteSiparisUrunuCommandValidator.cs": {
+    "mtime": 1788779261.503273,
+    "seen": 1788854503.023279,
+    "ast_hash": "0a072559e901820f52c073b302b753ef",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Commands/UpdateSiparis/UpdateSiparis.cs": {
+    "mtime": 1788779261.502344,
+    "seen": 1788854503.0232806,
+    "ast_hash": "be6476975335e78cfce266714898ba2e",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Commands/UpdateSiparis/UpdateSiparisCommandHandler.cs": {
+    "mtime": 1788779261.5024838,
+    "seen": 1788854503.023283,
+    "ast_hash": "313f6666030d6d544b86a0945f80bf58",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Commands/UpdateSiparis/UpdateSiparisCommandValidator.cs": {
+    "mtime": 1788779261.5024135,
+    "seen": 1788854503.0232847,
+    "ast_hash": "413ca6454963c36fc7a7d1603fb2d4e9",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Commands/UpdateSiparisUrunu/UpdateSiparisUrunu.cs": {
+    "mtime": 1788779261.5021193,
+    "seen": 1788854503.0232868,
+    "ast_hash": "6b30034825b7f32cbc7f08cd80bc26d5",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Commands/UpdateSiparisUrunu/UpdateSiparisUrunuCommandHandler.cs": {
+    "mtime": 1788779261.5021942,
+    "seen": 1788854503.0232885,
+    "ast_hash": "9386f102edf689c9f9f621559f646941",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Commands/UpdateSiparisUrunu/UpdateSiparisUrunuCommandValidator.cs": {
+    "mtime": 1788779261.5022717,
+    "seen": 1788854503.0232906,
+    "ast_hash": "daceb717d70cd35ea11161b396e94d34",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Dtos/GetByIdSiparisDto.cs": {
+    "mtime": 1788779261.5000439,
+    "seen": 1788854503.0232928,
+    "ast_hash": "44d49ab52035706b76854ccf63c1f6e8",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Dtos/GetByIdSiparisUrunleriDto.cs": {
+    "mtime": 1788779261.5001128,
+    "seen": 1788854503.0232944,
+    "ast_hash": "185993177f4249feca05cdb8fdfce393",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Dtos/ResultSiparisDto.cs": {
+    "mtime": 1788864501.4800212,
+    "seen": 1788864692.5451705,
+    "ast_hash": "b3a3a2c70cde7b9fe969266fbe94d391",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Dtos/ResultSiparisUrunleriDto.cs": {
+    "mtime": 1788864504.4409041,
+    "seen": 1788864692.5451722,
+    "ast_hash": "801e793d7cd7f1ce03d808add942fd68",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Queries/GetMySiparisler/GetMySiparisler.cs": {
+    "mtime": 1788858040.088,
+    "seen": 1788864186.3424668,
+    "ast_hash": "e1dbcfd0e3c87ee4f866fcab01c44aa1",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Queries/GetSiparis/GetSiparis.cs": {
+    "mtime": 1788857995.541,
+    "seen": 1788864186.342468,
+    "ast_hash": "0b5ff69dcf477fcc9e95662015896a54",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Queries/GetSiparisUrunleri/GetSiparisUrunleri.cs": {
+    "mtime": 1788858046.76,
+    "seen": 1788864186.3424695,
+    "ast_hash": "5a1bee5b785b0700a3f22f0e9be2e631",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Siparis/Queries/GetSiparisUrunu/GetSiparisUrunu.cs": {
+    "mtime": 1788858052.263,
+    "seen": 1788864186.3424704,
+    "ast_hash": "6b7ce7fcada35c2907c1161dea6e1795",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Domain/Siparis/Entities/SiparisDurumLookup.cs": {
+    "mtime": 1788864571.406,
+    "seen": 1788864692.5452087,
+    "ast_hash": "3acacee7f1ba9a8dec10de8a05c6be08",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Domain/Siparis/Entities/SiparisEntity.cs": {
+    "mtime": 1788864498.1572385,
+    "seen": 1788864692.5452104,
+    "ast_hash": "115821631c5ee5a300c834fdf02b6020",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Domain/Siparis/Entities/SiparisUrunleri.cs": {
+    "mtime": 1788864494.565372,
+    "seen": 1788864692.5452123,
+    "ast_hash": "9f1975da0160c691cc37f19b94dd3084",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Domain/Siparis/Enums/SiparisDurum.cs": {
+    "mtime": 1788779261.4911141,
+    "seen": 1788854503.0233545,
+    "ast_hash": "d4cde175ecbd48f792107e8f7be223ea",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Identity/Models/ApplicationUser.cs": {
+    "mtime": 1788779261.4892104,
+    "seen": 1788854503.0233684,
+    "ast_hash": "684599712881287dd3e4ef7d3166b69e",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Identity/Models/KayitliKullanici.cs": {
+    "mtime": 1788779261.489369,
+    "seen": 1788854503.0233705,
+    "ast_hash": "84b58e67d5f9fb58b5dde5db033496f0",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Identity/Seed/IdentityRoleSeeder.cs": {
+    "mtime": 1788779261.4889166,
+    "seen": 1788854503.0233722,
+    "ast_hash": "f3f8ddff4de4e9ad469b3e18e3a2f107",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Identity/Services/CurrentCustomerContext.cs": {
+    "mtime": 1788779261.4897466,
+    "seen": 1788854503.0233743,
+    "ast_hash": "68adb9745dcdccdb922b3a11b3b56795",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Identity/Services/IdentityService.cs": {
+    "mtime": 1788951294.6705203,
+    "seen": 1788951648.7335284,
+    "ast_hash": "5c3f98f8e5f3cfc0e9b7d4d7bc452198",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Identity/Services/JwtTokenGenerator.cs": {
+    "mtime": 1788779261.4898994,
+    "seen": 1788854503.023378,
+    "ast_hash": "c9da5ec88f56677c6679e8ec6506934e",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Identity/Settings/JwtSettings.cs": {
+    "mtime": 1788779261.489065,
+    "seen": 1788854503.0233798,
+    "ast_hash": "d2f28503db23d92d5c63c99dea160da1",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Context/ShopAppDbContext.cs": {
+    "mtime": 1788946126.9276946,
+    "seen": 1788946219.7294073,
+    "ast_hash": "ab92202e5f3ea85137c1332f3e502cf7",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Context/ShopAppDbContextFactory.cs": {
+    "mtime": 1788779261.4971924,
+    "seen": 1788854503.0234225,
+    "ast_hash": "51b1be808692666b180b91122f34cb8b",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Repositories/SepetRepository.cs": {
+    "mtime": 1788779261.497116,
+    "seen": 1788854503.0234647,
+    "ast_hash": "2c9e40e19a9e12e66dcce4d7b6412f23",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Repositories/SiparisRepository.cs": {
+    "mtime": 1788779261.4970348,
+    "seen": 1788854503.0234666,
+    "ast_hash": "5519c9c279796c891d6ea69531f6ede3",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/CreateUrun/CreateUrun.cs": {
+    "mtime": 1788870444.8222482,
+    "seen": 1788941202.1784194,
+    "ast_hash": "dc56bcd20e1d7582013888dc714abd85",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/CreateUrun/CreateUrunCommandHandler.cs": {
+    "mtime": 1788870457.4192584,
+    "seen": 1788941202.1784203,
+    "ast_hash": "4dfae298364539fe8466412405c069a0",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Domain/Urun/Entities/Kategori.cs": {
+    "mtime": 1788869668.302,
+    "seen": 1788941202.1784737,
+    "ast_hash": "d6f252385db977bd606cc0c9f78cd9d3",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Domain/Urun/Entities/Urun.cs": {
+    "mtime": 1788782515.031,
+    "seen": 1788854503.0233593,
+    "ast_hash": "10527c71b43b70a64fc16d0aff88034e",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Domain/Urun/Entities/UrunGorsel.cs": {
+    "mtime": 1788782554.465,
+    "seen": 1788854503.023361,
+    "ast_hash": "fc7f10b2f3b02cb7bea87607ca7cf71b",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Domain/Urun/Entities/UrunOzellik.cs": {
+    "mtime": 1788788773.926,
+    "seen": 1788854503.0233626,
+    "ast_hash": "bba051eded6d8e74caa135c419bb611c",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Domain/Urun/Entities/UrunTur.cs": {
+    "mtime": 1788788710.106,
+    "seen": 1788854503.0233643,
+    "ast_hash": "8663f27a124906252a04165797b573ab",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Common/BaseEntityConfiguration.cs": {
+    "mtime": 1788779271.0032744,
+    "seen": 1788854503.0233812,
+    "ast_hash": "a62cdecbc29c213776baf228bff88e62",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Kullanici/AddressConfiguration.cs": {
+    "mtime": 1788937668.526487,
+    "seen": 1788941202.1784923,
+    "ast_hash": "7ef010f8ff191f36a0895fd1935ab08d",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Kullanici/MusteriConfiguration.cs": {
+    "mtime": 1788779271.006483,
+    "seen": 1788854503.0234005,
+    "ast_hash": "a8ddb14a2a88ad0580846d73f9086c67",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Sepet/SepetConfiguration.cs": {
+    "mtime": 1788851997.405,
+    "seen": 1788854503.0234027,
+    "ast_hash": "b951da518b527b3775bf90be70a0c397",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Sepet/SepetDurumLookupConfiguration.cs": {
+    "mtime": 1788779271.0112681,
+    "seen": 1788854503.0234046,
+    "ast_hash": "469dcb4ea4806011b277c8de542c79a1",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Sepet/SepetUrunuConfiguration.cs": {
+    "mtime": 1788851997.485,
+    "seen": 1788854503.0234063,
+    "ast_hash": "eecde48615b47d76044c6a0e9c81ea22",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Siparis/SiparisConfiguration.cs": {
+    "mtime": 1788851997.536,
+    "seen": 1788854503.023408,
+    "ast_hash": "e3d9c2c838f3688ef6c7251a1dec26fb",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Siparis/SiparisUrunleriConfiguration.cs": {
+    "mtime": 1788872969.73,
+    "seen": 1788941202.1784987,
+    "ast_hash": "b03832f24e37365db7ef44cfda1a38d1",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Urun/KategoriCongifuration.cs": {
+    "mtime": 1788852340.709,
+    "seen": 1788854503.0234115,
+    "ast_hash": "f0cac8185802525d6669a3fb8bba0d41",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Urun/UrunConfiguration.cs": {
+    "mtime": 1788852370.787,
+    "seen": 1788854503.0234132,
+    "ast_hash": "e3970782373dced8fb60db5cbbe4d363",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Urun/UrunGorselConfiguration.cs": {
+    "mtime": 1788852430.385,
+    "seen": 1788854503.023415,
+    "ast_hash": "f103f2bf657e776111066b22bbc61ce7",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Urun/UrunOzellikConfiguration.cs": {
+    "mtime": 1788852451.56,
+    "seen": 1788854503.0234168,
+    "ast_hash": "bcbe357e057eb64fab0dbf78f387df26",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Configurations/Urun/UrunTurConfiguration.cs": {
+    "mtime": 1788854382.6853588,
+    "seen": 1788854503.0234184,
+    "ast_hash": "4508af7de89b04170b51315f33bd823c",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Common/Interfaces/IGenericUrunRepository.cs": {
+    "mtime": 1788868260.8758757,
+    "seen": 1788868358.2309172,
+    "ast_hash": "47351e24a4b534f04e799e45f2dacbc8",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Dtos/GetByIdUrunDto.cs": {
+    "mtime": 1788876466.823806,
+    "seen": 1788941202.1784422,
+    "ast_hash": "c4df26abce613709ca897ec16b2c084a",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260908105034_RebuildAllEntitySchema.Designer.cs": {
+    "mtime": 1788864634.3495612,
+    "seen": 1788864692.5453134,
+    "ast_hash": "e1ce8cfa98e28f04e8dff54c19c5c23c",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260908105034_RebuildAllEntitySchema.cs": {
+    "mtime": 1788864634.3495612,
+    "seen": 1788864692.5453155,
+    "ast_hash": "5661444ace785dee36585d6e39f047f3",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/categories/services/categoryService.js": {
+    "mtime": 1788949987.4362354,
+    "seen": 1788951648.7330039,
+    "ast_hash": "480ea3d8e9ea28d63af0392081df80a4",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application.Tests/Features/Urun/GenericUrunRepositoryTests.cs": {
+    "mtime": 1788868310.6828384,
+    "seen": 1788868358.2309017,
+    "ast_hash": "0a20fddd53aab390105cbe8c589ad199",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Repositories/GenericUrunRepository.cs": {
+    "mtime": 1788868260.8760078,
+    "seen": 1788868358.2311926,
+    "ast_hash": "5300b7d67aa7b337fb488da5a54b5aa4",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Api/Controllers/AdminKategoriController.cs": {
+    "mtime": 1788946849.7329066,
+    "seen": 1788947315.8206866,
+    "ast_hash": "fe30026bbc38282d32fc4fabcf38915a",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Api/Controllers/AdminUrunController.cs": {
+    "mtime": 1788946860.5848126,
+    "seen": 1788947315.8206885,
+    "ast_hash": "320a69bd2e4bd6b59f79cfd597c43bd0",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Api/Controllers/KategoriController.cs": {
+    "mtime": 1788940900.5703633,
+    "seen": 1788941202.1783485,
+    "ast_hash": "c2dfdb4b11c3819143513ecf4ea2aa4a",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Api/Controllers/UrunController.cs": {
+    "mtime": 1788940895.8552945,
+    "seen": 1788941202.1783512,
+    "ast_hash": "3f2a3c59b5dac5b78c070fad4ef2491a",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/CreateKategori/CreateKategori.cs": {
+    "mtime": 1788870435.1141303,
+    "seen": 1788941202.1784177,
+    "ast_hash": "c40355a0abe8f72013604911a7c20809",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/CreateKategori/CreateKategoriCommandHandler.cs": {
+    "mtime": 1788870440.6822448,
+    "seen": 1788941202.1784184,
+    "ast_hash": "f53abb3ab97d7cb43174c6ef22ee7b1c",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/CreateKategori/CreateKategoriCommandValidator.cs": {
+    "mtime": 1788870437.3522422,
+    "seen": 1788941202.1784189,
+    "ast_hash": "87d65a8d4f58bfb5ff08cd9455938b11",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/CreateUrun/CreateUrunCommandValidator.cs": {
+    "mtime": 1788870460.8432612,
+    "seen": 1788941202.1784208,
+    "ast_hash": "e3a975b70fe900f565dabb20e999918d",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/CreateUrunGorsel/CreateUrunGorsel.cs": {
+    "mtime": 1788870463.5602512,
+    "seen": 1788941202.1784213,
+    "ast_hash": "33b1448dc6eccca0849018ce2eb3c5cf",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/CreateUrunGorsel/CreateUrunGorselCommandHandler.cs": {
+    "mtime": 1788870469.2972682,
+    "seen": 1788941202.1784217,
+    "ast_hash": "7c580d92cfd5403437431e5ed4fc5bbc",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/CreateUrunGorsel/CreateUrunGorselCommandValidator.cs": {
+    "mtime": 1788870465.7262652,
+    "seen": 1788941202.1784225,
+    "ast_hash": "26ea8669aec3762e134bd155594f1303",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/CreateUrunOzellik/CreateUrunOzellik.cs": {
+    "mtime": 1788870481.8882787,
+    "seen": 1788941202.178423,
+    "ast_hash": "a49eae238e4d9b3a28892a24fa6e3316",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/CreateUrunOzellik/CreateUrunOzellikCommandHandler.cs": {
+    "mtime": 1788870487.7512836,
+    "seen": 1788941202.178424,
+    "ast_hash": "58ac408765b8f1db3cff57e660cdc660",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/CreateUrunOzellik/CreateUrunOzellikCommandValidator.cs": {
+    "mtime": 1788870484.1502807,
+    "seen": 1788941202.1784244,
+    "ast_hash": "631737ebcd252eda308511ad28480390",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/CreateUrunTur/CreateUrunTur.cs": {
+    "mtime": 1788870472.6933475,
+    "seen": 1788941202.1784248,
+    "ast_hash": "c5d89ffc27355591c0a56f6d2a90cc7a",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/CreateUrunTur/CreateUrunTurCommandHandler.cs": {
+    "mtime": 1788870478.5711641,
+    "seen": 1788941202.1784253,
+    "ast_hash": "8b7977497374ba4ec14a9591cdd35191",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/CreateUrunTur/CreateUrunTurCommandValidator.cs": {
+    "mtime": 1788870474.8809457,
+    "seen": 1788941202.1784256,
+    "ast_hash": "99812c3cc08baddd88aea1ffb64db633",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/DeleteKategori/DeleteKategori.cs": {
+    "mtime": 1788876392.218029,
+    "seen": 1788941202.178426,
+    "ast_hash": "613fd2ddc42a156e49c4989f19fe38eb",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/DeleteKategori/DeleteKategoriCommandHandler.cs": {
+    "mtime": 1788940890.6466057,
+    "seen": 1788941202.1784267,
+    "ast_hash": "e4539d3f8e04a2b3a2c42fdca129397f",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/DeleteKategori/DeleteKategoriCommandValidator.cs": {
+    "mtime": 1788876393.7101784,
+    "seen": 1788941202.1784272,
+    "ast_hash": "2384975361c25c193830943467d6b9fe",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/DeleteUrun/DeleteUrun.cs": {
+    "mtime": 1788876407.9676838,
+    "seen": 1788941202.178428,
+    "ast_hash": "3eeda1d6c83db0f05f16ad04f085dc9c",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/DeleteUrun/DeleteUrunCommandHandler.cs": {
+    "mtime": 1788876411.7988493,
+    "seen": 1788941202.1784284,
+    "ast_hash": "ccb167b837504c80e33abf96f9788c12",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/DeleteUrun/DeleteUrunCommandValidator.cs": {
+    "mtime": 1788876409.4860048,
+    "seen": 1788941202.178429,
+    "ast_hash": "00ea5d281ad66ed5ce6e8601441a2983",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/DeleteUrunGorsel/DeleteUrunGorsel.cs": {
+    "mtime": 1788876423.1514437,
+    "seen": 1788941202.1784294,
+    "ast_hash": "f0feed758c583fae4c7c392802a9776f",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/DeleteUrunGorsel/DeleteUrunGorselCommandHandler.cs": {
+    "mtime": 1788876428.2937589,
+    "seen": 1788941202.1784298,
+    "ast_hash": "233be9fa7cacc6b076b358972f4c7bd2",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/DeleteUrunGorsel/DeleteUrunGorselCommandValidator.cs": {
+    "mtime": 1788876424.8423827,
+    "seen": 1788941202.1784306,
+    "ast_hash": "3cab1e326e1b7ad191b88a1d9a747959",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/DeleteUrunOzellik/DeleteUrunOzellik.cs": {
+    "mtime": 1788876458.432057,
+    "seen": 1788941202.178431,
+    "ast_hash": "c5e09360559edc415cd0770fc4e7d549",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/DeleteUrunOzellik/DeleteUrunOzellikCommandHandler.cs": {
+    "mtime": 1788876462.958456,
+    "seen": 1788941202.1784315,
+    "ast_hash": "449d1cd820c0f4a70133d4439a191d0f",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/DeleteUrunOzellik/DeleteUrunOzellikCommandValidator.cs": {
+    "mtime": 1788876459.9781919,
+    "seen": 1788941202.1784317,
+    "ast_hash": "ab7da98aafd45be48be7727776a0e7c3",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/DeleteUrunTur/DeleteUrunTur.cs": {
+    "mtime": 1788876441.1256516,
+    "seen": 1788941202.1784322,
+    "ast_hash": "577ac451900b58f04286648348636fd8",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/DeleteUrunTur/DeleteUrunTurCommandHandler.cs": {
+    "mtime": 1788876445.972024,
+    "seen": 1788941202.1784327,
+    "ast_hash": "4acbc6e00ff6483fafe4f95eaed46a4d",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/DeleteUrunTur/DeleteUrunTurCommandValidator.cs": {
+    "mtime": 1788876442.7737763,
+    "seen": 1788941202.1784332,
+    "ast_hash": "7321d34f56b0c7de18dc2c5b87509957",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/UpdateKategori/UpdateKategori.cs": {
+    "mtime": 1788876383.9228194,
+    "seen": 1788941202.178434,
+    "ast_hash": "aa7592c44bea01b39858b177c01ca852",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/UpdateKategori/UpdateKategoriCommandHandler.cs": {
+    "mtime": 1788876391.054202,
+    "seen": 1788941202.1784344,
+    "ast_hash": "288be56622b8f3fa5328560fa99d523d",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/UpdateKategori/UpdateKategoriCommandValidator.cs": {
+    "mtime": 1788876386.0808809,
+    "seen": 1788941202.1784348,
+    "ast_hash": "ad3c5ff21232e5c363703295a7c21ea9",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/UpdateUrun/UpdateUrun.cs": {
+    "mtime": 1788876399.4089923,
+    "seen": 1788941202.1784353,
+    "ast_hash": "39e72fcb487a83df776613ef454fa155",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/UpdateUrun/UpdateUrunCommandHandler.cs": {
+    "mtime": 1788876406.8316383,
+    "seen": 1788941202.1784358,
+    "ast_hash": "808199c20152d25fe08a57104b0657f7",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/UpdateUrun/UpdateUrunCommandValidator.cs": {
+    "mtime": 1788876401.8064587,
+    "seen": 1788941202.1784365,
+    "ast_hash": "d91743c46de184cb05e0fa546d76d737",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/UpdateUrunGorsel/UpdateUrunGorsel.cs": {
+    "mtime": 1788876415.466025,
+    "seen": 1788941202.1784372,
+    "ast_hash": "00bc256c0907d2afa477be36b08f8a62",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/UpdateUrunGorsel/UpdateUrunGorselCommandHandler.cs": {
+    "mtime": 1788876422.087234,
+    "seen": 1788941202.1784377,
+    "ast_hash": "44887fcc9396f72ffebb4b4b869f69cb",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/UpdateUrunGorsel/UpdateUrunGorselCommandValidator.cs": {
+    "mtime": 1788876417.163112,
+    "seen": 1788941202.1784382,
+    "ast_hash": "4554cf4e7ebda7f84a3f0724125ec524",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/UpdateUrunOzellik/UpdateUrunOzellik.cs": {
+    "mtime": 1788876449.616175,
+    "seen": 1788941202.1784387,
+    "ast_hash": "175c603e2b0ef415477a7d902ad0a80d",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/UpdateUrunOzellik/UpdateUrunOzellikCommandHandler.cs": {
+    "mtime": 1788876456.6939068,
+    "seen": 1788941202.1784391,
+    "ast_hash": "762a8f9765b806dd993ab453546970e5",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/UpdateUrunOzellik/UpdateUrunOzellikCommandValidator.cs": {
+    "mtime": 1788876451.7671711,
+    "seen": 1788941202.1784396,
+    "ast_hash": "35b0abd66adb098e346cc08006da1432",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/UpdateUrunTur/UpdateUrunTur.cs": {
+    "mtime": 1788876432.41803,
+    "seen": 1788941202.17844,
+    "ast_hash": "c31541423ce68fca20935ecc4b324aa5",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/UpdateUrunTur/UpdateUrunTurCommandHandler.cs": {
+    "mtime": 1788876440.0505714,
+    "seen": 1788941202.1784408,
+    "ast_hash": "cef6d0a537b5dae9e1adf4d77518e732",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Commands/UpdateUrunTur/UpdateUrunTurCommandValidator.cs": {
+    "mtime": 1788876434.60618,
+    "seen": 1788941202.178441,
+    "ast_hash": "c8a243b889ebf872d98f10e28387d721",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Dtos/GetByIdKategoriDto.cs": {
+    "mtime": 1788876468.4899595,
+    "seen": 1788941202.1784415,
+    "ast_hash": "c9926d437059d7780d88a614bb62666f",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Dtos/GetByIdUrunGorselDto.cs": {
+    "mtime": 1788876469.563245,
+    "seen": 1788941202.1784427,
+    "ast_hash": "16478ea2ff6a1c60c209284d8b69ddf3",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Dtos/GetByIdUrunOzellikDto.cs": {
+    "mtime": 1788876472.2562678,
+    "seen": 1788941202.1784432,
+    "ast_hash": "d71959b3fbb6412c6985906edef27175",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Dtos/GetByIdUrunTurDto.cs": {
+    "mtime": 1788876471.2112129,
+    "seen": 1788941202.1784437,
+    "ast_hash": "2b8e77325f2a26d42659e0fdf1806df3",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Dtos/ResultKategoriDto.cs": {
+    "mtime": 1788870490.701817,
+    "seen": 1788941202.1784444,
+    "ast_hash": "3b02f455fad4b10878ef46023bee5775",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Dtos/ResultUrunDto.cs": {
+    "mtime": 1788870492.2842877,
+    "seen": 1788941202.1784449,
+    "ast_hash": "91f5a2a9dae3152e21b5b16932be3ce5",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Dtos/ResultUrunGorselDto.cs": {
+    "mtime": 1788870493.983289,
+    "seen": 1788941202.1784453,
+    "ast_hash": "de0e3a5061a5352bd8e4a35797ba317b",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Dtos/ResultUrunOzellikDto.cs": {
+    "mtime": 1788870496.045291,
+    "seen": 1788941202.1784458,
+    "ast_hash": "465bf1b9d7538c0a07e33bb9bc028c94",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Dtos/ResultUrunTurDto.cs": {
+    "mtime": 1788870495.9772909,
+    "seen": 1788941202.1784463,
+    "ast_hash": "9c9ae2d9e18116610beae3196fa21d8a",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Queries/GetKategori/GetKategori.cs": {
+    "mtime": 1788876479.832039,
+    "seen": 1788941202.1784468,
+    "ast_hash": "73444c245119ccc46e9bf74374d3ecce",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Queries/GetKategoriler/GetKategoriler.cs": {
+    "mtime": 1788876476.6569242,
+    "seen": 1788941202.1784472,
+    "ast_hash": "149520c4ff96aa966312349f6e6695a6",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Queries/GetUrun/GetUrun.cs": {
+    "mtime": 1788876486.1299453,
+    "seen": 1788941202.178448,
+    "ast_hash": "af3015eda11bce68b47fdcc0e9272df8",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Queries/GetUrunGorsel/GetUrunGorsel.cs": {
+    "mtime": 1788876493.5714197,
+    "seen": 1788941202.1784484,
+    "ast_hash": "4e3876459532bb919ebd1e97b242f44f",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Queries/GetUrunGorselleri/GetUrunGorselleri.cs": {
+    "mtime": 1788876490.0720549,
+    "seen": 1788941202.178449,
+    "ast_hash": "9a0f15ac98a11dca4227e45184305361",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Queries/GetUrunOzellik/GetUrunOzellik.cs": {
+    "mtime": 1788876507.9143467,
+    "seen": 1788941202.1784496,
+    "ast_hash": "27cb26479f36039b599d12801f66adb1",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Queries/GetUrunOzellikleri/GetUrunOzellikleri.cs": {
+    "mtime": 1788876504.4485598,
+    "seen": 1788941202.17845,
+    "ast_hash": "5cea1b28923d9c58f99f1df05473cd0c",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Queries/GetUrunTur/GetUrunTur.cs": {
+    "mtime": 1788876500.5431461,
+    "seen": 1788941202.1784506,
+    "ast_hash": "2014ba4630962fb22d88d7f171b5f5d8",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Queries/GetUrunTurleri/GetUrunTurleri.cs": {
+    "mtime": 1788876497.1723511,
+    "seen": 1788941202.1784513,
+    "ast_hash": "2fd2d0d64ca67137662756d4dada069b",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Urun/Queries/GetUrunler/GetUrunler.cs": {
+    "mtime": 1788876482.9122949,
+    "seen": 1788941202.1784518,
+    "ast_hash": "5d6c11af627a120ff9d7b1e536a26a7e",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Mapping/UrunMapping.cs": {
+    "mtime": 1788876518.0516155,
+    "seen": 1788941202.1784542,
+    "ast_hash": "409aed75bc3812e2e8264ea537b1056f",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260909071129_AddMahalleAndConvertPostaKoduToInteger.Designer.cs": {
+    "mtime": 1788937889.2593544,
+    "seen": 1788941202.1785243,
+    "ast_hash": "33ab2094ffcfd45fc9dd9098b7e4a77b",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260909071129_AddMahalleAndConvertPostaKoduToInteger.cs": {
+    "mtime": 1788937937.9004092,
+    "seen": 1788941202.1785252,
+    "ast_hash": "1efcd50fa368fac0b08ee5bc9849c07a",
+    "semantic_hash": ""
+  },
+  "tests/headerCategoryDropdown.test.js": {
+    "mtime": 1788868977.4868622,
+    "seen": 1788941202.1785774,
+    "ast_hash": "c457abb088fc92183ec998032f3e0264",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260909092917_RemoveAdminProfileTable.Designer.cs": {
+    "mtime": 1788946157.6015003,
+    "seen": 1788946219.7294226,
+    "ast_hash": "4fa3fea62e6ccefa0943da2257feb8d1",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Infrastructure/Persistence/Migrations/20260909092917_RemoveAdminProfileTable.cs": {
+    "mtime": 1788946157.6000023,
+    "seen": 1788946219.7294233,
+    "ast_hash": "e2763b13829b0e24c0bf588d290eaf5d",
+    "semantic_hash": ""
+  },
+  "src/Frontend/ShopApp.Web/src/features/customers/services/customerService.js": {
+    "mtime": 1788951571.0663593,
+    "seen": 1788951648.7330077,
+    "ast_hash": "bb2393555c8e8a6d277004098fc80a23",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application.Tests/Features/Admin/AdminCustomerHandlerTests.cs": {
+    "mtime": 1788951521.0552328,
+    "seen": 1788951648.7331173,
+    "ast_hash": "c3eee25bc60a4d2468e1d99f867c0074",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application.Tests/Features/Admin/AdminOrderStatusHandlerTests.cs": {
+    "mtime": 1788951538.344025,
+    "seen": 1788951648.73312,
+    "ast_hash": "30d02ff23abdf2592016c08f87acc59e",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application.Tests/Features/Admin/AdminRoleChangeHandlerTests.cs": {
+    "mtime": 1788951500.3746707,
+    "seen": 1788951648.7331219,
+    "ast_hash": "a6f50d949b0f2ffc5d8b9630b4e15244",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Admin/Customers/Commands/UpdateAdminCustomer/UpdateAdminCustomer.cs": {
+    "mtime": 1788951319.8530948,
+    "seen": 1788951648.7331657,
+    "ast_hash": "517b9d4c3d45f6fdae5eba6410a28fd3",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Admin/Customers/Commands/UpdateAdminCustomer/UpdateAdminCustomerCommandHandler.cs": {
+    "mtime": 1788951325.2050066,
+    "seen": 1788951648.733168,
+    "ast_hash": "837faef97eee1c89c48c57215e594d73",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Admin/Customers/Commands/UpdateAdminCustomer/UpdateAdminCustomerCommandValidator.cs": {
+    "mtime": 1788951349.3726175,
+    "seen": 1788951648.7331696,
+    "ast_hash": "fbb8d46e0d097566a554d410b2edc067",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Admin/Customers/Dtos/AdminCustomerDto.cs": {
+    "mtime": 1788951305.7093318,
+    "seen": 1788951648.7331712,
+    "ast_hash": "3551d7a25e206323fd1b9e672ea9973d",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Admin/Customers/Queries/GetAdminCustomers/GetAdminCustomers.cs": {
+    "mtime": 1788951315.277171,
+    "seen": 1788951648.7331727,
+    "ast_hash": "096f7fb02e758bb9b77fcebf62976637",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Admin/Orders/Commands/UpdateAdminOrderStatus/UpdateAdminOrderStatus.cs": {
+    "mtime": 1788951367.2133393,
+    "seen": 1788951648.733174,
+    "ast_hash": "94978a44a2ca2ddbe4e62d72e9ea40eb",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Admin/Orders/Commands/UpdateAdminOrderStatus/UpdateAdminOrderStatusCommandHandler.cs": {
+    "mtime": 1788951374.5972266,
+    "seen": 1788951648.7331758,
+    "ast_hash": "8da63637bba64e9366785a48d056dbe2",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Admin/Orders/Commands/UpdateAdminOrderStatus/UpdateAdminOrderStatusCommandValidator.cs": {
+    "mtime": 1788951378.007175,
+    "seen": 1788951648.7331772,
+    "ast_hash": "dfba7441399c2b66dd40d33c40371749",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Admin/Orders/Dtos/AdminOrderDto.cs": {
+    "mtime": 1788951355.6175191,
+    "seen": 1788951648.7331786,
+    "ast_hash": "830f0643f3e0eeb79a083af2ddf25cca",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Admin/Orders/Queries/GetAdminOrders/GetAdminOrders.cs": {
+    "mtime": 1788951363.5613956,
+    "seen": 1788951648.73318,
+    "ast_hash": "76f013fd220864f363f8a487c0df9d3a",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Admin/Roles/Commands/ChangeUserRole/ChangeUserRole.cs": {
+    "mtime": 1788951381.6081207,
+    "seen": 1788951648.7331817,
+    "ast_hash": "81148a1a3718d9da901f372e41902727",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Admin/Roles/Commands/ChangeUserRole/ChangeUserRoleCommandHandler.cs": {
+    "mtime": 1788951390.3329904,
+    "seen": 1788951648.733183,
+    "ast_hash": "feda184c238598f23bdcb34de79d2585",
+    "semantic_hash": ""
+  },
+  "src/Monolith/ShopApp.Application/Features/Admin/Roles/Commands/ChangeUserRole/ChangeUserRoleCommandValidator.cs": {
+    "mtime": 1788951407.8397346,
+    "seen": 1788951648.7331848,
+    "ast_hash": "38ec7baed8de8d25a8bf56623cfdfbca",
+    "semantic_hash": ""
+  }
+}

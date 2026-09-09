@@ -12,5 +12,5 @@ public record GetByIdUrunDto(
     string? GorselUrl,
     bool AktifMi,
     List<ResultUrunGorselDto> Gorseller,
-    List<ResultUrunTurDto> UrunTurleri
+    List<GetByIdUrunTurDto> UrunTurleri
 );

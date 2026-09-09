@@ -41,6 +41,14 @@ public class SiparisEntity : BaseEntity
         MarkAsUpdated();
     }
 
+    public void ToplamlariGuncelle(decimal araToplam, decimal indirimTutari, decimal kargoFiyat)
+    {
+        AraToplam = araToplam;
+        IndirimTutari = indirimTutari;
+        KargoFiyat = kargoFiyat;
+        ToplamFiyat = araToplam - indirimTutari + kargoFiyat;
+    }
+
     public SiparisUrunleri UrunEkle(
         Guid urunTurId,
         Guid urunId,

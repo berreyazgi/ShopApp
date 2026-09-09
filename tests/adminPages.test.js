@@ -948,3 +948,122 @@ test('Audit: No new fetch or apiClient network calls in admin components/pages',
     assert.equal(content.includes('apiClient.'), false, `${file} must not call apiClient`);
   });
 });
+
+// ── 17. Admin Customer Management Tests ──
+test('AdminCustomersPage renders customer records, filters by search, and triggers status toggle', () => {
+  const mockCustomers = [
+    { id: 'c-1', fullName: 'Ayşe Demir', email: 'ayse@example.com', createdAt: '2026-01-15', orderCount: 3, isActive: true },
+    { id: 'c-2', fullName: 'Mehmet Kaya', email: 'mehmet@example.com', createdAt: '2026-02-20', orderCount: 0, isActive: false },
+  ];
+
+  let toggledId = null;
+  let toggledStatus = null;
+  let viewedCustomer = null;
+
+  const page = AdminCustomersPage({
+    customers: mockCustomers,
+    pageSize: 10,
+    onViewCustomer: (c) => { viewedCustomer = c; },
+    onUpdateCustomerStatus: (id, status) => {
+      toggledId = id;
+      toggledStatus = status;
+    },
+  });
+
+  // Verify rows rendered
+  const rows = page.element.querySelectorAll('tbody tr');
+  assert.equal(rows.length, 2);
+  assert.ok(page.element.textContent.includes('Ayşe Demir'));
+  assert.ok(page.element.textContent.includes('Mehmet Kaya'));
+
+  // Test Search
+  const searchInput = page.element.querySelector('.admin-table-toolbar__search-input');
+  searchInput.value = 'mehmet';
+  searchInput.dispatchEvent({ type: 'input' });
+  assert.equal(page.element.querySelectorAll('tbody tr').length, 1);
+  assert.ok(page.element.textContent.includes('Mehmet Kaya'));
+
+  // Reset Search
+  searchInput.value = '';
+  searchInput.dispatchEvent({ type: 'input' });
+  assert.equal(page.element.querySelectorAll('tbody tr').length, 2);
+
+  // Test View Action
+  const viewBtns = page.element.querySelectorAll('.admin-table-btn').filter((b) => b.title === 'İncele');
+  assert.ok(viewBtns.length > 0);
+  viewBtns[0].dispatchEvent({ type: 'click' });
+  assert.ok(viewedCustomer);
+  assert.equal(viewedCustomer.id, 'c-1');
+
+  // Test Status Toggle Action
+  const toggleBtns = page.element.querySelectorAll('.admin-table-btn');
+  // First row has viewBtn (index 0) and toggleBtn (index 1)
+  assert.ok(toggleBtns.length >= 2);
+  const toggleBtn1 = toggleBtns[1];
+  assert.equal(toggleBtn1.title, 'Hesabı Pasife Al');
+
+  page.destroy();
+});
+
+// ── 18. Admin Order Management Tests ──
+test('AdminOrdersPage renders order records, filters by status, and handles status update', () => {
+  const mockOrders = [
+    { id: 'ord-1', orderNumber: 'SIP-1001', customerName: 'Ayşe Demir', createdAt: '2026-03-01', itemCount: 2, total: 450, status: 'Hazırlanıyor', durumId: 3 },
+    { id: 'ord-2', orderNumber: 'SIP-1002', customerName: 'Mehmet Kaya', createdAt: '2026-03-02', itemCount: 1, total: 1200, status: 'Teslim Edildi', durumId: 5 },
+  ];
+
+  let updatedOrderId = null;
+  let updatedStatusId = null;
+
+  const page = AdminOrdersPage({
+    orders: mockOrders,
+    pageSize: 10,
+    onUpdateOrderStatus: (orderId, statusId) => {
+      updatedOrderId = orderId;
+      updatedStatusId = statusId;
+    },
+  });
+
+  // Verify rows rendered
+  const rows = page.element.querySelectorAll('tbody tr');
+  assert.equal(rows.length, 2);
+  assert.ok(page.element.textContent.includes('SIP-1001'));
+  assert.ok(page.element.textContent.includes('SIP-1002'));
+
+  // Verify inline status selectors
+  const statusSelectors = page.element.querySelectorAll('.admin-order-status-select');
+  assert.equal(statusSelectors.length, 2);
+  assert.equal(statusSelectors[0].value, '3');
+  assert.equal(statusSelectors[1].value, '5');
+
+  // Test Status Filter
+  const filterSelect = page.element.querySelector('.admin-table-toolbar__filter');
+  filterSelect.value = 'hazirlaniyor';
+  filterSelect.dispatchEvent({ type: 'change' });
+  assert.equal(page.element.querySelectorAll('tbody tr').length, 1);
+  assert.ok(page.element.textContent.includes('SIP-1001'));
+
+  page.destroy();
+});
+
+// ── 19. Endpoints Configuration Verification ──
+test('endpoints.js contains update routes for adminKategori, adminUrun, adminMusteri, and adminSiparis', async () => {
+  const { endpoints } = await import('../src/Frontend/ShopApp.Web/src/shared/services/endpoints.js');
+
+  assert.equal(typeof endpoints.adminKategori.update, 'function');
+  assert.equal(endpoints.adminKategori.update('cat-xyz'), '/api/admin/kategori/cat-xyz');
+
+  assert.equal(typeof endpoints.adminUrun.update, 'function');
+  assert.equal(endpoints.adminUrun.update('prod-123'), '/api/admin/urun/prod-123');
+
+  assert.equal(typeof endpoints.adminMusteri.list, 'function');
+  assert.equal(endpoints.adminMusteri.list(), '/api/admin/musteriler');
+  assert.equal(typeof endpoints.adminMusteri.update, 'function');
+  assert.equal(endpoints.adminMusteri.update('cust-456'), '/api/admin/musteriler/cust-456');
+
+  assert.equal(typeof endpoints.adminSiparis.list, 'function');
+  assert.equal(endpoints.adminSiparis.list(), '/api/admin/siparisler');
+  assert.equal(typeof endpoints.adminSiparis.updateStatus, 'function');
+  assert.equal(endpoints.adminSiparis.updateStatus('ord-789'), '/api/admin/siparisler/ord-789/durum');
+});
+

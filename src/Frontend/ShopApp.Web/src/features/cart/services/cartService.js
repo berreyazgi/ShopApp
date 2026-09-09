@@ -14,7 +14,7 @@
  *  ResultSepetDto {
  *    id:               Guid (string)
  *    musteriId:        Guid (string)   — the owner, echoed back for display only
- *    durumId:          number
+ *    durumId:          number          — 1 = Aktif (the usable/open cart)
  *    olusturmaTarihi:  string (ISO date)
  *  }
  *
@@ -29,30 +29,36 @@
  *    id:            Guid (string)
  *    sepetId:       Guid (string)
  *    urunTurId:     Guid (string)
+ *    urunId:        Guid (string)
+ *    urunAd:        string
+ *    gorselUrl:     string | null
+ *    ozellikler:    [{ id, urunTurId, ozellikAd, ozellikDeger }]
  *    urunMiktar:    number
- *    urunAdet:      number
- *    fiyatGecmis:   number
- *    toplamTutar:   number   — computed on the server
+ *    fiyatGecmis:   number  — resolved server-side (Urun.Fiyat + UrunTur.FiyatFarki), never client-supplied
+ *    toplamTutar:   number  — computed on the server
  *  }
  *
  *  CreateSepetUrunuCommand {
  *    sepetId:       Guid (string)  — must match the route sepetId
  *    urunTurId:     Guid (string)
  *    urunMiktar:    number
- *    urunAdet:      number
- *    fiyatGecmis:   number
  *  }
+ *  NOTE: price is never part of this payload — the backend resolves it from
+ *  the UrunTur's parent Urun. Sending a price here would be ignored even if
+ *  present.
  *
  *  UpdateSepetUrunuCommand {
  *    sepetId:     Guid (string)  — must match the route sepetId
  *    id:          Guid (string)  — must match the route urunId
  *    urunMiktar:  number
- *    urunAdet:    number
  *  }
  */
 
 import { apiClient } from '../../../shared/services/apiClient.js';
 import { endpoints } from '../../../shared/services/endpoints.js';
+
+/** DurumId for a usable/open cart — see SepetDurum.Aktif in the backend. */
+const ACTIVE_CART_DURUM_ID = 1;
 
 // ── Carts ────────────────────────────────────────────────────────────────────
 
@@ -86,6 +92,23 @@ export async function getCartById(id) {
  */
 export async function createCart() {
   return apiClient.post(endpoints.cart.carts());
+}
+
+/**
+ * Finds the customer's currently active (DurumId === Aktif) cart, or creates
+ * a new one if none exists. Never creates a second active cart if one is
+ * already usable.
+ * Maps to: GET /api/sepet (+ POST /api/sepet only if no active cart is found)
+ *
+ * @returns {Promise<{ id: string, durumId: number }>}
+ */
+export async function getOrCreateActiveCart() {
+  const carts = await getMyCarts();
+  const active = (carts ?? []).find((c) => c.durumId === ACTIVE_CART_DURUM_ID);
+  if (active) return active;
+
+  const { id } = await createCart();
+  return { id, durumId: ACTIVE_CART_DURUM_ID };
 }
 
 /**
@@ -137,15 +160,21 @@ export async function getCartItemById(sepetId, urunId) {
 }
 
 /**
- * Adds an item to an existing cart.
+ * Adds a variant to a cart. Price is always resolved server-side from the
+ * variant's parent product — the client only ever supplies the variant and
+ * the quantity.
  * Maps to: POST /api/sepet/{sepetId}/urunler
  *
  * @param {string} sepetId
- * @param {{ urunTurId: string, urunMiktar: number, urunAdet: number, fiyatGecmis: number }} payload
+ * @param {{ urunTurId: string, urunMiktar: number }} payload
  * @returns {Promise<{ id: string }>}
  */
 export async function addCartItem(sepetId, payload) {
-  return apiClient.post(endpoints.cart.cartItems(sepetId), { sepetId, ...payload });
+  return apiClient.post(endpoints.cart.cartItems(sepetId), {
+    sepetId,
+    urunTurId: payload.urunTurId,
+    urunMiktar: payload.urunMiktar,
+  });
 }
 
 /**
@@ -154,11 +183,15 @@ export async function addCartItem(sepetId, payload) {
  *
  * @param {string} sepetId
  * @param {string} urunId
- * @param {{ urunMiktar: number, urunAdet: number }} payload
+ * @param {{ urunMiktar: number }} payload
  * @returns {Promise<void>}
  */
 export async function updateCartItem(sepetId, urunId, payload) {
-  return apiClient.put(endpoints.cart.cartItemById(sepetId, urunId), { sepetId, id: urunId, ...payload });
+  return apiClient.put(endpoints.cart.cartItemById(sepetId, urunId), {
+    sepetId,
+    id: urunId,
+    urunMiktar: payload.urunMiktar,
+  });
 }
 
 /**

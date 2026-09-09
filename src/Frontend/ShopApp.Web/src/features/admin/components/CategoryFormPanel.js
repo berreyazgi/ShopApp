@@ -7,7 +7,6 @@
  *  - Kategori Adı (required)
  *  - Üst Kategori (dynamically populated from supplied categories + "Ana Kategori (Yok)")
  *  - Açıklama (with char counter)
- *  - Görsel (local client-side image picker, preview, remove, validation: PNG/JPG <= 2MB)
  *  - Aktif (toggle switch)
  *
  * Actions:
@@ -16,13 +15,12 @@
  */
 
 import { createButton } from '../../../shared/components/Button/Button.js';
-import { createIcon } from '../../../shared/components/Icon/Icon.js';
 
 /**
  * @param {{
  *   categories?: Array,
  *   selectedCategory?: any,
- *   onSave?: (data: { id?: any, name: string, parentId: any, description: string, imageFile: File | null, isActive: boolean }) => void,
+ *   onSave?: (data: { id?: any, name: string, parentId: any, description: string, isActive: boolean }) => void,
  *   onCancel?: () => void,
  * }} options
  * @returns {HTMLElement & { setCategory: (category: any) => void, reset: () => void }}
@@ -37,7 +35,6 @@ export function createCategoryFormPanel({
   panel.className = 'admin-card admin-category-form-panel';
 
   let currentCategory = selectedCategory;
-  let selectedFile = null;
 
   // Header
   const header = document.createElement('div');
@@ -89,63 +86,7 @@ export function createCategoryFormPanel({
     charCount.textContent = `${descTextarea.value.length} / 250`;
   });
 
-  // 4. Görsel Yükleme & Önizleme
-  const imageGroup = document.createElement('div');
-  imageGroup.className = 'admin-form-group';
-  imageGroup.innerHTML = `
-    <label class="admin-form-label">Kategori Görseli</label>
-    <div class="admin-image-upload">
-      <input type="file" class="admin-image-upload__input" accept="image/png, image/jpeg, image/webp" aria-label="Görsel seç" />
-      <div class="admin-image-upload__content">
-        <span class="admin-image-upload__icon"></span>
-        <span style="font-size: var(--text-xs); font-weight: var(--font-semibold);">Görsel seçin veya sürükleyin</span>
-        <span class="admin-image-upload__hint">PNG, JPG, WEBP • Maks. 2MB</span>
-      </div>
-    </div>
-    <div class="admin-image-preview" style="display: none; margin-top: var(--space-2);">
-      <img src="" alt="Önizleme" />
-      <button type="button" class="admin-image-preview__remove" aria-label="Görseli kaldır">✕</button>
-    </div>
-  `;
-  imageGroup.querySelector('.admin-image-upload__icon').appendChild(createIcon('image', { size: 24 }));
-  form.appendChild(imageGroup);
-
-  const fileInput = imageGroup.querySelector('.admin-image-upload__input');
-  const uploadBox = imageGroup.querySelector('.admin-image-upload');
-  const previewBox = imageGroup.querySelector('.admin-image-preview');
-  const previewImg = previewBox.querySelector('img');
-  const removeImgBtn = previewBox.querySelector('.admin-image-preview__remove');
-
-  fileInput.addEventListener('change', (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Validate size (2MB)
-    if (file.size > 2 * 1024 * 1024) {
-      alert('Seçilen dosya boyutu 2MB üzerinde olamaz.');
-      fileInput.value = '';
-      return;
-    }
-
-    selectedFile = file;
-    const reader = new FileReader();
-    reader.onload = (loadEvt) => {
-      previewImg.src = loadEvt.target.result;
-      previewBox.style.display = 'flex';
-      uploadBox.style.display = 'none';
-    };
-    reader.readAsDataURL(file);
-  });
-
-  removeImgBtn.addEventListener('click', () => {
-    selectedFile = null;
-    fileInput.value = '';
-    previewImg.src = '';
-    previewBox.style.display = 'none';
-    uploadBox.style.display = 'block';
-  });
-
-  // 5. Aktif Durum Toggle
+  // 4. Aktif Durum Toggle
   const toggleGroup = document.createElement('div');
   toggleGroup.className = 'admin-form-group';
   toggleGroup.innerHTML = `
@@ -202,7 +143,6 @@ export function createCategoryFormPanel({
       name,
       parentId: parentSelect.value || null,
       description: descTextarea.value.trim(),
-      imageFile: selectedFile,
       isActive: activeToggle.checked,
     };
 
@@ -239,16 +179,6 @@ export function createCategoryFormPanel({
       descTextarea.value = cat.description || cat.aciklama || '';
       charCount.textContent = `${descTextarea.value.length} / 250`;
       activeToggle.checked = cat.isActive !== undefined ? cat.isActive : (cat.aktiflik ?? true);
-
-      const existingImg = cat.imageUrl || cat.gorselUrl;
-      if (existingImg) {
-        previewImg.src = existingImg;
-        previewBox.style.display = 'flex';
-        uploadBox.style.display = 'none';
-      } else {
-        previewBox.style.display = 'none';
-        uploadBox.style.display = 'block';
-      }
     } else {
       resetForm();
     }
@@ -256,14 +186,11 @@ export function createCategoryFormPanel({
 
   function resetForm() {
     currentCategory = null;
-    selectedFile = null;
     titleEl.textContent = 'Yeni Kategori Ekle';
     form.reset();
     nameInput.style.borderColor = '';
     charCount.textContent = '0 / 250';
     activeToggle.checked = true;
-    previewBox.style.display = 'none';
-    uploadBox.style.display = 'block';
     populateParentOptions();
   }
 

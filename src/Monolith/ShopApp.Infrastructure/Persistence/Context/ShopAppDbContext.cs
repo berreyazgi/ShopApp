@@ -21,7 +21,6 @@ public class ShopAppDbContext : IdentityDbContext<KayitliKullanici, IdentityRole
 
     // User modülü
     public DbSet<Musteri> Musteriler => Set<Musteri>();
-    public DbSet<AdminProfile> AdminProfilleri => Set<AdminProfile>();
     public DbSet<Address> Adresler => Set<Address>();
 
     // Cart modülü

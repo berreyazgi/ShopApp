@@ -17,6 +17,7 @@ import { createAdminSidebar } from './AdminSidebar.js';
  * @param {{
  *   currentPath?: string,
  *   onSearch?: (query: string) => void,
+ *   onLogout?: (triggerEl?: HTMLElement) => void,
  * }} [options]
  * @returns {{
  *   element: HTMLElement,
@@ -25,18 +26,19 @@ import { createAdminSidebar } from './AdminSidebar.js';
  *   destroy: () => void,
  * }}
  */
-export function createAdminLayout({ currentPath = window.location.pathname, onSearch } = {}) {
+export function createAdminLayout({ currentPath = window.location.pathname, onSearch, onLogout } = {}) {
   // Activate admin workspace isolation
   document.body.classList.add('admin-mode');
 
   const layout = document.createElement('div');
   layout.className = 'admin-layout';
 
-  const sidebar = createAdminSidebar({ currentPath });
+  const sidebar = createAdminSidebar({ currentPath, onLogout });
 
   const header = createAdminHeader({
     onToggleSidebar: () => sidebar.toggle(),
     onSearch,
+    onLogout,
   });
   layout.appendChild(header);
 

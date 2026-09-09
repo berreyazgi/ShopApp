@@ -108,27 +108,33 @@ export function createAdminProductFormModal({
   if (product) skuInput.value = product.sku || product.barkod || product.kod || '';
   skuCatRow.appendChild(skuGroup);
 
-  // Category
+  // Category — value MUST be the category's real Guid (Urun.KategoriId is a
+  // foreign key; category names are never sent to the backend).
   const catGroup = document.createElement('div');
   catGroup.className = 'admin-form-group';
   catGroup.innerHTML = `
-    <label class="admin-form-label" for="prod-modal-cat">Kategori</label>
-    <select id="prod-modal-cat" class="admin-form-input">
+    <label class="admin-form-label" for="prod-modal-cat">Kategori <span class="required">*</span></label>
+    <select id="prod-modal-cat" class="admin-form-input" required>
       <option value="">Kategori Seçin</option>
     </select>
+    <span class="admin-form-error" id="prod-modal-cat-error"></span>
   `;
   const catSelect = catGroup.querySelector('#prod-modal-cat');
 
   if (categories && categories.length > 0) {
     categories.forEach((cat) => {
+      if (typeof cat === 'string') return;
+      const id = cat.id ?? cat.kategoriId;
+      if (!id) return;
+
       const opt = document.createElement('option');
-      const val = typeof cat === 'string' ? cat : (cat.name || cat.ad || cat.id);
-      const label = typeof cat === 'string' ? cat : (cat.name || cat.ad || `Kategori ${cat.id}`);
-      opt.value = val;
-      opt.textContent = label;
-      const currentCat = product?.category || product?.kategori;
-      if (currentCat && (currentCat === val || currentCat === label || (cat.id && currentCat === cat.id))) {
+      opt.value = id;
+      opt.textContent = cat.name || cat.ad || `Kategori ${id}`;
+
+      const currentCategory = product?.categoryId ?? product?.kategoriId ?? product?.category ?? product?.kategori;
+      if (currentCategory && (String(currentCategory) === String(id) || String(currentCategory) === String(cat.name || cat.ad))) {
         opt.selected = true;
+        catSelect.value = id;
       }
       catSelect.appendChild(opt);
     });
@@ -141,6 +147,18 @@ export function createAdminProductFormModal({
   }
   skuCatRow.appendChild(catGroup);
   leftCol.appendChild(skuCatRow);
+
+  // Brand — required by CreateUrunCommand.MarkaAd
+  const brandGroup = document.createElement('div');
+  brandGroup.className = 'admin-form-group';
+  brandGroup.innerHTML = `
+    <label class="admin-form-label" for="prod-modal-brand">Marka <span class="required">*</span></label>
+    <input type="text" id="prod-modal-brand" class="admin-form-input" placeholder="Örn: Nike" required />
+    <span class="admin-form-error" id="prod-modal-brand-error"></span>
+  `;
+  const brandInput = brandGroup.querySelector('#prod-modal-brand');
+  brandInput.value = product?.brand || product?.marka || 'Genel';
+  leftCol.appendChild(brandGroup);
 
   // Price & Stock Row
   const priceStockRow = document.createElement('div');
@@ -339,7 +357,8 @@ export function createAdminProductFormModal({
 
     const name = String(nameInput.value ?? '').trim();
     const sku = String(skuInput.value ?? '').trim();
-    const category = catSelect.value;
+    const categoryId = catSelect.value;
+    const brand = String(brandInput.value ?? '').trim();
     const priceRaw = String(priceInput.value ?? '').trim();
     const stockRaw = String(stockInput.value ?? '').trim();
     const description = String(descInput.value ?? '').trim();
@@ -347,6 +366,16 @@ export function createAdminProductFormModal({
 
     if (!name) {
       document.querySelector('#prod-modal-name-error') && (document.querySelector('#prod-modal-name-error').textContent = 'Ürün adı zorunludur.');
+      hasError = true;
+    }
+
+    if (!categoryId) {
+      document.querySelector('#prod-modal-cat-error') && (document.querySelector('#prod-modal-cat-error').textContent = 'Kategori seçimi zorunludur.');
+      hasError = true;
+    }
+
+    if (!brand) {
+      document.querySelector('#prod-modal-brand-error') && (document.querySelector('#prod-modal-brand-error').textContent = 'Marka zorunludur.');
       hasError = true;
     }
 
@@ -365,15 +394,27 @@ export function createAdminProductFormModal({
       return;
     }
 
+    const selectedCategory = (categories || []).find((c) => {
+      if (typeof c === 'string') return c === categoryId;
+      return String(c.id ?? c.kategoriId) === String(categoryId) || (c.name || c.ad) === categoryId;
+    });
+
+    const categoryName = (typeof selectedCategory === 'string' ? selectedCategory : (selectedCategory?.name || selectedCategory?.ad)) || categoryId || null;
+
     const payload = {
       ...(product || {}),
       name,
       ad: name,
       sku: sku || null,
-      category: category || null,
-      kategori: category || null,
+      categoryId,
+      kategoriId: categoryId,
+      category: categoryName,
+      kategori: categoryName,
+      brand,
+      marka: brand,
       price: Number(priceRaw),
       fiyat: Number(priceRaw),
+      // Stok takibi backend Urun modelinde henüz yok; yalnızca UI'da tutulur.
       stock: parseInt(stockRaw, 10),
       stok: parseInt(stockRaw, 10),
       description,

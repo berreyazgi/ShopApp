@@ -521,35 +521,6 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.ToTable("Adresler", "kimlik");
                 });
 
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Kullanici.AdminProfile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("GuncellemeTarihi")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("GuncelleyenKullaniciId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("KullaniciId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("OlusturanKullaniciId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("OlusturmaTarihi")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("KullaniciId")
-                        .IsUnique();
-
-                    b.ToTable("AdminProfilleri", "kimlik");
-                });
-
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Kullanici.Musteri", b =>
                 {
                     b.Property<Guid>("Id")
@@ -626,7 +597,6 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Entities.SepetEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<int>("DurumId")
@@ -657,7 +627,6 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Entities.SepetUrunu", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("FiyatGecmis")
@@ -713,7 +682,6 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparis.Entities.SiparisEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("AraToplam")
@@ -765,7 +733,6 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Siparis.Entities.SiparisUrunleri", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("GuncellemeTarihi")
@@ -937,15 +904,6 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Musteri");
-                });
-
-            modelBuilder.Entity("src.Monolith.ShopApp.Domain.Kullanici.AdminProfile", b =>
-                {
-                    b.HasOne("ShopApp.Infrastructure.Identity.Models.KayitliKullanici", null)
-                        .WithOne()
-                        .HasForeignKey("src.Monolith.ShopApp.Domain.Kullanici.AdminProfile", "KullaniciId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Kullanici.Musteri", b =>

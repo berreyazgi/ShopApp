@@ -196,3 +196,31 @@ export async function updateOrderItem(siparisId, urunId, payload) {
 export async function removeOrderItem(siparisId, urunId) {
   return apiClient.delete(endpoints.ordering.orderItemById(siparisId, urunId));
 }
+
+// ── Admin Orders ─────────────────────────────────────────────────────────────
+
+/**
+ * Retrieves all orders for admin review.
+ * Maps to: GET /api/admin/siparisler
+ *
+ * @returns {Promise<Array>}
+ */
+export async function getAdminOrders() {
+  return apiClient.get(endpoints.adminSiparis.list());
+}
+
+/**
+ * Updates an order's status as an administrator.
+ * Maps to: PUT /api/admin/siparisler/{id}/durum
+ *
+ * The backend accepts exactly one canonical field (durumId) — no
+ * yeniDurumId/statusId aliases.
+ *
+ * @param {string} id
+ * @param {number} newStatusId
+ * @returns {Promise<void>}
+ */
+export async function updateAdminOrderStatus(id, newStatusId) {
+  return apiClient.put(endpoints.adminSiparis.updateStatus(id), { durumId: Number(newStatusId) });
+}
+
