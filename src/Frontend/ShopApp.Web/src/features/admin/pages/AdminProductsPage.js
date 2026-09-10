@@ -18,7 +18,6 @@
  *  - Product Table / List View (AdminProductList)
  *  - Interactive Modals:
  *      * AdminProductFormModal (Create & Edit modes with image picker & validation)
- *      * AdminProductDetailModal (Read-only full product details)
  *      * AdminConfirmModal (Delete confirmation dialog)
  *  - Comprehensive data states: Loading, Error, Empty, Filtered-Empty, Loaded
  *  - Dynamic Pagination (createAdminPagination)
@@ -34,7 +33,6 @@ import { createAdminConfirmModal } from '../components/AdminConfirmModal.js';
 import { createAdminProductGrid } from '../components/AdminProductGrid.js';
 import { createAdminProductList } from '../components/AdminProductList.js';
 import { createAdminProductFormModal } from '../components/AdminProductFormModal.js';
-import { createAdminProductDetailModal } from '../components/AdminProductDetailModal.js';
 import { createLoadingState, createEmptyState, createErrorState } from '../../../shared/components/StateView/StateView.js';
 import { createIcon } from '../../../shared/components/Icon/Icon.js';
 import { getCategoriesSync } from '../../categories/services/categoryService.js';
@@ -178,6 +176,9 @@ export default function AdminProductsPage(props = {}) {
 
   function openCreateModal() {
     closeActiveModal();
+    if (!props.categories) {
+      categories = getCategoriesSync();
+    }
     if (typeof props.onCreateProduct === 'function') {
       props.onCreateProduct();
     }
@@ -210,6 +211,9 @@ export default function AdminProductsPage(props = {}) {
       }
 
       closeActiveModal();
+      if (!props.categories) {
+        categories = getCategoriesSync();
+      }
       if (typeof props.onEditProduct === 'function') {
         props.onEditProduct(detail);
       }
@@ -225,16 +229,6 @@ export default function AdminProductsPage(props = {}) {
     } finally {
       editFetchInFlight = false;
     }
-  }
-
-  function openDetailModal(product) {
-    closeActiveModal();
-    activeModalInstance = createAdminProductDetailModal({
-      product,
-      onEdit: (p) => openEditModal(p),
-      onClose: () => { activeModalInstance = null; },
-    });
-    document.body.appendChild(activeModalInstance.element);
   }
 
   function openDeleteModal(product) {
@@ -626,7 +620,6 @@ export default function AdminProductsPage(props = {}) {
       if (viewMode === 'grid') {
         const gridView = createAdminProductGrid({
           products: paginatedItems,
-          onView: openDetailModal,
           onEdit: openEditModal,
           onDelete: openDeleteModal,
         });
@@ -634,7 +627,6 @@ export default function AdminProductsPage(props = {}) {
       } else {
         const listView = createAdminProductList({
           products: paginatedItems,
-          onView: openDetailModal,
           onEdit: openEditModal,
           onDelete: openDeleteModal,
         });

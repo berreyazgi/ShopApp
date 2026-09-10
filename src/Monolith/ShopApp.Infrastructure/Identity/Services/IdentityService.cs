@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -39,8 +40,14 @@ public sealed class IdentityService : IIdentityService
 
     public Guid? GetCurrentUserId()
     {
-        var musteriId = _httpContextAccessor. HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-        return Guid.TryParse(musteriId, out var result) ? result : null;
+        // The JWT bearer handler is configured with MapInboundClaims = false, so
+        // inbound claims keep their original short names (e.g. "sub") instead of
+        // being remapped to the long ClaimTypes.* URIs — mirrors AuthController.Me(),
+        // which resolves the same subject the same way. ClaimTypes.NameIdentifier is
+        // kept only as a defensive fallback for any other authentication scheme.
+        var subject = _httpContextAccessor.HttpContext?.User?.FindFirstValue(JwtRegisteredClaimNames.Sub)
+            ?? _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+        return Guid.TryParse(subject, out var result) ? result : null;
     }
 
     public async Task<IdentityUserInfo?> FindByEmailAsync(string email)

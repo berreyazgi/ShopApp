@@ -2,164 +2,12 @@
    home.css – Home Feature Styles
    ============================================================ */
 
-/* ── Category Grid Layout ── */
+/* ── Category Grid Layout ──
+   Cards render via the shared products/components/CategoryCard.js, styled
+   by the .cat-grid/.cat-card rules already loaded from products.css — only
+   this section's own spacing lives here. */
 .hero-grid {
   padding-block: var(--space-8);
-}
-
-.hero-grid .container {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-/* ── Hero row: 3 large cards ── */
-.hero-grid__hero-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
-}
-
-/* ── Secondary row: 4 medium cards ── */
-.hero-grid__secondary-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-4);
-}
-
-/* ── Category Card Base ── */
-.category-card {
-  position: relative;
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  background: #1a1a1a;
-  cursor: pointer;
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow var(--transition-base), transform var(--transition-base);
-}
-
-.category-card:hover {
-  box-shadow: var(--shadow-xl);
-  transform: translateY(-4px);
-}
-
-.category-card:focus-within {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
-}
-
-/* ── Card link (full-area click target) ── */
-.category-card__link {
-  display: block;
-  height: 100%;
-  text-decoration: none;
-  color: inherit;
-}
-
-/* ── Image wrapper ── */
-.category-card__image-wrap {
-  position: absolute;
-  inset: 0;
-}
-
-.category-card__image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.category-card:hover .category-card__image {
-  transform: scale(1.04);
-}
-
-/* ── Gradient overlay ── */
-.category-card__overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    rgb(0 0 0 / 75%) 0%,
-    rgb(0 0 0 / 30%) 45%,
-    rgb(0 0 0 / 5%)  100%
-  );
-}
-
-/* ── Content (sits above image) ── */
-.category-card__content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-2);
-  padding: var(--space-6);
-}
-
-/* ── Large card ── */
-.category-card--large {
-  height: 480px;
-}
-
-.category-card--large .category-card__link {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  height: 100%;
-}
-
-.category-card--large .category-card__headline {
-  font-size: var(--text-3xl);
-  font-weight: var(--font-bold);
-  line-height: var(--leading-snug);
-  letter-spacing: var(--tracking-tight);
-  color: var(--color-white);
-}
-
-.category-card--large .category-card__description {
-  font-size: var(--text-sm);
-  color: rgb(255 255 255 / 80%);
-  line-height: var(--leading-relaxed);
-  max-width: 28ch;
-}
-
-/* ── Medium card ── */
-.category-card--medium {
-  height: 340px;
-}
-
-.category-card--medium .category-card__link {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  height: 100%;
-}
-
-.category-card--medium .category-card__headline {
-  font-size: var(--text-xl);
-  font-weight: var(--font-bold);
-  line-height: var(--leading-snug);
-  letter-spacing: var(--tracking-tight);
-  color: var(--color-white);
-}
-
-.category-card--medium .category-card__description {
-  font-size: var(--text-xs);
-  color: rgb(255 255 255 / 75%);
-  line-height: var(--leading-relaxed);
-  max-width: 26ch;
-}
-
-/* ── Eyebrow label ── */
-.category-card__eyebrow {
-  color: rgb(255 255 255 / 70%);
-  letter-spacing: var(--tracking-wider);
-}
-
-/* ── CTA button ── */
-.category-card__cta {
-  margin-top: var(--space-2);
 }
 
 /* ── Benefits Banner ── */
@@ -223,25 +71,9 @@
 
 /* ── Responsive: Tablet (≤ 1024px) ── */
 @media (max-width: 1024px) {
-  .hero-grid__hero-row {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .hero-grid__hero-row .category-card--large:last-child {
-    grid-column: 1 / -1;
-  }
-
-  .hero-grid__secondary-row {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
   .benefits-banner__grid {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-4);
-  }
-
-  .category-card--large {
-    height: 400px;
   }
 }
 
@@ -249,30 +81,6 @@
 @media (max-width: 640px) {
   .hero-grid {
     padding-block: var(--space-4);
-  }
-
-  .hero-grid .container {
-    gap: var(--space-3);
-  }
-
-  .hero-grid__hero-row {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-grid__secondary-row {
-    grid-template-columns: 1fr;
-  }
-
-  .category-card--large {
-    height: 320px;
-  }
-
-  .category-card--medium {
-    height: 260px;
-  }
-
-  .category-card--large .category-card__headline {
-    font-size: var(--text-2xl);
   }
 
   .benefits-banner__grid {
@@ -291,21 +99,5 @@
   .benefit-item__icon-wrap {
     width: 40px;
     height: 40px;
-  }
-}
-
-/* ── Reduced motion ── */
-@media (prefers-reduced-motion: reduce) {
-  .category-card {
-    transition: none;
-  }
-  .category-card:hover {
-    transform: none;
-  }
-  .category-card__image {
-    transition: none;
-  }
-  .category-card:hover .category-card__image {
-    transform: none;
   }
 }

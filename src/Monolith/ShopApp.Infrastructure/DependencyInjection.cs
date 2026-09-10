@@ -15,6 +15,7 @@ using ShopApp.Infrastructure.Identity.Models;
 using ShopApp.Infrastructure.Identity.Seed;
 using ShopApp.Infrastructure.Identity.Services;
 using ShopApp.Infrastructure.Identity.Settings;
+using ShopApp.Infrastructure.Kargo;
 using ShopApp.Infrastructure.Persistence.Context;
 using ShopApp.Infrastructure.Persistence.Repositories;
 
@@ -97,8 +98,16 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ISepetRepository, SepetRepository>();
         services.AddScoped<ISiparisRepository, SiparisRepository>();
-        
+
         services.AddScoped(typeof(IGenericUrunRepository<>), typeof(GenericUrunRepository<>));
+
+        services.AddOptions<KargoServiceSettings>().Bind(configuration.GetSection(KargoServiceSettings.SectionName));
+        services.AddHttpClient<IKargoReadService, KargoReadService>((sp, client) =>
+        {
+            var settings = sp.GetRequiredService<IOptions<KargoServiceSettings>>().Value;
+            if (!string.IsNullOrWhiteSpace(settings.BaseUrl))
+                client.BaseAddress = new Uri(settings.BaseUrl);
+        });
 
         return services;
     }

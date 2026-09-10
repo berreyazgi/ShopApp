@@ -12,7 +12,7 @@ public sealed class UpdateUrunOzellikCommandHandler(
 {
     public async Task Handle(UpdateUrunOzellikCommand request, CancellationToken cancellationToken)
     {
-        var customer = await currentCustomerContext.GetRequiredAsync(cancellationToken);
+        var kullaniciId = await currentCustomerContext.GetCurrentKullaniciIdAsync(cancellationToken);
 
         var urunTur = await urunTurRepository.GetByIdAsync(request.UrunTurId, cancellationToken);
         if (urunTur is null)
@@ -24,7 +24,7 @@ public sealed class UpdateUrunOzellikCommandHandler(
 
         ozellik.OzellikAd = request.OzellikAd;
         ozellik.OzellikDeger = request.OzellikDeger;
-        ozellik.GuncelleyenKullaniciId = customer.KullaniciId;
+        ozellik.GuncelleyenKullaniciId = kullaniciId;
         ozellik.GuncellemeTarihi = DateTime.UtcNow;
 
         await ozellikRepository.UpdateAsync(ozellik, cancellationToken);

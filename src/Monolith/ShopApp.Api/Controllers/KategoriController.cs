@@ -7,6 +7,7 @@ namespace src.Monolith.ShopApp.Api.Controllers;
 
 [ApiController]
 [Route("api/kategori")]
+[Route("api/categories")]
 public sealed class KategoriController : ControllerBase
 {
     private readonly IMediator _mediator;

@@ -13,11 +13,7 @@ public sealed class CurrentCustomerContext(
 {
     public async Task<CurrentCustomer> GetRequiredAsync(CancellationToken cancellationToken = default)
     {
-        var subject = httpContextAccessor.HttpContext?.User
-            .FindFirstValue(JwtRegisteredClaimNames.Sub);
-
-        if (!Guid.TryParse(subject, out var kullaniciId))
-            throw new UnauthorizedAccessException("Geçerli bir kullanıcı kimliği bulunamadı.");
+        var kullaniciId = GetKullaniciId();
 
         var musteriId = await dbContext.Musteriler
             .AsNoTracking()
@@ -27,5 +23,19 @@ public sealed class CurrentCustomerContext(
             ?? throw new InvalidOperationException("Müşteri profili bulunamadı.");
 
         return new CurrentCustomer(musteriId, kullaniciId);
+    }
+
+    public Task<Guid> GetCurrentKullaniciIdAsync(CancellationToken cancellationToken = default)
+        => Task.FromResult(GetKullaniciId());
+
+    private Guid GetKullaniciId()
+    {
+        var subject = httpContextAccessor.HttpContext?.User
+            .FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+        if (!Guid.TryParse(subject, out var kullaniciId))
+            throw new UnauthorizedAccessException("Geçerli bir kullanıcı kimliği bulunamadı.");
+
+        return kullaniciId;
     }
 }

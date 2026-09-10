@@ -16,9 +16,11 @@ import { createAdminLayout } from '../components/AdminLayout.js';
 import { createAdminPageHeader } from '../components/AdminPageHeader.js';
 import { createAdminStatusBadge } from '../components/AdminStatusBadge.js';
 import { createAdminPagination } from '../components/AdminPagination.js';
+import { createAdminOrderDetailModal } from '../components/AdminOrderDetailModal.js';
+import { createButton } from '../../../shared/components/Button/Button.js';
 import { createIcon } from '../../../shared/components/Icon/Icon.js';
 import { formatPrice } from '../../../shared/utils/format.js';
-import { getAdminOrders, updateAdminOrderStatus } from '../../orders/services/orderService.js';
+import { getAdminOrders, getAdminOrderById, updateAdminOrderStatus } from '../../orders/services/orderService.js';
 
 /**
  * @param {{
@@ -35,9 +37,46 @@ export default function AdminOrdersPage(props = {}) {
   let searchQuery = '';
   let selectedFilter = 'all';
   let currentPage = 1;
+  let activeModalInstance = null;
+  let detailFetchInFlight = false;
 
   const layout = createAdminLayout({ currentPath: '/admin/siparisler' });
   const container = layout.contentArea;
+
+  function closeActiveModal() {
+    if (activeModalInstance) {
+      activeModalInstance.close();
+      activeModalInstance = null;
+    }
+  }
+
+  async function openDetailModal(order) {
+    if (detailFetchInFlight) return;
+    const orderId = order?.id;
+    if (!orderId) return;
+
+    detailFetchInFlight = true;
+    try {
+      const detail = await getAdminOrderById(orderId);
+      if (!detail) {
+        alert('Sipariş bulunamadı.');
+        return;
+      }
+
+      closeActiveModal();
+      if (typeof props.onViewOrder === 'function') props.onViewOrder(detail);
+
+      activeModalInstance = createAdminOrderDetailModal({
+        order: detail,
+        onClose: () => { activeModalInstance = null; },
+      });
+      document.body.appendChild(activeModalInstance.element);
+    } catch (err) {
+      alert(err?.message || 'Sipariş bilgileri yüklenemedi.');
+    } finally {
+      detailFetchInFlight = false;
+    }
+  }
 
   function getFilteredOrders() {
     return orders.filter((o) => {
@@ -222,16 +261,14 @@ export default function AdminOrdersPage(props = {}) {
         actionsWrap.className = 'admin-table-actions';
         actionsWrap.style.justifyContent = 'flex-end';
 
-        const viewBtn = document.createElement('button');
-        viewBtn.type = 'button';
-        viewBtn.className = 'admin-table-btn';
-        viewBtn.setAttribute('aria-label', `${orderNo} detayını görüntüle`);
-        viewBtn.title = 'İncele';
-        viewBtn.appendChild(createIcon('eye', { size: 14 }));
-        viewBtn.addEventListener('click', () => {
-          if (typeof props.onViewOrder === 'function') props.onViewOrder(o);
+        const { element: detailBtn } = createButton({
+          label: 'Detay',
+          variant: 'secondary',
+          size: 'sm',
+          ariaLabel: `${orderNo} detayını görüntüle`,
+          onClick: () => openDetailModal(o),
         });
-        actionsWrap.appendChild(viewBtn);
+        actionsWrap.appendChild(detailBtn);
 
         const statusSelect = document.createElement('select');
         statusSelect.className = 'admin-order-status-select admin-table-toolbar__filter';
@@ -325,6 +362,7 @@ export default function AdminOrdersPage(props = {}) {
 
   function destroy() {
     destroyed = true;
+    closeActiveModal();
     layout.destroy();
   }
 

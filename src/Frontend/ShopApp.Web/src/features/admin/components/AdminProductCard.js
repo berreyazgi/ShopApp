@@ -75,13 +75,12 @@ export function createProductStockBadge(product) {
 /**
  * @param {{
  *   product: any,
- *   onView?: (product: any) => void,
  *   onEdit?: (product: any) => void,
  *   onDelete?: (product: any) => void,
  * }} options
  * @returns {HTMLElement}
  */
-export function createAdminProductCard({ product, onView, onEdit, onDelete }) {
+export function createAdminProductCard({ product, onEdit, onDelete }) {
   const card = document.createElement('article');
   card.className = 'admin-product-card';
   card.setAttribute('data-product-id', String(product.id ?? product.urunId ?? ''));
@@ -173,18 +172,6 @@ export function createAdminProductCard({ product, onView, onEdit, onDelete }) {
   // 3. Actions Footer
   const footer = document.createElement('div');
   footer.className = 'admin-product-card__footer';
-
-  // View Button
-  const viewBtn = document.createElement('button');
-  viewBtn.type = 'button';
-  viewBtn.className = 'admin-product-card__action-btn';
-  viewBtn.setAttribute('aria-label', `${name} detaylarını görüntüle`);
-  viewBtn.title = 'Görüntüle';
-  viewBtn.appendChild(createIcon('eye', { size: 15 }));
-  viewBtn.addEventListener('click', () => {
-    if (typeof onView === 'function') onView(product);
-  });
-  footer.appendChild(viewBtn);
 
   // Edit Button
   const editBtn = document.createElement('button');

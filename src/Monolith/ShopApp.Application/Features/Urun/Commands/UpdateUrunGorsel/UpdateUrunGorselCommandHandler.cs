@@ -13,7 +13,7 @@ public sealed class UpdateUrunGorselCommandHandler(
 {
     public async Task Handle(UpdateUrunGorselCommand request, CancellationToken cancellationToken)
     {
-        var customer = await currentCustomerContext.GetRequiredAsync(cancellationToken);
+        var kullaniciId = await currentCustomerContext.GetCurrentKullaniciIdAsync(cancellationToken);
 
         var urun = await urunRepository.GetByIdAsync(request.UrunId, cancellationToken);
         if (urun is null)
@@ -25,7 +25,7 @@ public sealed class UpdateUrunGorselCommandHandler(
 
         gorsel.GorselUrl = request.GorselUrl;
         gorsel.GorselSira = request.GorselSira;
-        gorsel.GuncelleyenKullaniciId = customer.KullaniciId;
+        gorsel.GuncelleyenKullaniciId = kullaniciId;
         gorsel.GuncellemeTarihi = DateTime.UtcNow;
 
         await gorselRepository.UpdateAsync(gorsel, cancellationToken);

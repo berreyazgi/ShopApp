@@ -22,6 +22,7 @@ public class GetUrunler
         {
             var urunler = await context.Urun
                 .AsNoTracking()
+                .Include(x => x.Gorseller)
                 .Where(x => (request.IncludePassive || x.AktifMi)
                     && (request.KategoriId == null || x.KategoriId == request.KategoriId))
                 .ToListAsync(cancellationToken);

@@ -73,7 +73,8 @@ export function createAdminSidebar({ currentPath = window.location.pathname, isO
 
       const isActive = item.path === '/admin'
         ? currentPath === '/admin'
-        : currentPath.startsWith(item.path);
+        : (currentPath.startsWith(item.path) ||
+           (item.path === '/admin/kategoriler' && (currentPath.startsWith('/admin/categories') || currentPath.startsWith('/admin/add-category'))));
 
       if (isActive) {
         link.classList.add('admin-sidebar__link--active');

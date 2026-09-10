@@ -9,6 +9,7 @@ public class UrunGorselConfiguration : IEntityTypeConfiguration<UrunGorsel>
     public void Configure(EntityTypeBuilder<UrunGorsel> b)
     {
         b.ToTable("UrunGorsel", "Urunler");
+        b.Property(x => x.AnaGorselMi).HasDefaultValue(false);
         b.HasIndex(x => new { x.UrunId, x.GorselSira });
     }
 }

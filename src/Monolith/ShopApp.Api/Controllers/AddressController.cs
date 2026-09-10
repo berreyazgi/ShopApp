@@ -3,29 +3,10 @@ using src.Monolith.ShopApp.Api.Services.Address;
 
 namespace src.Monolith.ShopApp.Api.Controllers;
 
-[ApiController]
-[Route("api/address")]
-public sealed class AddressController(ITurkeyAddressService addressService) : ControllerBase
-{
-    [HttpGet("provinces")]
-    public ActionResult<IReadOnlyList<AddressLookupItemDto>> GetProvinces() =>
-        Ok(addressService.GetProvinces());
-
-    [HttpGet("districts/{provinceId:int}")]
-    public ActionResult<IReadOnlyList<AddressLookupItemDto>> GetDistricts(int provinceId)
-    {
-        var districts = addressService.GetDistricts(provinceId);
-        return districts is null
-            ? NotFound(new { message = "İl bulunamadı." })
-            : Ok(districts);
-    }
-
-    [HttpGet("neighborhoods/{districtId:int}")]
-    public ActionResult<IReadOnlyList<AddressLookupItemDto>> GetNeighborhoods(int districtId, [FromQuery] int provinceId)
-    {
-        var neighborhoods = addressService.GetNeighborhoods(provinceId, districtId);
-        return neighborhoods is null
-            ? NotFound(new { message = "İlçe bulunamadı." })
-            : Ok(neighborhoods);
-    }
-}
+/// <summary>
+/// Backwards-compatibility alias for <see cref="TurkeyAddressLookupController"/>.
+/// Deprecated in favor of <see cref="TurkeyAddressLookupController"/> mapped to /api/locations or /api/lookup/turkey-address.
+/// </summary>
+[Obsolete("Use TurkeyAddressLookupController instead.")]
+[NonController]
+public class AddressController(ITurkeyAddressService addressService) : TurkeyAddressLookupController(addressService);

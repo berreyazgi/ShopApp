@@ -50,6 +50,11 @@ export const endpoints = {
     list:           () => '/api/kategori',
     byId:           (id) => `/api/kategori/${id}`,
   },
+  categories: {
+    create:         () => '/api/categories',
+    list:           () => '/api/categories',
+    byId:           (id) => `/api/categories/${id}`,
+  },
   adminKategori: {
     create:         () => '/api/admin/kategori',
     update:         (id) => `/api/admin/kategori/${id}`,
@@ -86,7 +91,11 @@ export const endpoints = {
   },
   adminSiparis: {
     list:           () => '/api/admin/siparisler',
+    byId:           (id) => `/api/admin/siparisler/${id}`,
     updateStatus:   (id) => `/api/admin/siparisler/${id}/durum`,
+  },
+  adminDashboard: {
+    get:            () => '/api/admin/dashboard',
   },
 
   // ── Cart ─────────────────────────────────────────────────────────────────
@@ -142,5 +151,16 @@ export const endpoints = {
     provinces:      () => '/api/address/provinces',
     districts:      (provinceId) => `/api/address/districts/${provinceId}`,
     neighborhoods:  (provinceId, districtId) => `/api/address/neighborhoods/${districtId}?provinceId=${provinceId}`,
+  },
+  locations: {
+    provinces:      () => '/api/locations/provinces',
+    districts:      (provinceId) => `/api/locations/districts/${provinceId}`,
+    neighborhoods:  (provinceId, districtId) => `/api/locations/neighborhoods/${districtId}?provinceId=${provinceId}`,
+  },
+  userAddresses: {
+    list:           () => '/api/users/addresses',
+    create:         () => '/api/users/addresses',
+    update:         (id) => `/api/users/addresses/${id}`,
+    delete:         (id) => `/api/users/addresses/${id}`,
   },
 };

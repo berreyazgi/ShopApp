@@ -22,7 +22,18 @@ public class Urun : BaseEntity
     [Column(TypeName = "decimal(8, 2)")]    
     public decimal GecmisFiyat { get; set; }
     
+    /// <summary>
+    /// Fallback / cover image URL for backwards compatibility.
+    /// Synchronized with the product's primary image in Gorseller.
+    /// </summary>
     public string? GorselUrl { get; set; }
+
+    [NotMapped]
+    public string? CoverImageUrl
+    {
+        get => GorselUrl;
+        set => GorselUrl = value;
+    }
 
     public bool AktifMi { get; set; } = true;
 
@@ -30,4 +41,7 @@ public class Urun : BaseEntity
     public Kategori Kategori { get; set; } = null!;
     public ICollection<UrunTur> UrunTurleri { get; set; } = new List<UrunTur>();
     public ICollection<UrunGorsel> Gorseller { get; set; } = new List<UrunGorsel>();
+
+    [NotMapped]
+    public ICollection<UrunGorsel> Images => Gorseller;
 }

@@ -14,13 +14,12 @@ import { createProductStockBadge } from './AdminProductCard.js';
 /**
  * @param {{
  *   products: any[],
- *   onView?: (product: any) => void,
  *   onEdit?: (product: any) => void,
  *   onDelete?: (product: any) => void,
  * }} options
  * @returns {HTMLElement}
  */
-export function createAdminProductList({ products = [], onView, onEdit, onDelete }) {
+export function createAdminProductList({ products = [], onEdit, onDelete }) {
   const tableWrap = document.createElement('div');
   tableWrap.className = 'admin-table-wrap';
 
@@ -116,18 +115,6 @@ export function createAdminProductList({ products = [], onView, onEdit, onDelete
     const actionsWrap = document.createElement('div');
     actionsWrap.className = 'admin-table-actions';
     actionsWrap.style.justifyContent = 'flex-end';
-
-    // View
-    const viewBtn = document.createElement('button');
-    viewBtn.type = 'button';
-    viewBtn.className = 'admin-table-btn admin-table-btn--view';
-    viewBtn.setAttribute('aria-label', `${name} detaylarını görüntüle`);
-    viewBtn.title = 'Görüntüle';
-    viewBtn.appendChild(createIcon('eye', { size: 14 }));
-    viewBtn.addEventListener('click', () => {
-      if (typeof onView === 'function') onView(p);
-    });
-    actionsWrap.appendChild(viewBtn);
 
     // Edit
     const editBtn = document.createElement('button');
