@@ -97,12 +97,13 @@ export function createAdminProductFormModal({
   const skuCatRow = document.createElement('div');
   skuCatRow.className = 'admin-form-row';
 
-  // SKU
+  // SKU — maps 1:1 to UrunTur.StokKod, which the backend requires (non-empty).
   const skuGroup = document.createElement('div');
   skuGroup.className = 'admin-form-group';
   skuGroup.innerHTML = `
-    <label class="admin-form-label" for="prod-modal-sku">SKU / Stok Kodu</label>
-    <input type="text" id="prod-modal-sku" class="admin-form-input" placeholder="Örn: GML-001" />
+    <label class="admin-form-label" for="prod-modal-sku">SKU / Stok Kodu <span class="required">*</span></label>
+    <input type="text" id="prod-modal-sku" class="admin-form-input" placeholder="Örn: GML-001" required />
+    <span class="admin-form-error" id="prod-modal-sku-error"></span>
   `;
   const skuInput = skuGroup.querySelector('#prod-modal-sku');
   if (product) skuInput.value = product.sku || product.barkod || product.kod || '';
@@ -379,6 +380,11 @@ export function createAdminProductFormModal({
       hasError = true;
     }
 
+    if (!sku) {
+      document.querySelector('#prod-modal-sku-error') && (document.querySelector('#prod-modal-sku-error').textContent = 'SKU / Stok Kodu zorunludur.');
+      hasError = true;
+    }
+
     if (!priceRaw || isNaN(Number(priceRaw)) || Number(priceRaw) < 0) {
       document.querySelector('#prod-modal-price-error') && (document.querySelector('#prod-modal-price-error').textContent = 'Geçerli bir fiyat giriniz (0 veya daha büyük).');
       hasError = true;
@@ -414,7 +420,10 @@ export function createAdminProductFormModal({
       marka: brand,
       price: Number(priceRaw),
       fiyat: Number(priceRaw),
-      // Stok takibi backend Urun modelinde henüz yok; yalnızca UI'da tutulur.
+      // Persisted on UrunTur (SKU/stock live on the product's variant, not on
+      // Urun itself) — see productsService.js persistVariant(). urunTurId,
+      // variantAd, variantFiyatFarki and variantIsActive above (spread from
+      // `product`) identify which existing variant to update, if any.
       stock: parseInt(stockRaw, 10),
       stok: parseInt(stockRaw, 10),
       description,

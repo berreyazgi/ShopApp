@@ -26,6 +26,7 @@ public class GetMyAddresses
                     a.Id,
                     a.MusteriId,
                     a.AdresBilgisi,
+                    a.Telefon,
                     a.Ulke,
                     a.Sehir,
                     a.Ilce,

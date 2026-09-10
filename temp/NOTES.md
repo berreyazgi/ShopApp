@@ -209,3 +209,8 @@ The two bullets above are now **superseded** by this pass — kept above for his
   - Strictly zero `apiClient`, `fetch`, `axios`, or `XMLHttpRequest` calls added to `src/features/admin/`.
   - Backend `src/Monolith/` remained 100% untouched.
   - Unit and integration tests added in `tests/logoutConfirmation.test.js` (10/10 passing).
+
+## Turkey Address Lookup & Address Phone (2026-09-09)
+- `TurkiyeCitiesPackage` 2.0.0 is registered as the singleton `ITurkeyAddressService`; it ships 81 provinces, districts, and 31,000+ neighborhoods locally.
+- Lookup endpoints are public: `/api/address/provinces`, `/api/address/districts/{provinceId}`, and `/api/address/neighborhoods/{districtId}?provinceId={provinceId}`. The province query parameter is required for neighborhood lookup because the package resolves districts within their province.
+- Address phone is stored as nullable `kimlik.Adresler.Telefon` for legacy rows (migration `20260909203234_AddAddressPhone`); create/update validation requires `+905XXXXXXXXX`.

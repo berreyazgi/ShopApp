@@ -14,6 +14,10 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
             .HasColumnName("AdresBilgisi")
             .HasMaxLength(5000);
 
+        builder.Property(x => x.Telefon)
+            .HasColumnName("Telefon")
+            .HasMaxLength(13);
+
         builder.Property(x => x.PostaKodu)
             .HasColumnName("PostaKodu")
             .HasColumnType("integer")

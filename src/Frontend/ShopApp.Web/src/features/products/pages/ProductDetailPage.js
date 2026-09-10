@@ -584,7 +584,9 @@ export default function ProductDetailPage({ params } = {}) {
           title: 'Ürün Bulunamadı',
           description: 'Bu ürün mevcut değil veya kaldırılmış olabilir.',
           actionLabel: 'Ürünlere Dön',
-          onAction: () => { window.location.href = '/urunler'; },
+          // Use the SPA router, not a hard navigation — a full page reload
+          // would discard anything reload can't recover.
+          onAction: () => navigate('/urunler'),
         }));
         return;
       }

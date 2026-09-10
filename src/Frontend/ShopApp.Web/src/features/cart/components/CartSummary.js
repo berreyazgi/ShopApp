@@ -7,9 +7,16 @@
 
 import { createIcon } from '../../../shared/components/Icon/Icon.js';
 
+const CHECKOUT_LABEL_IDLE = 'Ödeme Adımına Geç';
+const CHECKOUT_LABEL_PROCESSING = 'Siparişiniz oluşturuluyor...';
+
 /**
  * @param {{ freeShippingThreshold: number, onCheckout: () => void }} options
- * @returns {{ element: HTMLElement, update: (totals: { subtotal: number, shipping: number, grandTotal: number }) => void }}
+ * @returns {{
+ *   element: HTMLElement,
+ *   update: (totals: { subtotal: number, shipping: number, grandTotal: number }) => void,
+ *   setCheckoutProcessing: (isProcessing: boolean) => void,
+ * }}
  */
 export function createCartSummary({ freeShippingThreshold, onCheckout }) {
   const card = document.createElement('div');
@@ -79,7 +86,7 @@ export function createCartSummary({ freeShippingThreshold, onCheckout }) {
   checkoutBtn.className = 'cart-checkout-btn';
   checkoutBtn.id = 'btn-checkout';
   const btnText = document.createElement('span');
-  btnText.textContent = 'Ödeme Adımına Geç';
+  btnText.textContent = CHECKOUT_LABEL_IDLE;
   const btnArrow = document.createElement('span');
   btnArrow.className = 'cart-checkout-btn__arrow';
   btnArrow.appendChild(createIcon('arrow-right', { size: 18 }));
@@ -102,6 +109,20 @@ export function createCartSummary({ freeShippingThreshold, onCheckout }) {
     return amount.toLocaleString('tr-TR') + ' TL';
   }
 
+  /**
+   * Toggles the checkout button's busy state — disables it and swaps the
+   * label to a "creating order" message so a slow request (or a rapid
+   * double-click) can't fire the checkout handler a second time. Purely
+   * presentational: the caller decides *when* checkout is processing.
+   * @param {boolean} isProcessing
+   */
+  function setCheckoutProcessing(isProcessing) {
+    checkoutBtn.disabled = isProcessing;
+    checkoutBtn.classList.toggle('cart-checkout-btn--processing', isProcessing);
+    btnText.textContent = isProcessing ? CHECKOUT_LABEL_PROCESSING : CHECKOUT_LABEL_IDLE;
+    btnArrow.style.display = isProcessing ? 'none' : '';
+  }
+
   function update({ subtotal, shipping, grandTotal }) {
     subtotalVal.textContent = formatPrice(subtotal);
     grandTotalVal.textContent = formatPrice(grandTotal);
@@ -122,5 +143,5 @@ export function createCartSummary({ freeShippingThreshold, onCheckout }) {
     }
   }
 
-  return { element: card, update };
+  return { element: card, update, setCheckoutProcessing };
 }

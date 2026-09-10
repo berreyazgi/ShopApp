@@ -12,6 +12,9 @@ public class Address : BaseEntity
     [MaxLength(5000)]
     public string? AdresBilgisi { get; private set; }
 
+    [MaxLength(13)]
+    public string? Telefon { get; private set; }
+
     public int Ulke { get; private set; }
 
     public int Sehir { get; private set; }
@@ -26,7 +29,7 @@ public class Address : BaseEntity
 
     private Address() { }
 
-    public static Address Olustur(Guid musteriId, int ulke, int sehir, int ilce, int mahalle, int postaKodu, string? adresBilgisi, Guid olusturanKullaniciId) => new()
+    public static Address Olustur(Guid musteriId, int ulke, int sehir, int ilce, int mahalle, int postaKodu, string? adresBilgisi, Guid olusturanKullaniciId, string? telefon = null) => new()
     {
         MusteriId = musteriId,
         Ulke = ulke,
@@ -35,11 +38,12 @@ public class Address : BaseEntity
         Mahalle = mahalle,
         PostaKodu = postaKodu,
         AdresBilgisi = adresBilgisi,
+        Telefon = telefon,
         OlusturanKullaniciId = olusturanKullaniciId,
         OlusturmaTarihi = DateTime.UtcNow
     };
 
-    public void Guncelle(int ulke, int sehir, int ilce, int mahalle, int postaKodu, string? adresBilgisi, Guid guncelleyenKullaniciId)
+    public void Guncelle(int ulke, int sehir, int ilce, int mahalle, int postaKodu, string? adresBilgisi, Guid guncelleyenKullaniciId, string? telefon = null)
     {
         Ulke = ulke;
         Sehir = sehir;
@@ -47,6 +51,7 @@ public class Address : BaseEntity
         Mahalle = mahalle;
         PostaKodu = postaKodu;
         AdresBilgisi = adresBilgisi;
+        Telefon = telefon;
         GuncelleyenKullaniciId = guncelleyenKullaniciId;
         MarkAsUpdated();
     }

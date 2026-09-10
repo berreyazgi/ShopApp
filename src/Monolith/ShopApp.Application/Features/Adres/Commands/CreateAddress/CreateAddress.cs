@@ -12,7 +12,8 @@ public sealed record CreateAddressCommand(
     int Sehir,
     int Ilce,
     int Mahalle,
-    int PostaKodu
+    int PostaKodu,
+    string? Telefon = null
 ) : IRequest<AddressDto>;
 
 public sealed class CreateAddressCommandValidator : AbstractValidator<CreateAddressCommand>
@@ -30,6 +31,10 @@ public sealed class CreateAddressCommandValidator : AbstractValidator<CreateAddr
 
         RuleFor(x => x.Mahalle)
             .GreaterThan(0).WithMessage("Geçerli bir mahalle seçiniz.");
+
+        RuleFor(x => x.Telefon)
+            .NotEmpty().WithMessage("Telefon numarası zorunludur.")
+            .Matches(@"^\+905\d{9}$").WithMessage("Telefon numarası +905XXXXXXXXX biçiminde olmalıdır.");
     }
 }
 
@@ -49,6 +54,7 @@ public sealed class CreateAddressCommandHandler(
             mahalle: request.Mahalle,
             postaKodu: request.PostaKodu,
             adresBilgisi: request.AdresBilgisi?.Trim(),
+            telefon: request.Telefon?.Trim(),
             olusturanKullaniciId: customer.KullaniciId
         );
 
@@ -59,6 +65,7 @@ public sealed class CreateAddressCommandHandler(
             address.Id,
             address.MusteriId,
             address.AdresBilgisi,
+            address.Telefon,
             address.Ulke,
             address.Sehir,
             address.Ilce,

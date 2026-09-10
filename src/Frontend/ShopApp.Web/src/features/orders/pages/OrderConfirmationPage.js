@@ -12,6 +12,8 @@
 
 import { createIcon } from '../../../shared/components/Icon/Icon.js';
 import { navigate }   from '../../../app/router.js';
+import { createLoadingState } from '../../../shared/components/StateView/StateView.js';
+import { getOrderById, getOrderItems } from '../services/orderService.js';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -345,10 +347,14 @@ function createSummaryCard(data = {}, onGoToOrders, onGoHome) {
   card.appendChild(totalRow);
 
   // Info text
+  // TODO(PaymentMicroservice): Replace this temporary payment message with
+  // real payment-confirmation wording once a Payment Microservice actually
+  // processes a transaction. Until then, no message here may claim a payment
+  // was completed — only that the order itself was created.
   const info = document.createElement('p');
   info.className = 'oc-summary__info';
   info.textContent =
-    "Ödeme işlemi başarıyla tamamlanmıştır. Sipariş durumunu 'Siparişlerim' sayfasından takip edebilirsiniz.";
+    "Siparişiniz başarıyla oluşturulmuştur. Ödeme entegrasyonu sonraki aşamada tamamlanacaktır. Sipariş durumunu 'Siparişlerim' sayfasından takip edebilirsiniz.";
   card.appendChild(info);
 
   // Action buttons
@@ -377,10 +383,36 @@ function createSummaryCard(data = {}, onGoToOrders, onGoHome) {
 }
 
 
+/**
+ * Maps a persisted ResultSiparisDto + its ResultSiparisUrunleriDto[] into the
+ * shape render() expects. No synthesized values — every field here is either
+ * read straight from the backend response or a UI-only derived label
+ * (e.g. the "Ücretsiz" shipping text below is derived from the real
+ * kargoFiyat, never a placeholder).
+ */
+function mapOrderToConfirmationData(siparis, items) {
+  return {
+    id: siparis.id,
+    orderNumber: siparis.siparisNumarasi,
+    items: items ?? [],
+    subtotal: siparis.araToplam,
+    shippingCost: siparis.kargoFiyat,
+    total: siparis.toplamFiyat,
+    delivery: {
+      shipping: siparis.kargoFiyat === 0 ? 'Ücretsiz' : formatPrice(siparis.kargoFiyat),
+    },
+  };
+}
+
 // ─── Page Component ───────────────────────────────────────────────────────────
 
 /**
- * @param {{ params?: object, order?: object }} [options] - `order` accepts dynamic order data.
+ * @param {{ params?: object, order?: object }} [options] - `order` accepts pre-supplied
+ *   order data (tests/previews). Otherwise the page loads the real order named
+ *   by the `?orderId=` query string via getOrderById()/getOrderItems() — this
+ *   is how the checkout flow (any checkout flow, temporary or a future
+ *   payment one) hands off the newly created order's id to this page, and
+ *   what makes a reload of /siparis-onay?orderId=... keep working.
  * @returns {{ element: HTMLElement, destroy: () => void }}
  */
 export default function OrderConfirmationPage({ order = null } = {}) {
@@ -388,15 +420,16 @@ export default function OrderConfirmationPage({ order = null } = {}) {
   element.className = 'order-confirmation-page';
 
   const cleanupFns = [];
+  let destroyed = false;
 
-  function render() {
+  function render(orderData) {
     element.innerHTML = '';
 
     // Breadcrumbs
     element.appendChild(createBreadcrumbs());
 
     // Check if valid order data exists
-    if (!order || (!order.orderNumber && !order.siparisNumarasi && !order.id && (!order.items || order.items.length === 0))) {
+    if (!orderData || (!orderData.orderNumber && !orderData.siparisNumarasi && !orderData.id && (!orderData.items || orderData.items.length === 0))) {
       const emptyWrap = document.createElement('div');
       emptyWrap.className = 'container';
       emptyWrap.appendChild(createEmptyState());
@@ -407,7 +440,7 @@ export default function OrderConfirmationPage({ order = null } = {}) {
     // Success banner
     const bannerWrap = document.createElement('div');
     bannerWrap.className = 'container';
-    const orderNo = order.orderNumber || order.siparisNumarasi || `#${order.id || ''}`;
+    const orderNo = orderData.orderNumber || orderData.siparisNumarasi || `#${orderData.id || ''}`;
     bannerWrap.appendChild(createSuccessBanner(orderNo));
     element.appendChild(bannerWrap);
 
@@ -421,13 +454,13 @@ export default function OrderConfirmationPage({ order = null } = {}) {
     // ── Left Column ──
     const leftCol = document.createElement('div');
     leftCol.className = 'oc-left';
-    leftCol.appendChild(createOrderDetailsCard(order.items || order.urunler || []));
-    leftCol.appendChild(createDeliveryCard(order.delivery || {}));
+    leftCol.appendChild(createOrderDetailsCard(orderData.items || orderData.urunler || []));
+    leftCol.appendChild(createDeliveryCard(orderData.delivery || {}));
     layout.appendChild(leftCol);
 
     // ── Right Column ──
     const { card: summaryCard, primaryBtn, secondaryBtn } = createSummaryCard(
-      order,
+      orderData,
       () => navigate('/siparisler'),
       () => navigate('/'),
     );
@@ -443,12 +476,46 @@ export default function OrderConfirmationPage({ order = null } = {}) {
     element.appendChild(main);
   }
 
+  function renderLoading() {
+    element.innerHTML = '';
+    element.appendChild(createBreadcrumbs());
+    const wrap = document.createElement('div');
+    wrap.className = 'container';
+    wrap.appendChild(createLoadingState({ message: 'Sipariş bilgileriniz yükleniyor...' }));
+    element.appendChild(wrap);
+  }
+
+  /** Loads the order named by ?orderId= from the real backend (no fallback/fake data). */
+  async function loadOrderFromQueryString() {
+    const orderId = new URLSearchParams(window.location.search).get('orderId');
+    if (!orderId) {
+      render(null);
+      return;
+    }
+
+    renderLoading();
+    try {
+      const [siparis, items] = await Promise.all([getOrderById(orderId), getOrderItems(orderId)]);
+      if (destroyed) return;
+      render(mapOrderToConfirmationData(siparis, items));
+    } catch (error) {
+      if (destroyed) return;
+      console.error('[OrderConfirmationPage] failed to load order:', error);
+      render(null);
+    }
+  }
+
   function destroy() {
+    destroyed = true;
     cleanupFns.forEach((fn) => fn());
     cleanupFns.length = 0;
   }
 
-  render();
+  if (order) {
+    render(order);
+  } else {
+    loadOrderFromQueryString();
+  }
 
   return { element, destroy };
 }

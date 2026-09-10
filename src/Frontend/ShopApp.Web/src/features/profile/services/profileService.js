@@ -51,6 +51,7 @@ export async function updateProfile(payload) {
  * @property {string} id
  * @property {string} musteriId
  * @property {string|null} adresBilgisi
+ * @property {string|null} telefon
  * @property {number} ulke
  * @property {number} sehir
  * @property {number} ilce
@@ -68,6 +69,22 @@ export async function getAddresses() {
   return apiClient.get(endpoints.address.list());
 }
 
+/** @returns {Promise<Array<{ id: number, name: string }>>} */
+export async function getAddressProvinces() {
+  return apiClient.get(endpoints.address.provinces());
+}
+
+/** @returns {Promise<Array<{ id: number, name: string }>>} */
+export async function getAddressDistricts(provinceId) {
+  return apiClient.get(endpoints.address.districts(provinceId));
+}
+
+/** @returns {Promise<Array<{ id: number, name: string }>>} */
+export async function getAddressNeighborhoods(provinceId, districtId) {
+  return apiClient.get(endpoints.address.neighborhoods(provinceId, districtId));
+}
+
+
 /**
  * Yeni adres ekler.
  * @param {{
@@ -77,12 +94,14 @@ export async function getAddresses() {
  *   ilce?: number,
  *   mahalle: number,
  *   postaKodu: number,
+ *   telefon: string,
  * }} payload
  * @returns {Promise<AddressDto>}
  */
 export async function createAddress(payload) {
   return apiClient.post(endpoints.address.create(), {
     ulke: payload.ulke ?? 90,
+    telefon: payload.telefon,
     sehir: Number(payload.sehir),
     ilce: Number(payload.ilce ?? 0),
     mahalle: Number(payload.mahalle),
@@ -101,6 +120,7 @@ export async function createAddress(payload) {
  *   ilce?: number,
  *   mahalle: number,
  *   postaKodu: number,
+ *   telefon: string,
  * }} payload
  * @returns {Promise<AddressDto>}
  */
@@ -108,6 +128,7 @@ export async function updateAddress(id, payload) {
   return apiClient.put(endpoints.address.update(id), {
     id,
     ulke: payload.ulke ?? 90,
+    telefon: payload.telefon,
     sehir: Number(payload.sehir),
     ilce: Number(payload.ilce ?? 0),
     mahalle: Number(payload.mahalle),

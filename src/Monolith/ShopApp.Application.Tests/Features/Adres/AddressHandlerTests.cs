@@ -25,6 +25,15 @@ public class AddressHandlerTests
     }
 
     [Fact]
+    public void CreateAddressValidator_RequiresE164TurkishMobilePhone()
+    {
+        var validator = new CreateAddressCommandValidator();
+        var command = new CreateAddressCommand("Atatürk Cad. No: 10", 90, 34, 5, 501, 34100, "5321234567");
+        var result = validator.TestValidate(command);
+        result.ShouldHaveValidationErrorFor(x => x.Telefon);
+    }
+
+    [Fact]
     public async Task GetMyAddresses_ReturnsOnlyCurrentCustomerAddresses()
     {
         using var context = TestDbContext.Create();

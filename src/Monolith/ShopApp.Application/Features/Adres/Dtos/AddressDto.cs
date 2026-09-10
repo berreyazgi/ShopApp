@@ -4,6 +4,7 @@ public record AddressDto(
     Guid Id,
     Guid MusteriId,
     string? AdresBilgisi,
+    string? Telefon,
     int Ulke,
     int Sehir,
     int Ilce,

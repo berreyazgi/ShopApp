@@ -6,7 +6,6 @@
  */
 
 import { createIcon } from '../../../shared/components/Icon/Icon.js';
-import { TURKEY_CITIES } from '../utils/cityUtils.js';
 
 function createModalOverlay(titleText, contentEl, onClose, containerModifier = '') {
   const overlay = document.createElement('div');
@@ -196,14 +195,16 @@ export function formatTurkishPhone(raw) {
  *   districts?: Array<{ id: number|string, cityId: number|string, name: string }>,
  *   neighborhoods?: Array<{ id: number|string, districtId: number|string, name: string }>,
  *   getDistricts?: (cityId: number|string) => Promise<Array<any>>,
- *   getNeighborhoods?: (districtId: number|string) => Promise<Array<any>>,
+ *   getProvinces?: () => Promise<Array<any>>,
+ *   getNeighborhoods?: (cityId: number|string, districtId: number|string) => Promise<Array<any>>,
  *   onSave: (payload: any) => Promise<void>,
  *   onClose: () => void,
  * }} options
  */
 export function createAddressModal({
   address = null,
-  cities = TURKEY_CITIES,
+  cities = [],
+  getProvinces = null,
   districts = [],
   neighborhoods = [],
   getDistricts = null,
@@ -219,6 +220,7 @@ export function createAddressModal({
   const initialDistrictId = address?.ilce || address?.districtId || '';
   const initialNeighborhoodId = address?.mahalle || address?.neighborhoodId || '';
   const initialAddressLine = address?.adresBilgisi || address?.addressLine || '';
+  const initialPhone = address?.telefon || address?.phone || '';
   const initialAddressTitle = address?.adresBasligi || address?.addressTitle || address?.title || '';
 
   const form = document.createElement('form');
@@ -287,35 +289,21 @@ export function createAddressModal({
 
   const cityLabel = document.createElement('label');
   cityLabel.className = 'profile-form-label';
-  cityLabel.htmlFor = 'profile-address-city';
+  cityLabel.htmlFor = 'citySelect';
   cityLabel.innerHTML = 'İl <span class="required">*</span>';
   cityGroup.appendChild(cityLabel);
 
   const citySelect = document.createElement('select');
-  citySelect.id = 'profile-address-city';
+  citySelect.id = 'citySelect';
   citySelect.className = 'profile-form-input profile-form-select';
   citySelect.required = true;
 
   const defaultCityOpt = document.createElement('option');
   defaultCityOpt.value = '';
-  defaultCityOpt.textContent = 'İl Seçiniz';
+  defaultCityOpt.textContent = 'İller yükleniyor...';
   citySelect.appendChild(defaultCityOpt);
+  citySelect.disabled = true;
 
-  const cityList = Array.isArray(cities) && cities.length > 0 ? cities : TURKEY_CITIES;
-  cityList.forEach((city) => {
-    const opt = document.createElement('option');
-    const code = city.code ?? city.id;
-    const name = city.name ?? city.sehirAdi;
-    opt.value = String(code);
-    opt.textContent = `${code} - ${name}`;
-    if (initialCityId && String(initialCityId) === String(code)) {
-      opt.selected = true;
-    }
-    citySelect.appendChild(opt);
-  });
-  if (initialCityId) {
-    citySelect.value = String(initialCityId);
-  }
   cityGroup.appendChild(citySelect);
   locationRow.appendChild(cityGroup);
 
@@ -325,12 +313,12 @@ export function createAddressModal({
 
   const districtLabel = document.createElement('label');
   districtLabel.className = 'profile-form-label';
-  districtLabel.htmlFor = 'profile-address-district';
+  districtLabel.htmlFor = 'districtSelect';
   districtLabel.innerHTML = 'İlçe <span class="required">*</span>';
   districtGroup.appendChild(districtLabel);
 
   const districtSelect = document.createElement('select');
-  districtSelect.id = 'profile-address-district';
+  districtSelect.id = 'districtSelect';
   districtSelect.className = 'profile-form-input profile-form-select';
   districtSelect.required = true;
   districtSelect.disabled = true;
@@ -355,12 +343,12 @@ export function createAddressModal({
 
   const neighborhoodLabel = document.createElement('label');
   neighborhoodLabel.className = 'profile-form-label';
-  neighborhoodLabel.htmlFor = 'profile-address-neighborhood';
+  neighborhoodLabel.htmlFor = 'neighborhoodSelect';
   neighborhoodLabel.innerHTML = 'Mahalle <span class="required">*</span>';
   neighborhoodGroup.appendChild(neighborhoodLabel);
 
   const neighborhoodSelect = document.createElement('select');
-  neighborhoodSelect.id = 'profile-address-neighborhood';
+  neighborhoodSelect.id = 'neighborhoodSelect';
   neighborhoodSelect.className = 'profile-form-input profile-form-select';
   neighborhoodSelect.required = true;
   neighborhoodSelect.disabled = true;
@@ -402,7 +390,64 @@ export function createAddressModal({
   areaRow.appendChild(postalGroup);
 
   form.appendChild(areaRow);
+  const addressPhoneGroup = document.createElement('div');
+  addressPhoneGroup.className = 'profile-form-group';
+  const addressPhoneLabel = document.createElement('label');
+  addressPhoneLabel.className = 'profile-form-label';
+  addressPhoneLabel.htmlFor = 'profile-address-phone';
+  addressPhoneLabel.innerHTML = 'Telefon <span class="required">*</span>';
+  addressPhoneGroup.appendChild(addressPhoneLabel);
+  const phoneInputGroup = document.createElement('div');
+  phoneInputGroup.className = 'profile-phone-group';
+  const phonePrefix = document.createElement('span');
+  phonePrefix.className = 'profile-phone-prefix';
+  phonePrefix.setAttribute('aria-hidden', 'true');
+  phonePrefix.textContent = '+90';
+  phoneInputGroup.appendChild(phonePrefix);
+  const phoneInput = document.createElement('input');
+  phoneInput.type = 'tel';
+  phoneInput.id = 'profile-address-phone';
+  phoneInput.className = 'profile-form-input profile-phone-input';
+  phoneInput.placeholder = '(5XX) XXX XX XX';
+  phoneInput.inputMode = 'numeric';
+  phoneInput.autocomplete = 'tel-national';
+  phoneInput.required = true;
+  phoneInput.maxLength = 16;
+  phoneInput.value = formatTurkishPhone(initialPhone);
+  phoneInput.addEventListener('input', () => {
+    phoneInput.value = formatTurkishPhone(phoneInput.value);
+  });
+  phoneInputGroup.appendChild(phoneInput);
+  addressPhoneGroup.appendChild(phoneInputGroup);
+  form.appendChild(addressPhoneGroup);
 
+  async function updateCityOptions(preserveSelected = null) {
+    citySelect.textContent = '';
+    const defaultOpt = document.createElement('option');
+    defaultOpt.value = '';
+    defaultOpt.textContent = 'İller yükleniyor...';
+
+    citySelect.appendChild(defaultOpt);
+    citySelect.disabled = true;
+    try {
+      const items = typeof getProvinces === 'function' ? await getProvinces() : cities;
+      if (!Array.isArray(items) || items.length === 0) {
+        defaultOpt.textContent = 'İl bulunamadı';
+        return;
+      }
+      items.forEach((item) => {
+        const opt = document.createElement('option');
+        const id = item.id ?? item.code;
+        opt.value = String(id);
+        opt.textContent = String(item.name ?? item.sehirAdi);
+        citySelect.appendChild(opt);
+      });
+      citySelect.disabled = false;
+      if (preserveSelected) citySelect.value = String(preserveSelected);
+    } catch {
+      defaultOpt.textContent = 'İller yüklenemedi';
+    }
+  }
   // ── Cascading State Providers & Resets ───────────────────────────────────
   async function updateDistrictOptions(cityId, preserveSelected = null) {
     districtSelect.textContent = '';
@@ -466,7 +511,7 @@ export function createAddressModal({
 
     let items = [];
     if (typeof getNeighborhoods === 'function') {
-      items = await getNeighborhoods(districtId);
+      items = await getNeighborhoods(citySelect.value, districtId);
     } else if (Array.isArray(neighborhoods) && neighborhoods.length > 0) {
       items = neighborhoods.filter((n) => String(n.districtId ?? n.ilceId) === String(districtId));
     }
@@ -501,13 +546,15 @@ export function createAddressModal({
     updateNeighborhoodOptions(districtSelect.value, null);
   });
 
-  if (initialCityId) {
-    updateDistrictOptions(initialCityId, initialDistrictId).then(() => {
+  void updateCityOptions(initialCityId).then(() => {
+    if (initialCityId) {
+      updateDistrictOptions(initialCityId, initialDistrictId).then(() => {
       if (initialDistrictId) {
         updateNeighborhoodOptions(initialDistrictId, initialNeighborhoodId);
       }
     });
-  }
+    }
+  });
 
   // ── Row 5: Delivery Warning Box ──────────────────────────────────────────
   const warningBox = document.createElement('div');
@@ -594,6 +641,8 @@ export function createAddressModal({
     const postalCode = form.querySelector('#profile-address-postal').value.trim();
     const addressLine = form.querySelector('#profile-address-line').value.trim();
     const addressTitle = form.querySelector('#profile-address-title').value.trim();
+    const phoneDigits = phoneInput.value.replace(/\D/g, '');
+    const phone = `+90${phoneDigits}`;
 
     if (!firstName || !lastName) {
       errorAlert.textContent = 'Lütfen ad ve soyad alanlarını doldurun.';
@@ -607,13 +656,13 @@ export function createAddressModal({
       return;
     }
 
-    if (!districtSelect.disabled && !districtId) {
+    if (!districtId) {
       errorAlert.textContent = 'Lütfen bir ilçe seçin.';
       errorAlert.style.display = 'block';
       return;
     }
 
-    if (!neighborhoodSelect.disabled && !neighborhoodId) {
+    if (!neighborhoodId) {
       errorAlert.textContent = 'Lütfen bir mahalle seçin.';
       errorAlert.style.display = 'block';
       return;
@@ -624,6 +673,12 @@ export function createAddressModal({
       errorAlert.style.display = 'block';
       return;
     }
+    if (!/^5\d{9}$/.test(phoneDigits)) {
+      errorAlert.textContent = 'Lütfen 5 ile başlayan 10 haneli bir telefon numarası girin.';
+      errorAlert.style.display = 'block';
+      return;
+    }
+
 
     if (!addressLine) {
       errorAlert.textContent = 'Lütfen açık adres bilginizi girin.';
@@ -646,6 +701,7 @@ export function createAddressModal({
       postalCode,
       addressLine,
       addressTitle,
+      telefon: phone,
 
       // Backward compatibility fields for profileService and backend:
       sehir: Number(cityId),
