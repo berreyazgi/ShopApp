@@ -30,6 +30,20 @@ public sealed class CreateSiparisCommandHandler(
         if (sepet is null || sepet.Urunler.Count == 0)
             throw new InvalidOperationException("Sepetiniz boş. Sipariş oluşturmak için sepetinize ürün ekleyin.");
 
+        // Frontend validation (CartPage's address-required prompt) is for UX
+        // only — this is the actual enforcement, so POSTing directly to this
+        // endpoint can't skip it. A customer may add products to the basket
+        // with zero saved addresses; they just can't convert it into a
+        // Siparis until at least one exists. Sepet itself carries no address
+        // selection (no Sepet.AdresId) — that is a later checkout/payment
+        // concern, not this minimum rule.
+        var hasAddress = await context.Adresler
+            .AsNoTracking()
+            .AnyAsync(a => a.MusteriId == customer.MusteriId, cancellationToken);
+
+        if (!hasAddress)
+            throw new InvalidOperationException("Sipariş oluşturabilmek için önce teslimat adresi eklemelisiniz.");
+
         var urunTurIds = sepet.Urunler.Select(u => u.UrunTurId).ToList();
         var urunTurler = await context.UrunTur
             .Include(t => t.Urun)

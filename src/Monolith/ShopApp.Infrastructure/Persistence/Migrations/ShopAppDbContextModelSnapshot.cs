@@ -511,6 +511,11 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<int>("Sehir")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Telefon")
+                        .HasMaxLength(13)
+                        .HasColumnType("character varying(13)")
+                        .HasColumnName("Telefon");
+
                     b.Property<int>("Ulke")
                         .HasColumnType("integer");
 

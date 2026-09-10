@@ -14,6 +14,7 @@ public static class MapperFactory
         {
             cfg.AddProfile<SepetMapping>();
             cfg.AddProfile<SiparisMapping>();
+            cfg.AddProfile<UrunMapping>();
         });
         return services.BuildServiceProvider().GetRequiredService<IMapper>();
     }

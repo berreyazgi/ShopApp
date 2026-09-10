@@ -11,6 +11,9 @@
 import { createIcon }   from '../../../shared/components/Icon/Icon.js';
 import { navigate }     from '../../../app/router.js';
 import { getAllOrders }  from '../services/orderService.js';
+import { getProfile }    from '../../profile/services/profileService.js';
+import { createProfileSidebar } from '../../profile/components/ProfileSidebar.js';
+import { createLoadingState, createErrorState as createStateViewError } from '../../../shared/components/StateView/StateView.js';
 
 
 // Maps backend "durumIsmi" strings to CSS modifier classes
@@ -140,7 +143,7 @@ function createOrderCard(order) {
   detailBtn.type = 'button';
   detailBtn.className = 'order-btn order-btn--primary';
   detailBtn.textContent = 'Sipariş Detayı / Onayı';
-  detailBtn.addEventListener('click', () => navigate('/siparis-onay'));
+  detailBtn.addEventListener('click', () => navigate(`/siparis-onay?orderId=${order.id}`));
 
   actions.appendChild(detailBtn);
   footer.appendChild(actions);
@@ -231,6 +234,8 @@ function createErrorState(message) {
 // ─── Page Component ───────────────────────────────────────────────────────────
 
 /**
+ * Reuses the same customer profile sidebar as ProfilePage (createProfileSidebar)
+ * so the two pages share one navigation component instead of duplicating it.
  * @param {{ params: object }} _options
  * @returns {{ element: HTMLElement, destroy: () => void }}
  */
@@ -238,75 +243,142 @@ export default function OrderListPage(_options = {}) {
   const element = document.createElement('div');
   element.className = 'orders-page';
 
-  // ── Skeleton shell (rendered synchronously) ────────────────────────────────
   element.appendChild(createBreadcrumbs());
 
   const mainContainer = document.createElement('div');
-  mainContainer.className = 'container';
-
-  // Page title
-  const pageHeader = document.createElement('div');
-  pageHeader.className = 'orders-header';
-  pageHeader.innerHTML = `
-    <h1 class="orders-header__title">
-      Siparişlerim
-      <span class="orders-header__badge" id="orders-count-badge">Yükleniyor...</span>
-    </h1>
-  `;
-  mainContainer.appendChild(pageHeader);
-
-  // Content area — will be replaced after fetch
-  const contentArea = document.createElement('div');
-  contentArea.id = 'orders-content';
-  contentArea.appendChild(createLoadingSpinner());
-  mainContainer.appendChild(contentArea);
-
+  mainContainer.className = 'container profile-main-container';
   element.appendChild(mainContainer);
 
-  // ── Async data load ────────────────────────────────────────────────────────
-  const badge = pageHeader.querySelector('#orders-count-badge');
+  // profile-content-area / profile-layout / profile-sidebar are the exact
+  // classes ProfilePage.js uses — reusing them (rather than copy/pasting the
+  // profile layout CSS into orders.css) is what gives this page the same
+  // "sidebar | content" desktop layout and responsive stacking for free.
+  const contentWrap = document.createElement('div');
+  contentWrap.className = 'profile-content-area';
+  mainContainer.appendChild(contentWrap);
 
-  async function loadOrders() {
-    try {
-      /** @type {import('../services/orderService.js').ResultSiparisDto[]} */
-      const orders = await getAllOrders();
+  let destroyed = false;
 
-      // Update count badge
-      if (badge) badge.textContent = `${orders.length} Sipariş`;
+  function buildOrdersContent() {
+    const wrap = document.createElement('div');
+    wrap.className = 'orders-profile-content';
 
-      // Swap loading spinner with real content
-      contentArea.innerHTML = '';
+    const pageHeader = document.createElement('div');
+    pageHeader.className = 'orders-header';
+    pageHeader.innerHTML = `
+      <h1 class="orders-header__title">
+        Siparişlerim
+        <span class="orders-header__badge" id="orders-count-badge">Yükleniyor...</span>
+      </h1>
+    `;
+    wrap.appendChild(pageHeader);
 
-      if (orders.length === 0) {
-        contentArea.appendChild(createEmptyState());
-        return;
-      }
+    const contentArea = document.createElement('div');
+    contentArea.id = 'orders-content';
+    contentArea.appendChild(createLoadingSpinner());
+    wrap.appendChild(contentArea);
 
-      const list = document.createElement('div');
-      list.className = 'orders-list';
-      orders.forEach((order) => list.appendChild(createOrderCard(order)));
-      contentArea.appendChild(list);
-
-    } catch (err) {
-      if (badge) badge.textContent = 'Hata';
-
-      contentArea.innerHTML = '';
-
-      // 401 is handled globally by apiClient (redirects to login)
-      // Show a user-friendly error for everything else
-      const message = err?.status === 401
-        ? 'Oturum süresi doldu. Lütfen tekrar giriş yapın.'
-        : (err?.message ?? 'Bağlantı hatası. Lütfen tekrar deneyin.');
-
-      contentArea.appendChild(createErrorState(message));
-      console.error('[OrderListPage] loadOrders failed:', err);
-    }
+    const badge = pageHeader.querySelector('#orders-count-badge');
+    return { wrap, contentArea, badge };
   }
 
-  loadOrders();
+  /** Renders the outcome of getAllOrders() into contentArea/badge — unchanged
+   *  from the page's pre-sidebar behavior: loading/empty/error states, order
+   *  count badge, order cards. `result` is `{ ok: true, orders }` or
+   *  `{ ok: false, error }` (apiClient rejects with a plain object, not an
+   *  Error instance, so the outcome is tagged explicitly instead of relying
+   *  on `instanceof Error`), so a failed orders fetch never fails the whole
+   *  page load. */
+  function renderOrders(contentArea, badge, result) {
+    if (destroyed) return;
+
+    if (!result.ok) {
+      const error = result.error;
+      if (badge) badge.textContent = 'Hata';
+      contentArea.innerHTML = '';
+      // 401 is handled globally by apiClient (redirects to login)
+      const message = error?.status === 401
+        ? 'Oturum süresi doldu. Lütfen tekrar giriş yapın.'
+        : (error?.message ?? 'Bağlantı hatası. Lütfen tekrar deneyin.');
+      contentArea.appendChild(createErrorState(message));
+      console.error('[OrderListPage] loadOrders failed:', error);
+      return;
+    }
+
+    const orders = result.orders;
+    if (badge) badge.textContent = `${orders.length} Sipariş`;
+    contentArea.innerHTML = '';
+
+    if (orders.length === 0) {
+      contentArea.appendChild(createEmptyState());
+      return;
+    }
+
+    const list = document.createElement('div');
+    list.className = 'orders-list';
+    orders.forEach((order) => list.appendChild(createOrderCard(order)));
+    contentArea.appendChild(list);
+  }
+
+  // ── Sidebar (left column) + orders content (right column) ──────────────
+  // The sidebar needs real profile fields (name/email/initials), so the
+  // layout only mounts once getProfile() resolves — no broken/empty sidebar
+  // is ever shown. getAllOrders() is still fired at the same time as
+  // getProfile() (true concurrency, not a profile -> orders waterfall), but
+  // its result/error is handled independently: an orders failure only
+  // affects the orders content area, never the sidebar/profile state.
+  async function loadData() {
+    contentWrap.innerHTML = '';
+    contentWrap.appendChild(createLoadingState({ message: 'Profil bilgileriniz yükleniyor...' }));
+
+    const ordersPromise = getAllOrders()
+      .then((orders) => ({ ok: true, orders }))
+      .catch((error) => ({ ok: false, error }));
+    let profile;
+    try {
+      profile = await getProfile();
+    } catch (err) {
+      if (destroyed) return;
+      console.error('[OrderListPage] getProfile failed:', err);
+      contentWrap.innerHTML = '';
+      contentWrap.appendChild(
+        createStateViewError({
+          title: 'Profil bilgileri yüklenemedi',
+          message: err?.message || 'Bir ağ hatası oluştu. Lütfen bağlantınızı kontrol edip tekrar deneyin.',
+          retryLabel: 'Tekrar Dene',
+          onRetry: () => loadData(),
+        })
+      );
+      return;
+    }
+    if (destroyed) return;
+
+    const layout = document.createElement('div');
+    layout.className = 'profile-layout';
+
+    const sidebar = createProfileSidebar({
+      user: profile,
+      activeItem: 'orders',
+      // The sidebar's "Hesabım" link is an in-page "#hesabim" anchor on
+      // ProfilePage; here there is no such section, so it's a real navigation.
+      onNavigateSection: (id) => { if (id === 'account') navigate('/profil'); },
+    });
+    layout.appendChild(sidebar);
+
+    const { wrap: ordersWrap, contentArea, badge } = buildOrdersContent();
+    layout.appendChild(ordersWrap);
+
+    contentWrap.innerHTML = '';
+    contentWrap.appendChild(layout);
+
+    const ordersResult = await ordersPromise;
+    renderOrders(contentArea, badge, ordersResult);
+  }
+
+  loadData();
 
   return {
     element,
-    destroy: () => {},
+    destroy: () => { destroyed = true; },
   };
 }

@@ -14,7 +14,8 @@ public sealed record UpdateAddressCommand(
     int Sehir,
     int Ilce,
     int Mahalle,
-    int PostaKodu
+    int PostaKodu,
+    string? Telefon = null
 ) : IRequest<AddressDto>;
 
 public sealed class UpdateAddressCommandValidator : AbstractValidator<UpdateAddressCommand>
@@ -35,6 +36,10 @@ public sealed class UpdateAddressCommandValidator : AbstractValidator<UpdateAddr
 
         RuleFor(x => x.Mahalle)
             .GreaterThan(0).WithMessage("Geçerli bir mahalle seçiniz.");
+
+        RuleFor(x => x.Telefon)
+            .NotEmpty().WithMessage("Telefon numarası zorunludur.")
+            .Matches(@"^\+905\d{9}$").WithMessage("Telefon numarası +905XXXXXXXXX biçiminde olmalıdır.");
     }
 }
 
@@ -57,6 +62,7 @@ public sealed class UpdateAddressCommandHandler(
             mahalle: request.Mahalle,
             postaKodu: request.PostaKodu,
             adresBilgisi: request.AdresBilgisi?.Trim(),
+            telefon: request.Telefon?.Trim(),
             guncelleyenKullaniciId: customer.KullaniciId
         );
 
@@ -66,6 +72,7 @@ public sealed class UpdateAddressCommandHandler(
             address.Id,
             address.MusteriId,
             address.AdresBilgisi,
+            address.Telefon,
             address.Ulke,
             address.Sehir,
             address.Ilce,

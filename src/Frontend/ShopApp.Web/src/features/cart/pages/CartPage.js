@@ -22,6 +22,16 @@ import { createCartItemRow } from '../components/CartItem.js';
 import { createCartSummary } from '../components/CartSummary.js';
 import { createLoadingState, createErrorState } from '../../../shared/components/StateView/StateView.js';
 import { getOrCreateActiveCart, getCartItems, updateCartItem, removeCartItem } from '../services/cartService.js';
+// TEMPORARY PAYMENT BYPASS — see handleTemporaryCheckout() below. createOrder()
+// itself is the real, permanent order-creation service call and is not going
+// away; only *how/when* it gets invoked from the cart changes once a Payment
+// Microservice exists.
+import { createOrder } from '../../orders/services/orderService.js';
+// Address requirement is a permanent checkout rule (independent of payment):
+// a customer may add products to the basket without an address, but may not
+// proceed past "Ödeme Adımına Geç" without at least one saved one.
+import { getAddresses } from '../../profile/services/profileService.js';
+import { openConfirmModal } from '../../../shared/components/ConfirmModal/ConfirmModal.js';
 
 const FREE_SHIPPING_THRESHOLD = 500;
 
@@ -122,7 +132,7 @@ export default function CartPage({ items } = {}) {
   // ── Right Column: Order Summary
   const summary = createCartSummary({
     freeShippingThreshold: FREE_SHIPPING_THRESHOLD,
-    onCheckout: () => navigate('/siparis-onay'),
+    onCheckout: () => handleCheckout(),
   });
   layout.appendChild(summary.element);
 
@@ -217,6 +227,94 @@ export default function CartPage({ items } = {}) {
       itemsContainer.appendChild(row.element);
     });
   }
+
+  let checkoutInProgress = false;
+
+  function showAddressRequiredModal() {
+    openConfirmModal({
+      title: 'Teslimat Adresi Gerekli',
+      message: 'Sipariş oluşturabilmek için önce bir teslimat adresi eklemelisiniz. Profil sayfanızdan adres bilgilerinizi ekledikten sonra alışverişinize devam edebilirsiniz.',
+      confirmLabel: 'Adres Ekle',
+      cancelLabel: 'İptal',
+      confirmVariant: 'primary',
+      onConfirm: () => navigate('/profil#adreslerim'),
+    });
+  }
+
+  /**
+   * Checkout entry point. Permanent business rule, independent of payment:
+   * a customer may add products to the basket without an address, but may
+   * not proceed past this point without at least one saved delivery address
+   * — checked here, once, right as checkout starts. Only once that passes
+   * does the (temporary) order-creation step below run.
+   */
+  async function handleCheckout() {
+    // Guards against a double-click (or double Enter) firing two orders —
+    // the button is also disabled below, this is the source-of-truth guard.
+    if (checkoutInProgress || cartItems.length === 0) return;
+
+    checkoutInProgress = true;
+    summary.setCheckoutProcessing(true);
+
+    try {
+      const addresses = await getAddresses();
+      if (!addresses || addresses.length === 0) {
+        checkoutInProgress = false;
+        summary.setCheckoutProcessing(false);
+        showAddressRequiredModal();
+        return;
+      }
+
+      await handleTemporaryCheckout();
+    } catch (error) {
+      checkoutInProgress = false;
+      summary.setCheckoutProcessing(false);
+      console.error('[CartPage] checkout failed:', error);
+      alert(error?.message || 'Sipariş oluşturulamadı. Lütfen tekrar deneyin.');
+    }
+  }
+
+  // ============================================================
+  // TEMPORARY PAYMENT BYPASS - START
+  // TODO(PaymentMicroservice): Remove/replace this block when Payment
+  // Microservice integration is implemented.
+  //
+  // Current temporary behavior:
+  //   address verified -> create Siparis (createOrder()) -> confirmation
+  // NO REAL PAYMENT IS PROCESSED HERE. This only exists so checkout is
+  // usable end-to-end (cart -> order -> "Siparişlerim") before a Payment
+  // Microservice exists. createOrder() itself (orderService.js) and the
+  // backend CreateSiparisCommand are permanent — they stay after payment
+  // is added; only this trigger function is temporary. The address check
+  // in handleCheckout() above is also permanent and stays as-is.
+  //
+  // Replacing this later means swapping the body of this one function
+  // (conceptually renaming it to handlePaymentCheckout()) for a real
+  // payment step — CartSummary, handleCheckout()'s address guard,
+  // OrderConfirmationPage, OrderListPage and orderService.js do not need
+  // to change. Errors still surface through handleCheckout()'s try/catch.
+  // ============================================================
+  async function handleTemporaryCheckout() {
+    // FUTURE PAYMENT MICROSERVICE FLOW:
+    //
+    // const paymentResult = await paymentService.startPayment({
+    //   cartId,
+    //   amount: getSubtotal() + getShippingCost(),
+    // });
+    // if (!paymentResult.success) {
+    //   throw new Error(paymentResult.message);
+    // }
+    // const order = await createOrder(paymentResult.paymentReference);
+
+    const order = await createOrder();
+    // Navigate with the real created-order id so OrderConfirmationPage can
+    // load the persisted Siparis/SiparisUrunleri — never fabricated data,
+    // and reload-safe since the id lives in the URL, not in memory/state.
+    navigate(`/siparis-onay?orderId=${order.id}`);
+  }
+  // ============================================================
+  // TEMPORARY PAYMENT BYPASS - END
+  // ============================================================
 
   // ── Load real cart data from the backend ────────────────────────────────
 

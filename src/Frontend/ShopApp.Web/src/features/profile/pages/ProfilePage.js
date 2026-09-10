@@ -16,6 +16,9 @@ import { createLoadingState, createErrorState } from '../../../shared/components
 import {
   getProfile,
   updateProfile,
+  getAddressProvinces,
+  getAddressDistricts,
+  getAddressNeighborhoods,
   getAddresses,
   createAddress,
   updateAddress,
@@ -107,6 +110,7 @@ export default function ProfilePage(_options = {}) {
     // 1. Sol Kolon: Kenar Çubuğu
     const sidebar = createProfileSidebar({
       user: profileData,
+      activeItem: 'account',
       onNavigateSection: (id) => scrollToSection(id),
     });
     layout.appendChild(sidebar);
@@ -157,6 +161,9 @@ export default function ProfilePage(_options = {}) {
         closeModal();
         activeModal = createAddressModal({
           address: null,
+          getProvinces: getAddressProvinces,
+          getDistricts: getAddressDistricts,
+          getNeighborhoods: getAddressNeighborhoods,
           onSave: async (addressPayload) => {
             const created = await createAddress(addressPayload);
             addressesData = [created, ...addressesData];
@@ -170,6 +177,9 @@ export default function ProfilePage(_options = {}) {
         closeModal();
         activeModal = createAddressModal({
           address,
+          getProvinces: getAddressProvinces,
+          getDistricts: getAddressDistricts,
+          getNeighborhoods: getAddressNeighborhoods,
           onSave: async (addressPayload) => {
             const updated = await updateAddress(address.id, addressPayload);
             addressesData = addressesData.map((a) => (a.id === address.id ? updated : a));
@@ -222,6 +232,12 @@ export default function ProfilePage(_options = {}) {
       addressesData = addressesRes || [];
 
       renderDashboard();
+
+      // Deep-link support (e.g. /profil#adreslerim from the cart's "Adres
+      // Ekle" prompt) — scroll straight to the requested section once the
+      // dashboard it belongs to has actually rendered.
+      const targetSectionId = window.location.hash?.slice(1);
+      if (targetSectionId) scrollToSection(targetSectionId);
     } catch (err) {
       console.error('[ProfilePage] Veri yükleme hatası:', err);
       contentArea.innerHTML = '';

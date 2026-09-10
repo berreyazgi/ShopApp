@@ -703,6 +703,7 @@ test('createAdminProductFormModal validates inputs and emits onSave in create & 
 
   // Fill valid create data
   const nameInp = createModal.element.querySelector('#prod-modal-name');
+  const skuInp = createModal.element.querySelector('#prod-modal-sku');
   const priceInp = createModal.element.querySelector('#prod-modal-price');
   const stockInp = createModal.element.querySelector('#prod-modal-stock');
   const catSelect = createModal.element.querySelector('#prod-modal-cat');
@@ -712,18 +713,28 @@ test('createAdminProductFormModal validates inputs and emits onSave in create & 
   stockInp.value = '25';
   catSelect.value = 'Giyim';
 
+  // SKU is required (UrunTur.StokKod is a non-empty backend field) — submit
+  // must still fail without it.
+  submitBtn.dispatchEvent({ type: 'click' });
+  assert.equal(savedData, null, 'Must not submit with empty SKU');
+
+  skuInp.value = 'TSH-NEW-01';
   submitBtn.dispatchEvent({ type: 'click' });
   assert.ok(savedData, 'Must submit valid create data');
   assert.equal(savedData.name, 'Yeni Tişört');
   assert.equal(savedData.price, 299.9);
   assert.equal(savedData.stock, 25);
+  assert.equal(savedData.sku, 'TSH-NEW-01');
   assert.equal(savedData.category, 'Giyim');
 
   createModal.close();
 
-  // 2. Edit Mode: Pre-populates existing product
+  // 2. Edit Mode: Pre-populates existing product from full detail (as
+  // productsService.getAdminProductById()/getProductById() would supply it —
+  // urunTurId/sku/stock come from the product's UrunTur variant).
   const existingProduct = {
     id: 'p-edit',
+    urunTurId: 'tur-99',
     name: 'Deri Ceket',
     sku: 'CKT-99',
     category: 'Giyim',
@@ -740,17 +751,66 @@ test('createAdminProductFormModal validates inputs and emits onSave in create & 
   });
 
   const editNameInp = editModal.element.querySelector('#prod-modal-name');
+  const editSkuInp = editModal.element.querySelector('#prod-modal-sku');
+  const editStockInp = editModal.element.querySelector('#prod-modal-stock');
   assert.equal(editNameInp.value, 'Deri Ceket');
+  assert.equal(editSkuInp.value, 'CKT-99', 'Existing SKU must be pre-populated, not blank');
+  assert.equal(editStockInp.value, 5, 'Existing stock must be pre-populated, not blank');
 
+  // Change only the price — SKU/stock must survive unchanged.
   const editSubmitBtn = editModal.element.querySelectorAll('.admin-modal__footer button')[1];
-  editNameInp.value = 'Deri Ceket Güncel';
+  const editPriceInp = editModal.element.querySelector('#prod-modal-price');
+  editPriceInp.value = '1600';
   editSubmitBtn.dispatchEvent({ type: 'click' });
 
   assert.ok(editSaved, 'Must emit updated data');
-  assert.equal(editSaved.name, 'Deri Ceket Güncel');
   assert.equal(editSaved.id, 'p-edit');
+  assert.equal(editSaved.price, 1600);
+  assert.equal(editSaved.sku, 'CKT-99', 'Changing price must preserve existing SKU');
+  assert.equal(editSaved.stock, 5, 'Changing price must preserve existing stock');
+  assert.equal(editSaved.urunTurId, 'tur-99', 'Must keep editing the same UrunTur, not create a new one');
 
   editModal.close();
+});
+
+test('createAdminProductFormModal preserves isActive:false (passive) instead of defaulting to active', () => {
+  const passiveProduct = {
+    id: 'p-passive',
+    urunTurId: 'tur-passive',
+    name: 'Pasif Ürün',
+    sku: 'PSV-01',
+    stock: 3,
+    price: 100,
+    isActive: false,
+  };
+
+  let saved = null;
+  const modal = createAdminProductFormModal({
+    product: passiveProduct,
+    categories: [],
+    onSave: (data) => { saved = data; },
+  });
+
+  const activeCheckbox = modal.element.querySelector('#prod-modal-active');
+  assert.equal(activeCheckbox.checked, false, 'Checkbox must load unchecked for a passive product');
+
+  // Category isn't required by this modal's own validation once already set
+  // via the constructor path used above; force a category through the input
+  // for a clean submit.
+  const catSelect = modal.element.querySelector('#prod-modal-cat');
+  catSelect.value = '';
+  const opt = document.createElement('option');
+  opt.value = 'cat-x';
+  catSelect.appendChild(opt);
+  catSelect.value = 'cat-x';
+
+  const submitBtn = modal.element.querySelectorAll('.admin-modal__footer button')[1];
+  submitBtn.dispatchEvent({ type: 'click' });
+
+  assert.ok(saved, 'Must emit saved data');
+  assert.equal(saved.isActive, false, 'Saving without touching the checkbox must not flip false to true');
+
+  modal.close();
 });
 
 // ── 14. AdminProductDetailModal Read-Only Inspection Tests ──

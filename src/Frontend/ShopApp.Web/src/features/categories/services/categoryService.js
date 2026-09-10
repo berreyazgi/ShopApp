@@ -91,7 +91,11 @@ function mapFromBackend(dto) {
     name,
     ad: name,
     slug: slugify(name),
-    href: `/urunler/${slugify(name)}`,
+    // Category filtering is a query param on the product list route, keyed
+    // by the real Kategori.Id — never a name/slug. /urunler/:productId is a
+    // *product detail* route on the same router, so a slug/name here would
+    // be misread as a product id (e.g. /urunler/kadin -> productId="kadin").
+    href: `/urunler?kategoriId=${encodeURIComponent(dto.id)}`,
     description: dto.detay ?? '',
     aciklama: dto.detay ?? '',
     parentId,

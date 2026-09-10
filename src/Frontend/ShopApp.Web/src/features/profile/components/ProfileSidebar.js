@@ -22,11 +22,12 @@ export function getInitials(firstName = '', lastName = '') {
 /**
  * @param {{
  *   user: import('../services/profileService.js').UserProfileDto,
+ *   activeItem?: 'account' | 'orders' | 'contact',
  *   onNavigateSection?: (sectionId: string) => void,
  * }} options
  * @returns {HTMLElement}
  */
-export function createProfileSidebar({ user, onNavigateSection }) {
+export function createProfileSidebar({ user, activeItem = 'account', onNavigateSection }) {
   const aside = document.createElement('aside');
   aside.className = 'profile-sidebar';
   aside.setAttribute('aria-label', 'Profil menüsü');
@@ -75,7 +76,7 @@ export function createProfileSidebar({ user, onNavigateSection }) {
   nav.className = 'profile-sidebar__nav';
 
   const items = [
-    { id: 'account', label: 'Hesabım', icon: 'profile', active: true, href: '#hesabim' },
+    { id: 'account', label: 'Hesabım', icon: 'profile', href: '#hesabim' },
     { id: 'orders', label: 'Siparişlerim', icon: 'cart', href: '/siparisler' },
     { id: 'contact', label: 'Hakkımızda', icon: 'mail', href: '/hakkimizda' },
   ];
@@ -89,7 +90,7 @@ export function createProfileSidebar({ user, onNavigateSection }) {
     li.className = 'profile-sidebar__item';
 
     const a = document.createElement('a');
-    a.className = `profile-sidebar__link${item.active ? ' profile-sidebar__link--active' : ''}`;
+    a.className = `profile-sidebar__link${item.id === activeItem ? ' profile-sidebar__link--active' : ''}`;
     a.href = item.href;
 
     const iconSpan = document.createElement('span');

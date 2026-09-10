@@ -38,7 +38,7 @@ import { createAdminProductDetailModal } from '../components/AdminProductDetailM
 import { createLoadingState, createEmptyState, createErrorState } from '../../../shared/components/StateView/StateView.js';
 import { createIcon } from '../../../shared/components/Icon/Icon.js';
 import { getCategoriesSync } from '../../categories/services/categoryService.js';
-import { getProducts, getCategories, createProduct, updateProduct, deleteProduct } from '../../products/services/productsService.js';
+import { getAdminProducts, getAdminProductById, getCategories, createProduct, updateProduct, deleteProduct } from '../../products/services/productsService.js';
 
 /**
  * @param {{
@@ -190,18 +190,41 @@ export default function AdminProductsPage(props = {}) {
     document.body.appendChild(activeModalInstance.element);
   }
 
-  function openEditModal(product) {
-    closeActiveModal();
-    if (typeof props.onEditProduct === 'function') {
-      props.onEditProduct(product);
+  // Product cards/rows only carry the list DTO (no SKU/stock — those live on
+  // UrunTur, not on the list-level Urun projection). Opening the edit modal
+  // with that DTO directly is what made SKU/stock show up blank, so fetch the
+  // full detail (GET /api/admin/urun/{id}, active or passive) first and open
+  // the modal only once it has arrived.
+  let editFetchInFlight = false;
+  async function openEditModal(product) {
+    if (editFetchInFlight) return;
+    const pid = product?.id ?? product?.urunId;
+    if (!pid) return;
+
+    editFetchInFlight = true;
+    try {
+      const detail = await getAdminProductById(pid);
+      if (!detail) {
+        alert('Ürün bulunamadı.');
+        return;
+      }
+
+      closeActiveModal();
+      if (typeof props.onEditProduct === 'function') {
+        props.onEditProduct(detail);
+      }
+      activeModalInstance = createAdminProductFormModal({
+        product: detail,
+        categories,
+        onSave: handleSaveProduct,
+        onClose: () => { activeModalInstance = null; },
+      });
+      document.body.appendChild(activeModalInstance.element);
+    } catch (err) {
+      alert(err?.message || 'Ürün bilgileri yüklenemedi.');
+    } finally {
+      editFetchInFlight = false;
     }
-    activeModalInstance = createAdminProductFormModal({
-      product,
-      categories,
-      onSave: handleSaveProduct,
-      onClose: () => { activeModalInstance = null; },
-    });
-    document.body.appendChild(activeModalInstance.element);
   }
 
   function openDetailModal(product) {
@@ -648,7 +671,10 @@ export default function AdminProductsPage(props = {}) {
     hasError = false;
     renderPage();
     try {
-      const [fetchedProducts, fetchedCategories] = await Promise.all([getProducts(), getCategories()]);
+      // GET /api/admin/urun (Admin only) — returns active AND passive products,
+      // unlike the public GET /api/urun used by the customer catalogue, so a
+      // product made passive stays visible/manageable here.
+      const [fetchedProducts, fetchedCategories] = await Promise.all([getAdminProducts(), getCategories()]);
       if (destroyed) return;
       categories = fetchedCategories;
       products = enrichWithCategoryNames(fetchedProducts, categories);

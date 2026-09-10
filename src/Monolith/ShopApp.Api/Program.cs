@@ -1,6 +1,7 @@
 using Microsoft.OpenApi.Models;
 using ShopApp.Application;
 using ShopApp.Infrastructure;
+using src.Monolith.ShopApp.Api.Services.Address;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<ITurkeyAddressService, TurkeyAddressService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {

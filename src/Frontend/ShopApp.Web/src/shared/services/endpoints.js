@@ -67,10 +67,16 @@ export const endpoints = {
     list:           (kategoriId) => kategoriId ? `/api/urun?kategoriId=${kategoriId}` : '/api/urun',
     byId:           (id) => `/api/urun/${id}`,
   },
+  // Admin-only reads (AdminUrunController GET) return active AND passive
+  // products/details — the public `urun` endpoints above hide passive ones.
   adminUrun: {
+    list:           (kategoriId) => kategoriId ? `/api/admin/urun?kategoriId=${kategoriId}` : '/api/admin/urun',
+    byId:           (id) => `/api/admin/urun/${id}`,
     create:         () => '/api/admin/urun',
     update:         (id) => `/api/admin/urun/${id}`,
     delete:         (id) => `/api/admin/urun/${id}`,
+    createTur:      (urunId) => `/api/admin/urun/${urunId}/tur`,
+    updateTur:      (urunId, turId) => `/api/admin/urun/${urunId}/tur/${turId}`,
   },
 
   // ── Admin Müşteri & Sipariş ──────────────────────────────────────────────
@@ -133,5 +139,8 @@ export const endpoints = {
     create:         () => '/api/adres',
     update:         (id) => `/api/adres/${id}`,
     delete:         (id) => `/api/adres/${id}`,
+    provinces:      () => '/api/address/provinces',
+    districts:      (provinceId) => `/api/address/districts/${provinceId}`,
+    neighborhoods:  (provinceId, districtId) => `/api/address/neighborhoods/${districtId}?provinceId=${provinceId}`,
   },
 };
