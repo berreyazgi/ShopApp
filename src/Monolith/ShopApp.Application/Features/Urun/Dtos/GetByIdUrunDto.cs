@@ -12,5 +12,19 @@ public record GetByIdUrunDto(
     string? GorselUrl,
     bool AktifMi,
     List<ResultUrunGorselDto> Gorseller,
-    List<GetByIdUrunTurDto> UrunTurleri
-);
+    List<GetByIdUrunTurDto> UrunTurleri,
+    List<string>? ImageUrls = null
+)
+{
+    public Guid CategoryId => KategoriId;
+    public string CategoryName => KategoriAd;
+    public string Name => UrunAd;
+    public string? Description => Detay;
+    public decimal Price => Fiyat;
+    public string Brand => MarkaAd;
+    public decimal PreviousPrice => GecmisFiyat;
+    public string? ImageUrl => GorselUrl;
+    public string? CoverImageUrl => GorselUrl;
+    public bool IsActive => AktifMi;
+    public List<ResultUrunGorselDto> Images => Gorseller;
+}

@@ -22,7 +22,6 @@ import { getAdminCustomers, updateCustomerStatus } from '../../customers/service
  * @param {{
  *   customers?: Array,
  *   pageSize?: number,
- *   onViewCustomer?: (customer: any) => void,
  * }} [props]
  * @returns {{ element: HTMLElement, destroy: () => void }}
  */
@@ -202,17 +201,6 @@ export default function AdminCustomersPage(props = {}) {
         const actionsWrap = document.createElement('div');
         actionsWrap.className = 'admin-table-actions';
         actionsWrap.style.justifyContent = 'flex-end';
-
-        const viewBtn = document.createElement('button');
-        viewBtn.type = 'button';
-        viewBtn.className = 'admin-table-btn';
-        viewBtn.setAttribute('aria-label', `${name} detayını görüntüle`);
-        viewBtn.title = 'İncele';
-        viewBtn.appendChild(createIcon('eye', { size: 14 }));
-        viewBtn.addEventListener('click', () => {
-          if (typeof props.onViewCustomer === 'function') props.onViewCustomer(c);
-        });
-        actionsWrap.appendChild(viewBtn);
 
         const toggleBtn = document.createElement('button');
         toggleBtn.type = 'button';

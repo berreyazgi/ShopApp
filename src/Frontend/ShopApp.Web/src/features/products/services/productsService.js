@@ -47,6 +47,12 @@ import { getCategories as getCategoriesFromService, getCategoryById as getCatego
 
 /** Maps a backend ResultUrunDto to the frontend product shape. */
 function mapFromBackend(dto) {
+  const images = (dto.gorseller ?? []).map((g) => g.gorselUrl || g.imageUrl).filter(Boolean);
+  if (images.length === 0 && Array.isArray(dto.imageUrls)) {
+    images.push(...dto.imageUrls.filter(Boolean));
+  }
+  if (images.length === 0 && dto.gorselUrl) images.push(dto.gorselUrl);
+
   return {
     id: dto.id,
     urunId: dto.id,
@@ -62,10 +68,17 @@ function mapFromBackend(dto) {
     gecmisFiyat: dto.gecmisFiyat,
     brand: dto.markaAd,
     marka: dto.markaAd,
-    imageUrl: dto.gorselUrl ?? null,
-    gorselUrl: dto.gorselUrl ?? null,
+    imageUrl: dto.gorselUrl ?? (images[0] ?? null),
+    gorselUrl: dto.gorselUrl ?? (images[0] ?? null),
+    images,
+    imageUrls: images,
     isActive: dto.aktifMi ?? true,
     aktiflik: dto.aktifMi ?? true,
+    // Only the admin list projection (AdminUrunListDto) carries ToplamStok —
+    // the public ResultUrunDto never has it. Left undefined (never defaulted
+    // to 0) here so the stock badge can tell "missing" apart from "zero".
+    stock: dto.toplamStok,
+    stok: dto.toplamStok,
   };
 }
 
@@ -106,7 +119,10 @@ function mapVariant(dto) {
  * mapping.
  */
 function mapDetailFromBackend(dto) {
-  const images = (dto.gorseller ?? []).map((g) => g.gorselUrl).filter(Boolean);
+  const images = (dto.gorseller ?? []).map((g) => g.gorselUrl || g.imageUrl).filter(Boolean);
+  if (images.length === 0 && Array.isArray(dto.imageUrls)) {
+    images.push(...dto.imageUrls.filter(Boolean));
+  }
   if (images.length === 0 && dto.gorselUrl) images.push(dto.gorselUrl);
 
   const variants = (dto.urunTurleri ?? []).map(mapVariant);
@@ -307,6 +323,9 @@ async function persistVariant(urunId, payload) {
  * @returns {Promise<any>}
  */
 export async function createProduct(payload) {
+  const imageUrls = payload.imageUrls || (Array.isArray(payload.images) ? payload.images.map(img => typeof img === 'string' ? img : (img.url || img.imageUrl || img.gorselUrl)).filter(Boolean) : null);
+  const mainImage = payload.imageUrl ?? payload.gorselUrl ?? (imageUrls && imageUrls.length > 0 ? imageUrls[0] : null);
+
   const body = {
     kategoriId: payload.categoryId ?? payload.kategoriId,
     urunAd: payload.name ?? payload.ad,
@@ -314,14 +333,14 @@ export async function createProduct(payload) {
     fiyat: Number(payload.price ?? payload.fiyat ?? 0),
     markaAd: payload.brand ?? payload.marka,
     gecmisFiyat: Number(payload.previousPrice ?? payload.gecmisFiyat ?? 0),
-    gorselUrl: payload.imageUrl ?? payload.gorselUrl ?? null,
+    gorselUrl: mainImage,
+    ...(imageUrls && imageUrls.length > 0 ? { imageUrls } : {}),
     aktifMi: payload.isActive !== undefined ? payload.isActive : (payload.aktiflik ?? true),
   };
 
   const { id } = await apiClient.post(endpoints.adminUrun.create(), body);
   const variant = await persistVariant(id, payload);
-  const mapped = mapFromBackend({ id, ...body });
-  return variant ? { ...mapped, urunTurId: variant.id, sku: variant.stokKod, stock: variant.stokAded } : mapped;
+  return fetchAuthoritativeProduct(id, variant);
 }
 
 /**
@@ -334,6 +353,9 @@ export async function createProduct(payload) {
  * @returns {Promise<any>}
  */
 export async function updateProduct(id, payload) {
+  const imageUrls = payload.imageUrls || (Array.isArray(payload.images) ? payload.images.map(img => typeof img === 'string' ? img : (img.url || img.imageUrl || img.gorselUrl)).filter(Boolean) : null);
+  const mainImage = payload.imageUrl ?? payload.gorselUrl ?? (imageUrls && imageUrls.length > 0 ? imageUrls[0] : null);
+
   const body = {
     id,
     kategoriId: payload.categoryId ?? payload.kategoriId,
@@ -342,14 +364,31 @@ export async function updateProduct(id, payload) {
     fiyat: Number(payload.price ?? payload.fiyat ?? 0),
     markaAd: payload.brand ?? payload.marka ?? 'Genel',
     gecmisFiyat: Number(payload.previousPrice ?? payload.gecmisFiyat ?? 0),
-    gorselUrl: payload.imageUrl ?? payload.gorselUrl ?? null,
+    gorselUrl: mainImage,
+    ...(imageUrls ? { imageUrls } : {}),
     aktifMi: payload.isActive !== undefined ? payload.isActive : (payload.aktiflik ?? true),
   };
 
   await apiClient.put(endpoints.adminUrun.update(id), body);
   const variant = await persistVariant(id, payload);
-  const mapped = mapFromBackend({ ...body });
-  return variant ? { ...mapped, urunTurId: variant.id, sku: variant.stokKod, stock: variant.stokAded } : mapped;
+  return fetchAuthoritativeProduct(id, variant);
+}
+
+/**
+ * Re-fetches the just-saved product from GET /api/admin/urun (the same list
+ * endpoint AdminProductsPage reloads from) so the returned record — including
+ * ToplamStok — is the authoritative persisted state rather than a value
+ * carried over from the submitted form payload, which can go stale (e.g. if
+ * the backend recalculates/rejects something).
+ * @param {string} id
+ * @param {{ id: string, stokKod: string, stokAded: number } | null} variant
+ * @returns {Promise<any>}
+ */
+async function fetchAuthoritativeProduct(id, variant) {
+  const products = await getAdminProducts();
+  const found = products.find((p) => String(p.id) === String(id));
+  if (!found) return null;
+  return variant ? { ...found, urunTurId: variant.id, sku: variant.stokKod } : found;
 }
 
 /**

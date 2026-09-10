@@ -10,4 +10,33 @@ public sealed record CreateUrunCommand(
     string MarkaAd,
     decimal GecmisFiyat,
     string? GorselUrl,
-    bool AktifMi) : IRequest<Guid>;
+    bool AktifMi,
+    List<string>? ImageUrls = null) : IRequest<Guid>
+{
+    public Guid CategoryId => KategoriId;
+    public string Name => UrunAd;
+    public string? Description => Detay;
+    public decimal Price => Fiyat;
+    public string Brand => MarkaAd;
+    public decimal PreviousPrice => GecmisFiyat;
+    public string? CoverImageUrl => GorselUrl;
+    public bool IsActive => AktifMi;
+}
+
+/// <summary>
+/// English alias command for CreateUrunCommand.
+/// </summary>
+public sealed record CreateProductCommand(
+    Guid CategoryId,
+    string Name,
+    string? Description,
+    decimal Price,
+    string Brand,
+    decimal PreviousPrice,
+    string? CoverImageUrl,
+    bool IsActive,
+    List<string>? ImageUrls = null) : IRequest<Guid>
+{
+    public CreateUrunCommand ToCommand() =>
+        new(CategoryId, Name, Description, Price, Brand, PreviousPrice, CoverImageUrl, IsActive, ImageUrls);
+}

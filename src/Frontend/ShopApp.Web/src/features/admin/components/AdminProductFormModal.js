@@ -28,7 +28,29 @@ export function createAdminProductFormModal({
   const modalTitle = isEdit ? 'Ürünü Düzenle' : 'Yeni Ürün Ekle';
   const saveLabel = isEdit ? 'Güncelle' : 'Kaydet';
 
-  let previewUrl = product?.imageUrl || product?.gorselUrl || (Array.isArray(product?.images) ? product.images[0] : null) || null;
+  let imageList = [];
+  if (Array.isArray(product?.images) && product.images.length > 0) {
+    imageList = product.images.map((img, i) => {
+      const url = typeof img === 'string' ? img : (img.imageUrl || img.gorselUrl || img.url || '');
+      const isMain = typeof img === 'object' ? !!(img.isMain || img.anaGorselMi) : i === 0;
+      return { url, isMain };
+    });
+  } else if (Array.isArray(product?.imageUrls) && product.imageUrls.length > 0) {
+    imageList = product.imageUrls.map((url, i) => ({ url, isMain: i === 0 }));
+  } else {
+    const singleUrl = product?.imageUrl || product?.gorselUrl || null;
+    if (singleUrl) {
+      imageList = [{ url: singleUrl, isMain: true }];
+    }
+  }
+
+  if (imageList.length > 0 && !imageList.some((img) => img.isMain)) {
+    imageList[0].isMain = true;
+  }
+  if (imageList.length === 0) {
+    imageList = [{ url: '', isMain: true }];
+  }
+
   let selectedFile = null;
 
   const overlay = document.createElement('div');
@@ -223,62 +245,142 @@ export function createAdminProductFormModal({
 
   formColumns.appendChild(leftCol);
 
-  // ── RIGHT COLUMN: Image Picker & Preview ──
+  // ── RIGHT COLUMN: Multi-Image Picker & Manager ──
   const rightCol = document.createElement('div');
   rightCol.className = 'admin-product-modal__col-side';
 
   const imgLabel = document.createElement('label');
   imgLabel.className = 'admin-form-label';
-  imgLabel.textContent = 'Ürün Görseli';
+  imgLabel.textContent = 'Ürün Görselleri';
   rightCol.appendChild(imgLabel);
 
+  const imagesContainer = document.createElement('div');
+  imagesContainer.className = 'admin-product-images-container';
+
+  const imagesListEl = document.createElement('div');
+  imagesListEl.className = 'admin-product-images-list';
+  imagesContainer.appendChild(imagesListEl);
+
+  function renderImageList() {
+    imagesListEl.innerHTML = '';
+    imageList.forEach((item, index) => {
+      const row = document.createElement('div');
+      row.className = 'admin-product-image-row';
+
+      const thumb = document.createElement('div');
+      thumb.className = 'admin-product-image-thumb';
+      if (item.url) {
+        const img = document.createElement('img');
+        img.src = item.url;
+        img.alt = 'Görsel';
+        img.onerror = () => {
+          thumb.innerHTML = '';
+          thumb.appendChild(createIcon('image', { size: 18 }));
+        };
+        thumb.appendChild(img);
+      } else {
+        thumb.appendChild(createIcon('image', { size: 18 }));
+      }
+      row.appendChild(thumb);
+
+      const urlInput = document.createElement('input');
+      urlInput.type = 'text';
+      urlInput.className = 'admin-form-input admin-product-image-input';
+      urlInput.placeholder = 'Görsel URL veya dosya yükleyin';
+      urlInput.value = item.url || '';
+      urlInput.addEventListener('input', () => {
+        item.url = urlInput.value.trim();
+        thumb.innerHTML = '';
+        if (item.url) {
+          const img = document.createElement('img');
+          img.src = item.url;
+          img.alt = 'Görsel';
+          img.onerror = () => {
+            thumb.innerHTML = '';
+            thumb.appendChild(createIcon('image', { size: 18 }));
+          };
+          thumb.appendChild(img);
+        } else {
+          thumb.appendChild(createIcon('image', { size: 18 }));
+        }
+      });
+      row.appendChild(urlInput);
+
+      const mainBtn = document.createElement('button');
+      mainBtn.type = 'button';
+      mainBtn.className = `admin-img-main-btn ${item.isMain ? 'admin-img-main-btn--active' : ''}`;
+      mainBtn.textContent = item.isMain ? '★ Ana Görsel' : '☆ Ana Yap';
+      mainBtn.title = item.isMain ? 'Varsayılan kapak görseli' : 'Bu görseli ana görsel yap';
+      mainBtn.addEventListener('click', (e) => {
+        e?.preventDefault?.();
+        e?.stopPropagation?.();
+        imageList.forEach((img, idx) => {
+          img.isMain = idx === index;
+        });
+        renderImageList();
+      });
+      row.appendChild(mainBtn);
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'admin-img-delete-btn';
+      deleteBtn.title = 'Kaldır';
+      deleteBtn.setAttribute('aria-label', 'Görseli kaldır');
+      deleteBtn.appendChild(createIcon('close', { size: 14 }));
+      deleteBtn.addEventListener('click', (e) => {
+        e?.preventDefault?.();
+        e?.stopPropagation?.();
+        if (imageList.length > 1) {
+          const wasMain = item.isMain;
+          imageList.splice(index, 1);
+          if (wasMain && imageList.length > 0) {
+            imageList[0].isMain = true;
+          }
+        } else {
+          imageList[0] = { url: '', isMain: true };
+        }
+        renderImageList();
+      });
+      row.appendChild(deleteBtn);
+
+      imagesListEl.appendChild(row);
+    });
+  }
+
+  const addImageBtn = document.createElement('button');
+  addImageBtn.type = 'button';
+  addImageBtn.id = 'prod-modal-add-image';
+  addImageBtn.className = 'admin-btn-add-image';
+  addImageBtn.textContent = '+ Yeni Görsel Ekle';
+  addImageBtn.addEventListener('click', (e) => {
+    e?.preventDefault?.();
+    imageList.push({ url: '', isMain: imageList.length === 0 });
+    renderImageList();
+    const inputs = imagesListEl.querySelectorAll('.admin-product-image-input');
+    if (inputs.length > 0) {
+      inputs[inputs.length - 1].focus();
+    }
+  });
+  imagesContainer.appendChild(addImageBtn);
+  rightCol.appendChild(imagesContainer);
+
+  // Compact dropzone for local file upload
   const dropzone = document.createElement('div');
-  dropzone.className = 'admin-image-dropzone';
+  dropzone.className = 'admin-image-dropzone admin-image-dropzone--compact';
 
   const previewBox = document.createElement('div');
-  previewBox.className = 'admin-image-dropzone__preview';
+  previewBox.className = 'admin-image-dropzone__prompt';
+  previewBox.innerHTML = `
+    <span style="font-weight:var(--font-medium); font-size:var(--text-xs);">Bilgisayardan dosya seçmek için tıklayın</span>
+    <span style="font-size:10px; color:var(--color-secondary);">PNG, JPG, WEBP (Max 5MB)</span>
+  `;
+  dropzone.appendChild(previewBox);
 
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
   fileInput.accept = 'image/*';
   fileInput.id = 'prod-modal-file';
   fileInput.style.display = 'none';
-
-  function updateImagePreview() {
-    previewBox.innerHTML = '';
-    if (previewUrl) {
-      const img = document.createElement('img');
-      img.src = previewUrl;
-      img.alt = 'Görsel Önizleme';
-      img.className = 'admin-image-dropzone__img';
-      previewBox.appendChild(img);
-
-      const removeBtn = document.createElement('button');
-      removeBtn.type = 'button';
-      removeBtn.className = 'admin-image-dropzone__remove-btn';
-      removeBtn.title = 'Görseli Kaldır';
-      removeBtn.setAttribute('aria-label', 'Görseli kaldır');
-      removeBtn.appendChild(createIcon('close', { size: 14 }));
-      removeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        previewUrl = null;
-        selectedFile = null;
-        fileInput.value = '';
-        updateImagePreview();
-      });
-      previewBox.appendChild(removeBtn);
-    } else {
-      const icon = createIcon('image', { size: 36 });
-      const prompt = document.createElement('div');
-      prompt.className = 'admin-image-dropzone__prompt';
-      prompt.innerHTML = `
-        <span style="font-weight:var(--font-medium); font-size:var(--text-sm);">Görsel seçmek için tıklayın</span>
-        <span style="font-size:var(--text-xs); color:var(--color-secondary);">PNG, JPG, WEBP (Max 5MB)</span>
-      `;
-      previewBox.appendChild(icon);
-      previewBox.appendChild(prompt);
-    }
-  }
 
   fileInput.addEventListener('change', (e) => {
     const file = e.target.files?.[0];
@@ -292,16 +394,28 @@ export function createAdminProductFormModal({
         return;
       }
       selectedFile = file;
+      const applyUrl = (dataUrl) => {
+        const emptyIdx = imageList.findIndex((item) => !item.url);
+        if (emptyIdx >= 0) {
+          imageList[emptyIdx].url = dataUrl;
+        } else {
+          imageList.push({
+            url: dataUrl,
+            isMain: imageList.length === 0 || !imageList.some((img) => img.url),
+          });
+        }
+        renderImageList();
+      };
+
       if (typeof FileReader !== 'undefined') {
         const reader = new FileReader();
         reader.onload = (re) => {
-          previewUrl = re.target?.result;
-          updateImagePreview();
+          applyUrl(re.target?.result);
         };
         reader.readAsDataURL(file);
       } else {
-        previewUrl = URL.createObjectURL ? URL.createObjectURL(file) : file.name;
-        updateImagePreview();
+        const blobUrl = URL.createObjectURL ? URL.createObjectURL(file) : file.name;
+        applyUrl(blobUrl);
       }
     }
   });
@@ -310,7 +424,6 @@ export function createAdminProductFormModal({
     fileInput.click();
   });
 
-  dropzone.appendChild(previewBox);
   dropzone.appendChild(fileInput);
   rightCol.appendChild(dropzone);
   formColumns.appendChild(rightCol);
@@ -407,6 +520,18 @@ export function createAdminProductFormModal({
 
     const categoryName = (typeof selectedCategory === 'string' ? selectedCategory : (selectedCategory?.name || selectedCategory?.ad)) || categoryId || null;
 
+    const validImages = imageList.filter((item) => item.url && item.url.trim() !== '');
+    const mainItem = imageList.find((img) => img.isMain && img.url && img.url.trim()) ||
+                     validImages[0] ||
+                     null;
+    const mainUrl = mainItem ? mainItem.url.trim() : null;
+    const imageUrls = validImages.map((img) => img.url.trim());
+    const images = validImages.map((img, idx) => ({
+      url: img.url.trim(),
+      isMain: mainItem ? img.url.trim() === mainItem.url.trim() : idx === 0,
+      displayOrder: idx,
+    }));
+
     const payload = {
       ...(product || {}),
       name,
@@ -430,7 +555,10 @@ export function createAdminProductFormModal({
       aciklama: description,
       isActive,
       aktiflik: isActive,
-      imageUrl: previewUrl,
+      imageUrl: mainUrl,
+      gorselUrl: mainUrl,
+      imageUrls,
+      images,
       selectedImageFile: selectedFile,
     };
 
@@ -455,7 +583,7 @@ export function createAdminProductFormModal({
     if (e.target === overlay) close();
   });
 
-  updateImagePreview();
+  renderImageList();
 
   return { element: overlay, close };
 }

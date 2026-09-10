@@ -193,7 +193,8 @@ export async function addCategory(item) {
   const imageUrl = item.imageFile ? await fileToDataUrl(item.imageFile) : (item.imageUrl || item.gorselUrl || null);
   const body = mapToBackend(item, imageUrl);
 
-  const { id } = await apiClient.post(endpoints.adminKategori.create(), body);
+  const createUrl = endpoints.categories?.create ? endpoints.categories.create() : endpoints.adminKategori.create();
+  const { id } = await apiClient.post(createUrl, body);
   await getCategories();
 
   const created = categories.find((c) => String(c.id) === String(id));

@@ -10,6 +10,7 @@ namespace src.Monolith.ShopApp.Api.Controllers;
 
 [ApiController]
 [Route("api/admin/kategori")]
+[Route("api/categories")]
 [Authorize(Roles = "Admin")]
 public sealed class AdminKategoriController : ControllerBase
 {

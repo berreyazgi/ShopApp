@@ -12,30 +12,17 @@
 // import { apiClient } from '../../../shared/services/apiClient.js';
 // import { endpoints } from '../../../shared/services/endpoints.js';
 
-import { heroCategories, secondaryCategories } from '../data/homeCategories.js';
+import { getCategories } from '../../categories/services/categoryService.js';
 
 /**
- * Returns featured hero categories for the homepage grid.
+ * Returns the real, database-backed category collection for the homepage
+ * grid — the same categories/category shape used by the Products/Category
+ * pages (GET /api/kategori via categoryService). No static/demo fallback.
  *
- * @returns {Promise<import('../data/homeCategories.js').CategoryCardData[]>}
+ * @returns {Promise<import('../../categories/services/categoryService.js').CategoryItem[]>}
  */
-export async function getHeroCategories() {
-  // TODO: Integrate with Catalog API or Catalog Microservice.
-  // return apiClient.get(endpoints.catalog.categories());
-
-  return heroCategories;
-}
-
-/**
- * Returns secondary category cards for the homepage.
- *
- * @returns {Promise<import('../data/homeCategories.js').CategoryCardData[]>}
- */
-export async function getSecondaryCategories() {
-  // TODO: Integrate with Catalog API or Catalog Microservice.
-  // return apiClient.get(endpoints.catalog.categories() + '?featured=secondary');
-
-  return secondaryCategories;
+export async function getHomeCategories() {
+  return getCategories();
 }
 
 /**

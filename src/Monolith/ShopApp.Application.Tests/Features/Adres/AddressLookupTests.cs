@@ -29,9 +29,19 @@ public class AddressLookupTests
     }
 
     [Fact]
+    public void TurkeyAddressLookupController_ReturnsNotFoundForUnknownParent()
+    {
+        var controller = new TurkeyAddressLookupController(new MissingAddressService());
+
+        var result = controller.GetDistricts(999);
+
+        Assert.IsType<NotFoundObjectResult>(result.Result);
+    }
+
+    [Fact]
     public void AddressController_ReturnsNotFoundForUnknownParent()
     {
-        var controller = new AddressController(new MissingAddressService());
+        var controller = new TurkeyAddressLookupController(new MissingAddressService());
 
         var result = controller.GetDistricts(999);
 

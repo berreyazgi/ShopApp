@@ -12,7 +12,7 @@ public sealed class CreateUrunOzellikCommandHandler(
 {
     public async Task<Guid> Handle(CreateUrunOzellikCommand request, CancellationToken cancellationToken)
     {
-        var customer = await currentCustomerContext.GetRequiredAsync(cancellationToken);
+        var kullaniciId = await currentCustomerContext.GetCurrentKullaniciIdAsync(cancellationToken);
 
         var urunTur = await urunTurRepository.GetByIdAsync(request.UrunTurId, cancellationToken);
         if (urunTur is null)
@@ -20,7 +20,7 @@ public sealed class CreateUrunOzellikCommandHandler(
 
         var ozellik = new UrunOzellik(request.OzellikAd, request.OzellikDeger, request.UrunTurId)
         {
-            OlusturanKullaniciId = customer.KullaniciId
+            OlusturanKullaniciId = kullaniciId
         };
 
         await ozellikRepository.AddAsync(ozellik, cancellationToken);

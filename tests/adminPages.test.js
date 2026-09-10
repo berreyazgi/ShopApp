@@ -316,6 +316,8 @@ test('Admin routes are properly registered with role guard', () => {
     '/admin/musteriler',
     '/admin/siparisler',
     '/admin/kayit',
+    '/admin/categories',
+    '/admin/add-category',
   ];
 
   adminRoutes.forEach((path) => {
@@ -1125,5 +1127,122 @@ test('endpoints.js contains update routes for adminKategori, adminUrun, adminMus
   assert.equal(endpoints.adminSiparis.list(), '/api/admin/siparisler');
   assert.equal(typeof endpoints.adminSiparis.updateStatus, 'function');
   assert.equal(endpoints.adminSiparis.updateStatus('ord-789'), '/api/admin/siparisler/ord-789/durum');
+});
+
+// ── 20. Multi-Image Product Form & Detail Tests ──
+test('createAdminProductFormModal supports multi-image addition, removal, and main image toggling', () => {
+  let savedData = null;
+  const modal = createAdminProductFormModal({
+    categories: [{ id: 'cat-1', name: 'Giyim' }],
+    onSave: (data) => { savedData = data; },
+  });
+
+  // Modal initializes with 1 empty image slot
+  let rows = modal.element.querySelectorAll('.admin-product-image-row');
+  assert.equal(rows.length, 1);
+
+  // Set the first image
+  const firstInp = rows[0].querySelector('.admin-product-image-input');
+  firstInp.value = 'https://example.com/cover.jpg';
+  firstInp.dispatchEvent({ type: 'input' });
+
+  // Add a second image
+  const addBtn = modal.element.querySelector('#prod-modal-add-image');
+  assert.ok(addBtn);
+  addBtn.dispatchEvent({ type: 'click' });
+
+  rows = modal.element.querySelectorAll('.admin-product-image-row');
+  assert.equal(rows.length, 2);
+
+  const secondInp = rows[1].querySelector('.admin-product-image-input');
+  secondInp.value = 'https://example.com/gallery.jpg';
+  secondInp.dispatchEvent({ type: 'input' });
+
+  // Toggle second image as main
+  let mainBtns = modal.element.querySelectorAll('.admin-img-main-btn');
+  assert.equal(mainBtns.length, 2);
+  mainBtns[1].dispatchEvent({ type: 'click' });
+
+  // Re-query rows after renderImageList
+  rows = modal.element.querySelectorAll('.admin-product-image-row');
+  const activeBtn = rows[1].querySelector('.admin-img-main-btn--active');
+  assert.ok(activeBtn, 'Second row must have active main button');
+
+  // Fill in required fields
+  modal.element.querySelector('#prod-modal-name').value = 'Çoklu Görsel Tişört';
+  modal.element.querySelector('#prod-modal-sku').value = 'MLT-001';
+  modal.element.querySelector('#prod-modal-price').value = '199';
+  modal.element.querySelector('#prod-modal-stock').value = '15';
+  modal.element.querySelector('#prod-modal-cat').value = 'Giyim';
+
+  const submitBtn = modal.element.querySelectorAll('.admin-modal__footer button')[1];
+  submitBtn.dispatchEvent({ type: 'click' });
+
+  assert.ok(savedData);
+  assert.equal(savedData.imageUrl, 'https://example.com/gallery.jpg', 'Main image must be the chosen main image');
+  assert.deepEqual(savedData.imageUrls, ['https://example.com/cover.jpg', 'https://example.com/gallery.jpg']);
+  assert.equal(savedData.images.length, 2);
+  assert.equal(savedData.images[1].isMain, true);
+
+  modal.close();
+});
+
+test('createAdminProductDetailModal renders multi-image gallery thumbnails and handles clicks', () => {
+  const product = {
+    id: 'p-multi',
+    name: 'Multi Gallery Ceket',
+    price: 950,
+    imageUrl: 'https://example.com/img1.jpg',
+    images: [
+      { imageUrl: 'https://example.com/img1.jpg', isMain: true },
+      { imageUrl: 'https://example.com/img2.jpg', isMain: false },
+    ],
+  };
+
+  const modal = createAdminProductDetailModal({ product });
+  const thumbs = modal.element.querySelectorAll('.admin-product-detail-modal__thumb-btn');
+  assert.equal(thumbs.length, 2, 'Should render 2 thumbnail buttons');
+
+  const mainImg = modal.element.querySelector('.admin-product-detail-modal__img');
+  assert.equal(mainImg.src, 'https://example.com/img1.jpg');
+
+  // Click on the second thumbnail to preview
+  thumbs[1].dispatchEvent({ type: 'click' });
+  assert.equal(mainImg.src, 'https://example.com/img2.jpg');
+
+  modal.close();
+});
+
+test('AdminProductsPage auto-refreshes category list from categoryService when opening create modal', async () => {
+  const oldFetch = globalThis.fetch;
+  globalThis.fetch = async () => ({
+    ok: true,
+    status: 200,
+    json: async () => [{ id: 'cat-fresh-99', kategoriAd: 'Taze Kategori', aktifMi: true }],
+  });
+
+  try {
+    const { getCategories } = await import('../src/Frontend/ShopApp.Web/src/features/categories/services/categoryService.js');
+    await getCategories();
+
+    const page = AdminProductsPage({ products: [{ id: 'p1', name: 'Existing', price: 10 }] });
+    const addBtn = page.element.querySelector('.admin-page-header__actions button');
+    assert.ok(addBtn, 'Must find add product button in page header');
+    addBtn.dispatchEvent({ type: 'click' });
+
+    const modalOverlay = document.querySelector('.admin-modal-overlay');
+    assert.ok(modalOverlay);
+    const catSelect = modalOverlay.querySelector('#prod-modal-cat');
+    assert.ok(catSelect);
+
+    const options = Array.from(catSelect.options || catSelect.children).map((o) => o.textContent || o.value);
+    assert.ok(options.some((txt) => txt.includes('Taze Kategori')), 'Newly added category must appear in modal category select');
+
+    const closeBtn = modalOverlay.querySelector('.admin-modal__close');
+    closeBtn && closeBtn.dispatchEvent({ type: 'click' });
+    page.destroy();
+  } finally {
+    globalThis.fetch = oldFetch;
+  }
 });
 

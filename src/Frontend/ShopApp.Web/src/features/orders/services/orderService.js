@@ -210,6 +210,18 @@ export async function getAdminOrders() {
 }
 
 /**
+ * Retrieves the full detail (customer, line items, totals, status, shipment)
+ * of one order for admin review.
+ * Maps to: GET /api/admin/siparisler/{id}
+ *
+ * @param {string} id
+ * @returns {Promise<Object>}
+ */
+export async function getAdminOrderById(id) {
+  return apiClient.get(endpoints.adminSiparis.byId(id));
+}
+
+/**
  * Updates an order's status as an administrator.
  * Maps to: PUT /api/admin/siparisler/{id}/durum
  *

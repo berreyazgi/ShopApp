@@ -27,6 +27,7 @@ import {
   updateCategory,
   deleteCategory,
 } from '../../categories/services/categoryService.js';
+import { getDashboardSummary } from '../services/adminService.js';
 
 /**
  * @param {{
@@ -181,6 +182,20 @@ export default function AdminCategoriesPage(props = {}) {
         renderPage();
       })
       .catch((err) => console.error('[AdminCategoriesPage] failed to load categories:', err));
+  }
+
+  if (!props.statistics) {
+    // "Toplam Ürün" needs the real persisted product count, which a bare
+    // category record never carries — reuse the Admin Dashboard's summary
+    // (GET /api/admin/dashboard) rather than issuing a second, duplicate
+    // backend query just for this one number.
+    getDashboardSummary()
+      .then((summary) => {
+        if (destroyed) return;
+        statistics = { ...(statistics || {}), totalProducts: summary.totalProducts };
+        renderPage();
+      })
+      .catch((err) => console.error('[AdminCategoriesPage] failed to load dashboard summary:', err));
   }
 
   function destroy() {

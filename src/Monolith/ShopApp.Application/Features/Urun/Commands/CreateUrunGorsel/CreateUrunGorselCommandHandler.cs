@@ -13,7 +13,7 @@ public sealed class CreateUrunGorselCommandHandler(
 {
     public async Task<Guid> Handle(CreateUrunGorselCommand request, CancellationToken cancellationToken)
     {
-        var customer = await currentCustomerContext.GetRequiredAsync(cancellationToken);
+        var kullaniciId = await currentCustomerContext.GetCurrentKullaniciIdAsync(cancellationToken);
 
         var urun = await urunRepository.GetByIdAsync(request.UrunId, cancellationToken);
         if (urun is null)
@@ -24,7 +24,7 @@ public sealed class CreateUrunGorselCommandHandler(
             UrunId = request.UrunId,
             GorselUrl = request.GorselUrl,
             GorselSira = request.GorselSira,
-            OlusturanKullaniciId = customer.KullaniciId
+            OlusturanKullaniciId = kullaniciId
         };
 
         await gorselRepository.AddAsync(gorsel, cancellationToken);

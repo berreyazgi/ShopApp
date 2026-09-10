@@ -4,8 +4,10 @@ using ShopApp.Application.Features.Adres.Commands.CreateAddress;
 using ShopApp.Application.Features.Adres.Commands.DeleteAddress;
 using ShopApp.Application.Features.Adres.Commands.UpdateAddress;
 using ShopApp.Application.Features.Adres.Queries.GetMyAddresses;
+using ShopApp.Application.Features.Adres.Dtos;
 using ShopApp.Application.Tests.TestSupport;
 using src.Monolith.ShopApp.Domain.Kullanici;
+using Moq;
 using Xunit;
 
 namespace ShopApp.Application.Tests.Features.Adres;
@@ -56,6 +58,25 @@ public class AddressHandlerTests
 
         Assert.Equal(2, result.Count);
         Assert.All(result, a => Assert.Equal(myMusteriId, a.MusteriId));
+    }
+
+    [Fact]
+    public async Task UserAddressesController_GetMyAddresses_DelegatesToMediator()
+    {
+        var mediatorMock = new Moq.Mock<MediatR.IMediator>();
+        var addresses = new List<AddressDto>
+        {
+            new AddressDto(Guid.NewGuid(), Guid.NewGuid(), "Cadde", "+905321234567", 90, 34, 1, 101, 34000, DateTime.UtcNow, null)
+        };
+        mediatorMock.Setup(m => m.Send(Moq.It.IsAny<GetMyAddresses.GetMyAddressesQuery>(), Moq.It.IsAny<CancellationToken>()))
+            .ReturnsAsync(addresses);
+
+        var controller = new src.Monolith.ShopApp.Api.Controllers.UserAddressesController(mediatorMock.Object);
+        var actionResult = await controller.GetMyAddresses(CancellationToken.None);
+
+        var okResult = Assert.IsType<Microsoft.AspNetCore.Mvc.OkObjectResult>(actionResult.Result);
+        var returned = Assert.IsType<List<AddressDto>>(okResult.Value);
+        Assert.Single(returned);
     }
 
     [Fact]

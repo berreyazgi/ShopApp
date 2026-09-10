@@ -52,11 +52,14 @@ export function createCategoryStatistics({ categories = [], statistics = null } 
         totalProducts = categories.reduce((sum, c) => sum + (Number(c.productCount ?? c.urunSayisi) || 0), 0);
       }
     }
-  } else if (Array.isArray(categories) && categories.length === 0 && !statistics) {
-    totalCategories = 0;
-    rootCategories = 0;
-    activeRatio = '—';
-    totalProducts = '—';
+  } else {
+    // No categories — the 3 category-derived metrics are genuinely zero,
+    // regardless of whether totalProducts separately arrived via the
+    // caller-supplied statistics (e.g. the Admin Dashboard summary).
+    if (totalCategories === null) totalCategories = 0;
+    if (rootCategories === null) rootCategories = 0;
+    if (activeRatio === null) activeRatio = '—';
+    if (totalProducts === null) totalProducts = '—';
   }
 
   // 1. Ana Kategori

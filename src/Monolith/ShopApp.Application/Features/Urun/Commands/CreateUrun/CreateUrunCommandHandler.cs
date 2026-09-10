@@ -32,6 +32,39 @@ public sealed class CreateUrunCommandHandler(
             OlusturanKullaniciId = customer.KullaniciId
         };
 
+        var images = (request.ImageUrls ?? [])
+            .Where(url => !string.IsNullOrWhiteSpace(url))
+            .Distinct()
+            .Select((url, index) => new UrunGorsel
+            {
+                UrunId = urun.Id,
+                GorselUrl = url.Trim(),
+                GorselSira = index,
+                AnaGorselMi = index == 0,
+                OlusturanKullaniciId = customer.KullaniciId
+            })
+            .ToList();
+
+        if (images.Count > 0)
+        {
+            urun.Gorseller = images;
+            if (string.IsNullOrWhiteSpace(urun.GorselUrl))
+            {
+                urun.GorselUrl = images[0].GorselUrl;
+            }
+        }
+        else if (!string.IsNullOrWhiteSpace(urun.GorselUrl))
+        {
+            urun.Gorseller = [new UrunGorsel
+            {
+                UrunId = urun.Id,
+                GorselUrl = urun.GorselUrl.Trim(),
+                GorselSira = 0,
+                AnaGorselMi = true,
+                OlusturanKullaniciId = customer.KullaniciId
+            }];
+        }
+
         await urunRepository.AddAsync(urun, cancellationToken);
         return urun.Id;
     }

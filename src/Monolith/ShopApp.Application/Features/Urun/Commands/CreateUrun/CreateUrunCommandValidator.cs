@@ -11,5 +11,7 @@ public sealed class CreateUrunCommandValidator : AbstractValidator<CreateUrunCom
         RuleFor(x => x.MarkaAd).NotEmpty();
         RuleFor(x => x.Fiyat).GreaterThanOrEqualTo(0);
         RuleFor(x => x.GecmisFiyat).GreaterThanOrEqualTo(0);
+        RuleForEach(x => x.ImageUrls)
+            .NotEmpty().WithMessage("Görsel URL boş olamaz.");
     }
 }

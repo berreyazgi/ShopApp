@@ -214,3 +214,26 @@ The two bullets above are now **superseded** by this pass — kept above for his
 - `TurkiyeCitiesPackage` 2.0.0 is registered as the singleton `ITurkeyAddressService`; it ships 81 provinces, districts, and 31,000+ neighborhoods locally.
 - Lookup endpoints are public: `/api/address/provinces`, `/api/address/districts/{provinceId}`, and `/api/address/neighborhoods/{districtId}?provinceId={provinceId}`. The province query parameter is required for neighborhood lookup because the package resolves districts within their province.
 - Address phone is stored as nullable `kimlik.Adresler.Telefon` for legacy rows (migration `20260909203234_AddAddressPhone`); create/update validation requires `+905XXXXXXXXX`.
+
+## Multi-Image Support, Admin Category Navigation, and Address Controller Refactoring (2026-09-10)
+- **Multi-Image Support (Domain & Persistence)**:
+  - `UrunGorsel` entity includes `bool AnaGorselMi` (aliased as `IsMain`) with EF Core default `false`. Migration `20260910080147_AddProductMultiImageSupport` applies the column under the `Urunler` schema.
+  - `Urun.GorselUrl` is retained as a fallback / cover image (`CoverImageUrl`) and synchronized with the image marked `AnaGorselMi = true` (or the first image).
+  - Global alias `global using ProductImage = ShopApp.Domain.Urun.Entities.UrunGorsel;` and DTO aliases `ProductDto` / `ProductImageDto` provide English naming compatibility without breaking existing Turkish CQRS contracts.
+- **Multi-Image Application Layer & CQRS**:
+  - `CreateUrunCommand` and `UpdateUrunCommand` accept optional `List<string>? ImageUrls`.
+  - Handlers synchronize multiple images: in `CreateUrunCommandHandler`, child `UrunGorsel` records are created and added to `urun.Gorseller`. In `UpdateUrunCommandHandler`, `IShopAppDbContext` is optionally injected to synchronize existing images (inserting new, updating order/main status, and removing deleted images) while preserving backward compatibility for test mocks.
+  - Queries (`GetUrunler`, `GetUrunById`) include `Gorseller` navigation collection.
+- **Frontend Multi-Image UI**:
+  - `AdminProductFormModal.js` supports an interactive multi-image list: URL text inputs, "+ Yeni Görsel Ekle" button, "★ Ana Görsel" toggle, "Kaldır" delete button, and a compact dropzone for local file upload via `FileReader`.
+  - `AdminProductDetailModal.js` renders a horizontal thumbnail gallery below the main image when multiple images are present, allowing administrators to click thumbnails and preview images dynamically.
+- **Admin Category Navigation & Routing**:
+  - Exposes `/admin/categories` and `/admin/add-category` as aliases in `routes.js` (both guarded by `roles: ['Admin']`).
+  - `AdminSidebar.js` highlights the "Kategoriler" menu item when visiting either Turkish or English category routes (`/admin/kategoriler`, `/admin/categories`, `/admin/add-category`).
+  - `AdminProductsPage.js` auto-refreshes category choices dynamically on modal open via `getCategoriesSync()`, ensuring newly added categories immediately appear in product category dropdowns.
+  - `categoryService.js` routes `POST` requests to `endpoints.categories.create()` (`/api/categories` or `/api/admin/kategori`).
+- **Address Controller Separation & Architecture**:
+  - Turkish administrative address lookup endpoints (provinces, districts, neighborhoods) are housed in `TurkeyAddressLookupController.cs` mapped to `/api/locations`, `/api/lookup/turkey-address`, and `/api/address`.
+  - Authenticated user personal address CRUD endpoints are isolated in `UserAddressesController.cs` mapped to `/api/users/addresses` and `/api/adres` with `[Authorize]`.
+  - Subclasses `AddressController` and `AdresController` are decorated with `[NonController]` to provide backward compatibility without causing route collision `AmbiguousMatchException` in ASP.NET Core routing.
+

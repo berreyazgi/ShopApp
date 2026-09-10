@@ -12,7 +12,8 @@ import { createAdminLayout } from '../components/AdminLayout.js';
 import { createAdminPageHeader } from '../components/AdminPageHeader.js';
 import { createAdminMetricCard } from '../components/AdminMetricCard.js';
 import { createAdminStatusBadge } from '../components/AdminStatusBadge.js';
-import { getDashboardSummary, getRecentOrders, getLowStockProducts } from '../services/adminService.js';
+import { createProductStockBadge } from '../components/AdminProductCard.js';
+import { getAdminDashboard } from '../services/adminService.js';
 import { createLoadingState, createEmptyState, createErrorState } from '../../../shared/components/StateView/StateView.js';
 import { formatPrice } from '../../../shared/utils/format.js';
 
@@ -106,10 +107,16 @@ function createLowStockList(products = []) {
   products.forEach((product) => {
     const item = document.createElement('li');
     item.className = 'admin-recent-item';
-    item.innerHTML = `
-      <span class="admin-recent-item__name">${product.name || product.ad || 'Ürün'}</span>
-      <span class="admin-status-badge admin-status-badge--warning" aria-label="Stok: ${product.stock || 0} adet">${product.stock || 0} adet kaldı</span>
-    `;
+
+    const name = product.name || product.ad || 'Ürün';
+    const label = product.variantName ? `${name} — ${product.variantName}` : name;
+
+    const nameEl = document.createElement('span');
+    nameEl.className = 'admin-recent-item__name';
+    nameEl.textContent = label;
+    item.appendChild(nameEl);
+
+    item.appendChild(createProductStockBadge(product));
     list.appendChild(item);
   });
 
@@ -145,10 +152,19 @@ export default function AdminDashboardPage(props = {}) {
     contentWrap.appendChild(createLoadingState({ message: 'Panel verileri yükleniyor...' }));
 
     try {
-      // Use supplied props if provided; otherwise query adminService stubs
-      const summary = props.summary ?? await getDashboardSummary();
-      const recentOrders = props.recentOrders ?? await getRecentOrders();
-      const lowStockProducts = props.lowStockProducts ?? await getLowStockProducts();
+      // Use supplied props if provided; otherwise fetch the single real
+      // dashboard response once (summary + recentOrders + lowStockProducts
+      // together) rather than hitting the API three separate times.
+      let summary = props.summary;
+      let recentOrders = props.recentOrders;
+      let lowStockProducts = props.lowStockProducts;
+
+      if (summary === undefined || recentOrders === undefined || lowStockProducts === undefined) {
+        const fetched = await getAdminDashboard();
+        summary = summary ?? fetched.summary;
+        recentOrders = recentOrders ?? fetched.recentOrders;
+        lowStockProducts = lowStockProducts ?? fetched.lowStockProducts;
+      }
 
       contentWrap.innerHTML = '';
       contentWrap.appendChild(createMetricsRow(summary));
