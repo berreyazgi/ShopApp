@@ -2,9 +2,9 @@
  * ProfilePage.js — Profilim (My Profile) Sayfası
  *
  * %100 gerçek veritabanı verileriyle çalışır:
- *  - Profil bilgileri: GET /api/profil
+ *  - Profil bilgileri: GET /api/profile
  *  - Son siparişler:   GET /api/siparis
- *  - Kayıtlı adresler: GET /api/adres
+ *  - Kayıtlı adresler: GET /api/profile/addresses
  *
  * Hiçbir şekilde demo, mock veya statik müşteri verisi kullanılmaz.
  * API hatasında demo veri yerine temiz hata / tekrar dene durumu gösterilir.

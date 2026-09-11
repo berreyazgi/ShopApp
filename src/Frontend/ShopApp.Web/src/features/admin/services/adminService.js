@@ -4,7 +4,7 @@
  * Wraps the real Admin Dashboard endpoint using the shared apiClient.
  * Backend: GET /api/admin/dashboard (AdminDashboardController, Admin only),
  * backed by the GetAdminDashboard CQRS query — real persisted Urun/Kategori/
- * Siparis/UrunTur data. NO demo data, NO fake business data, NO hardcoded
+ * Siparis/UrunVaryant data. NO demo data, NO fake business data, NO hardcoded
  * records.
  *
  * summary/recentOrders/lowStockProducts all come from the same single
@@ -32,12 +32,12 @@ function mapOrder(dto) {
 function mapLowStockItem(dto) {
   return {
     urunId: dto.urunId,
-    urunTurId: dto.urunTurId,
+    urunVaryantId: dto.urunVaryantId,
     name: dto.urunAd,
     ad: dto.urunAd,
-    variantName: dto.urunTurAd,
-    stock: dto.stokAded,
-    stok: dto.stokAded,
+    variantName: dto.urunVaryantAd,
+    stock: dto.stokAdet,
+    stok: dto.stokAdet,
   };
 }
 
@@ -83,7 +83,7 @@ export async function getRecentOrders() {
 }
 
 /**
- * Returns UrunTur records currently at or below the low-stock threshold.
+ * Returns UrunVaryant records currently at or below the low-stock threshold.
  * @returns {Promise<Array>}
  */
 export async function getLowStockProducts() {

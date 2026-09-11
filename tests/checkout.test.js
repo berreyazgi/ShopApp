@@ -279,7 +279,7 @@ const oneSavedAddress = [{ id: 'addr-1', musteriId: 'cust-1', adresBilgisi: 'Tes
 
 test('Checkout: clicking "Ödeme Adımına Geç" checks addresses, then calls createOrder (POST /api/siparis) exactly once', async () => {
   const calls = stubFetch({
-    'GET /api/adres': () => ({ body: oneSavedAddress }),
+    'GET /api/profile/addresses': () => ({ body: oneSavedAddress }),
     'POST /api/siparis': () => ({ body: { id: 'order-1' } }),
   });
 
@@ -290,7 +290,7 @@ test('Checkout: clicking "Ödeme Adımına Geç" checks addresses, then calls cr
   btn.dispatchEvent({ type: 'click' });
   await flush();
 
-  assert.deepEqual(calls, ['GET /api/adres', 'POST /api/siparis']);
+  assert.deepEqual(calls, ['GET /api/profile/addresses', 'POST /api/siparis']);
 });
 
 test('Checkout: button is disabled and shows a processing label while the request is in flight', async () => {
@@ -312,7 +312,7 @@ test('Checkout: button is disabled and shows a processing label while the reques
 
 test('Checkout: a rapid double-click only checks addresses/creates an order once', async () => {
   const calls = stubFetch({
-    'GET /api/adres': () => ({ body: oneSavedAddress }),
+    'GET /api/profile/addresses': () => ({ body: oneSavedAddress }),
     'POST /api/siparis': () => ({ body: { id: 'order-3' } }),
   });
 
@@ -323,13 +323,13 @@ test('Checkout: a rapid double-click only checks addresses/creates an order once
   btn.dispatchEvent({ type: 'click' }); // fired before the first request settles
   await flush();
 
-  assert.equal(calls.filter((c) => c === 'GET /api/adres').length, 1, 'must not check addresses twice from a double-click');
+  assert.equal(calls.filter((c) => c === 'GET /api/profile/addresses').length, 1, 'must not check addresses twice from a double-click');
   assert.equal(calls.filter((c) => c === 'POST /api/siparis').length, 1, 'must not create a second order from a double-click');
 });
 
 test('Checkout: success navigates to /siparis-onay with the created order id preserved', async () => {
   stubFetch({
-    'GET /api/adres': () => ({ body: oneSavedAddress }),
+    'GET /api/profile/addresses': () => ({ body: oneSavedAddress }),
     'POST /api/siparis': () => ({ body: { id: 'order-abc-123' } }),
   });
   global.window.__lastPush = null;
@@ -346,7 +346,7 @@ test('Checkout: success navigates to /siparis-onay with the created order id pre
 
 test('Checkout: a failed createOrder (e.g. insufficient stock) does not navigate, re-enables the button, and shows the backend message', async () => {
   const calls = stubFetch({
-    'GET /api/adres': () => ({ body: oneSavedAddress }),
+    'GET /api/profile/addresses': () => ({ body: oneSavedAddress }),
     'POST /api/siparis': () => ({ ok: false, status: 409, body: { message: "'Ürün X' için yeterli stok bulunmuyor." } }),
   });
   global.window.__lastPush = null;
@@ -357,7 +357,7 @@ test('Checkout: a failed createOrder (e.g. insufficient stock) does not navigate
   btn.dispatchEvent({ type: 'click' });
   await flush();
 
-  assert.deepEqual(calls, ['GET /api/adres', 'POST /api/siparis'], 'must call getAddresses then createOrder exactly once each, no retry loop');
+  assert.deepEqual(calls, ['GET /api/profile/addresses', 'POST /api/siparis'], 'must call getAddresses then createOrder exactly once each, no retry loop');
   assert.equal(global.window.__lastPush, null, 'must not navigate to confirmation on failure');
   assert.equal(btn.disabled, false, 'button must be re-enabled after a failed checkout');
   assert.ok(btn.textContent.includes('Ödeme Adımına Geç'), 'button label must revert to idle text');
@@ -368,7 +368,7 @@ test('Checkout: a failed createOrder (e.g. insufficient stock) does not navigate
 
 test('Checkout: zero saved addresses opens the warning modal instead of creating an order', async () => {
   const calls = stubFetch({
-    'GET /api/adres': () => ({ body: [] }),
+    'GET /api/profile/addresses': () => ({ body: [] }),
   });
   global.window.__lastPush = null;
 
@@ -377,7 +377,7 @@ test('Checkout: zero saved addresses opens the warning modal instead of creating
   btn.dispatchEvent({ type: 'click' });
   await flush();
 
-  assert.deepEqual(calls, ['GET /api/adres'], 'must not call createOrder when there is no saved address');
+  assert.deepEqual(calls, ['GET /api/profile/addresses'], 'must not call createOrder when there is no saved address');
   assert.equal(global.window.__lastPush, null, 'must not navigate to confirmation');
 
   const modalTitle = document.body.querySelector('.confirm-modal-title');
@@ -391,7 +391,7 @@ test('Checkout: zero saved addresses opens the warning modal instead of creating
 
 test('Checkout: "Adres Ekle" in the address-required modal navigates to /profil#adreslerim', async () => {
   stubFetch({
-    'GET /api/adres': () => ({ body: [] }),
+    'GET /api/profile/addresses': () => ({ body: [] }),
   });
   global.window.__lastPush = null;
 
@@ -412,7 +412,7 @@ test('Checkout: "Adres Ekle" in the address-required modal navigates to /profil#
 test('Checkout: a basket may exist with zero addresses — the address check only blocks checkout, not adding to cart', async () => {
   // Same shape as the other zero-address test: CartPage renders and accepts
   // pre-supplied items with no address-related gate on mount/render at all.
-  stubFetch({ 'GET /api/adres': () => ({ body: [] }) });
+  stubFetch({ 'GET /api/profile/addresses': () => ({ body: [] }) });
   const page = CartPage({ items: sampleCartItems });
   assert.equal(page.element.querySelectorAll('.cart-item').length, sampleCartItems.length, 'basket must render items regardless of address state');
 });
@@ -435,8 +435,8 @@ test('OrderConfirmationPage loads the real order + items named by ?orderId= and 
     }),
     'GET /api/siparis/order-xyz/urunler': () => ({
       body: [
-        { id: 'su-1', siparisId: 'order-xyz', urunTurId: 'ut-1', urunIsmi: 'Ürün A', urunAciklamasi: null, stokTakipNumarasi: null, urunMiktar: 2, urunBirimFiyat: 100, indirimOrani: 0, toplamFiyat: 200 },
-        { id: 'su-2', siparisId: 'order-xyz', urunTurId: 'ut-2', urunIsmi: 'Ürün B', urunAciklamasi: null, stokTakipNumarasi: null, urunMiktar: 1, urunBirimFiyat: 50, indirimOrani: 0, toplamFiyat: 50 },
+        { id: 'su-1', siparisId: 'order-xyz', urunVaryantId: 'ut-1', urunIsmi: 'Ürün A', urunAciklamasi: null, stokTakipNumarasi: null, urunMiktar: 2, urunBirimFiyat: 100, indirimOrani: 0, toplamFiyat: 200 },
+        { id: 'su-2', siparisId: 'order-xyz', urunVaryantId: 'ut-2', urunIsmi: 'Ürün B', urunAciklamasi: null, stokTakipNumarasi: null, urunMiktar: 1, urunBirimFiyat: 50, indirimOrani: 0, toplamFiyat: 50 },
       ],
     }),
   });

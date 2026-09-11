@@ -8,7 +8,7 @@ namespace ShopApp.Application.Features.Urun.Queries;
 
 public class GetUrunOzellik
 {
-    public sealed record GetUrunOzellikQuery(Guid UrunTurId, Guid Id) : IRequest<GetByIdUrunOzellikDto>;
+    public sealed record GetUrunOzellikQuery(Guid UrunId, Guid Id) : IRequest<GetByIdUrunOzellikDto>;
 
     public sealed class GetUrunOzellikQueryHandler(
         IShopAppDbContext context,
@@ -18,7 +18,7 @@ public class GetUrunOzellik
         {
             var ozellik = await context.UrunOzellik
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == request.Id && x.UrunTurId == request.UrunTurId, cancellationToken)
+                .FirstOrDefaultAsync(x => x.Id == request.Id && x.UrunId == request.UrunId, cancellationToken)
                 ?? throw new KeyNotFoundException($"Ürün özelliği '{request.Id}' bulunamadı.");
 
             return mapper.Map<GetByIdUrunOzellikDto>(ozellik);

@@ -8,7 +8,7 @@ namespace ShopApp.Application.Tests.Features.Urun;
 
 /// <summary>
 /// Covers the admin product list projection's ToplamStok — the sum of a
-/// product's persisted UrunTur.StokAded rows, never an arbitrary single
+/// product's persisted UrunVaryant.StokAdet rows, never an arbitrary single
 /// variant's value, and never a stand-in for genuinely missing data.
 /// </summary>
 public class GetAdminUrunlerHandlerTests
@@ -49,9 +49,9 @@ public class GetAdminUrunlerHandlerTests
         context.Urun.Add(urun);
         await context.SaveChangesAsync();
 
-        context.UrunTur.AddRange(
-            new UrunTur { UrunId = urun.Id, Ad = "S", StokKod = "SK-S", StokAded = 3 },
-            new UrunTur { UrunId = urun.Id, Ad = "M", StokKod = "SK-M", StokAded = 4 });
+        context.UrunVaryant.AddRange(
+            new UrunVaryant { UrunId = urun.Id, Beden = "S", StokKod = "SK-S", StokAdet = 3 },
+            new UrunVaryant { UrunId = urun.Id, Beden = "M", StokKod = "SK-M", StokAdet = 4 });
         await context.SaveChangesAsync();
 
         var handler = new GetAdminUrunler.GetAdminUrunlerQueryHandler(context);

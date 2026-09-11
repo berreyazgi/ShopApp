@@ -23,7 +23,7 @@ public class SepetUrunuCommandHandlerTests
         return sepet;
     }
 
-    private static UrunTur SeedActiveVariant(TestDbContext context, decimal fiyat, decimal fiyatFarki, int stok, bool aktifMi = true, bool urunAktifMi = true)
+    private static UrunVaryant SeedActiveVariant(TestDbContext context, decimal fiyat, decimal fiyatFarki, int stok, bool aktifMi = true, bool urunAktifMi = true)
     {
         var kategori = new Kategori { KategoriAd = "Test Kategori", AktifMi = true };
         context.Kategori.Add(kategori);
@@ -39,16 +39,16 @@ public class SepetUrunuCommandHandlerTests
         };
         context.Urun.Add(urun);
 
-        var tur = new UrunTur
+        var tur = new UrunVaryant
         {
             UrunId = urun.Id,
-            Ad = "M / Siyah",
-            StokAded = stok,
+            Beden = "M / Siyah",
+            StokAdet = stok,
             StokKod = "SK-1",
             FiyatFarki = fiyatFarki,
             AktifMi = aktifMi,
         };
-        context.UrunTur.Add(tur);
+        context.UrunVaryant.Add(tur);
         context.SaveChanges();
 
         return tur;
@@ -84,13 +84,13 @@ public class SepetUrunuCommandHandlerTests
 
         var handler = new CreateSepetUrunuCommandHandler(sepetRepository.Object, context, CustomerContextFactory.For(Owner).Object);
 
-        // The command carries no price at all — only SepetId/UrunTurId/UrunMiktar.
+        // The command carries no price at all — only SepetId/UrunVaryantId/UrunMiktar.
         var id = await handler.Handle(new CreateSepetUrunuCommand(sepet.Id, tur.Id, 2), CancellationToken.None);
 
         Assert.NotEqual(Guid.Empty, id);
         var eklenen = Assert.Single(sepet.Urunler);
         Assert.Equal(id, eklenen.Id);
-        // Urun.Fiyat (1000) + UrunTur.FiyatFarki (100) — never client-supplied.
+        // Urun.Fiyat (1000) + UrunVaryant.FiyatFarki (100) — never client-supplied.
         Assert.Equal(1100m, eklenen.FiyatGecmis);
         sepetRepository.Verify(r => r.UpdateAsync(sepet, It.IsAny<CancellationToken>()), Times.Once);
     }

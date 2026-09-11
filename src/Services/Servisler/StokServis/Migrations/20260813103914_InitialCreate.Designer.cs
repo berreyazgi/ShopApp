@@ -130,7 +130,7 @@ namespace StokServis.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("UrunTurId")
+                    b.Property<Guid>("UrunVaryantId")
                         .HasColumnType("uuid")
                         .HasColumnName("UrunTipiId");
 
@@ -141,9 +141,9 @@ namespace StokServis.Migrations
 
                     b.HasIndex("DepoId");
 
-                    b.HasIndex("UrunTurId");
+                    b.HasIndex("UrunVaryantId");
 
-                    b.HasIndex("UrunTurId", "DepoId")
+                    b.HasIndex("UrunVaryantId", "DepoId")
                         .IsUnique();
 
                     b.ToTable("StokKalemleri", "stok", t =>

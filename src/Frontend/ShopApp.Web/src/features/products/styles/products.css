@@ -696,7 +696,7 @@
 
 .cat-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-5);
   padding-bottom: var(--space-12);
 }
@@ -705,7 +705,7 @@
   position: relative;
   border-radius: var(--radius-xl);
   overflow: hidden;
-  height: 220px;
+  height: 300px;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
   transition: box-shadow var(--transition-base), transform var(--transition-base);
@@ -724,6 +724,14 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
+}
+
+.cat-card__image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
 }
 
 .cat-card__overlay {
@@ -762,7 +770,7 @@
   }
 
   .cat-card {
-    height: 180px;
+    height: 240px;
   }
 
   .cat-header__title {

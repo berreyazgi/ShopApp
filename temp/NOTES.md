@@ -1,10 +1,17 @@
+# Product Variant and Attribute Refactor (2026-09-10)
+- `UrunVaryant` is the only sellable-SKU model. It owns nullable `Beden`/`Renk`, stock, SKU, price delta, and active state; cart and order lines reference `UrunVaryantId`.
+- `UrunOzellik` is product-level descriptive data (`UrunId`, `OzellikAd`, `Deger`, `Siralama`), not variant data. The `(UrunId, OzellikAd)` index is intentionally non-unique so distinct conflicting values are retained.
+- Migration `20260910201850_RenameUrunTurToUrunVaryantAndMoveAttributes` renames the existing table/columns, backfills attributes via the renamed variant's `UrunId`, deduplicates only exact `(UrunId, OzellikAd, Deger)` duplicates, and aborts rather than orphaning attributes. Legacy `UrunTur.Ad` is mapped to `Beden` only after a length guard (values over 50 characters require manual normalization). Its `Down` intentionally throws rather than silently duplicating or losing product attributes.
+- New orders snapshot the selected `Beden` and `Renk` in addition to `UrunVaryantId`; existing callers remain source-compatible because the snapshot parameters are optional and trailing.
+
 # ShopApp Development Notes
 
 ## Profile and Address Architecture
 - **Backend Controllers**:
-  - `ProfilController` is mapped to `[Route("api/profil")]` and requires `[Authorize]`. It exposes `GET /api/profil` and `PUT /api/profil` using CQRS queries `GetMyProfileQuery` and commands `UpdateMyProfileCommand`.
-  - `AdresController` is mapped to `[Route("api/adres")]` and requires `[Authorize]`. It exposes `GET /api/adres`, `POST /api/adres`, `PUT /api/adres/{id:guid}`, and `DELETE /api/adres/{id:guid}`.
-  - Ownership security: When updating or deleting addresses, handlers always verify that `address.MusteriId == currentCustomer.MusteriId` derived from `ICurrentCustomerContext`.
+  - `ProfileController` is mapped to `[Route("api/[controller]")]` and requires `[Authorize]`. It exposes `GET/PUT /api/profile` and authenticated address CRUD at `/api/profile/addresses`; `GET /api/profile/addresses/{id}` uses `GetMyAddressQuery` and filters by the current customer `MusteriId`.
+  - `UserAddressesController`, `AdresController`, and the legacy `/api/adres` and `/api/users/addresses` routes were deleted. There are no default billing/shipping endpoints because the address model has no corresponding fields.
+  - `AddressLookupController` is public at `/api/addresslookup`. It lists only `TR` today, validates country codes, defaults them to `TR`, and caches countries/subdivisions/districts/neighborhoods for 24 hours. Turkish lookups remain backed by `ITurkeyAddressService`.
+  - Ownership security: Address read, update, and delete handlers verify that `address.MusteriId == currentCustomer.MusteriId` derived from `ICurrentCustomerContext`.
 - **Database Schema for Addresses**:
   - The table is `kimlik.Adresler` with columns `Id`, `MusteriId`, `AdresBilgisi`, `Ulke`, `Sehir` (integer plate code 1–81), `Ilce` (integer), `Mahalle` (integer), `PostaKodu` (integer), `OlusturmaTarihi`, `GuncellemeTarihi`.
   - There is no `IsDefault` column in the database, so the "Varsayılan" badge is omitted cleanly without faking or running database migrations.
@@ -212,7 +219,7 @@ The two bullets above are now **superseded** by this pass — kept above for his
 
 ## Turkey Address Lookup & Address Phone (2026-09-09)
 - `TurkiyeCitiesPackage` 2.0.0 is registered as the singleton `ITurkeyAddressService`; it ships 81 provinces, districts, and 31,000+ neighborhoods locally.
-- Lookup endpoints are public: `/api/address/provinces`, `/api/address/districts/{provinceId}`, and `/api/address/neighborhoods/{districtId}?provinceId={provinceId}`. The province query parameter is required for neighborhood lookup because the package resolves districts within their province.
+- Public lookup routes are `/api/addresslookup/countries`, `/api/addresslookup/countries/{countryCode}/subdivisions`, `/api/addresslookup/subdivisions/{subdivisionId}/districts`, and the retained neighborhood route `/api/addresslookup/subdivisions/{subdivisionId}/districts/{districtId}/neighborhoods`. The current provider supports only `TR`.
 - Address phone is stored as nullable `kimlik.Adresler.Telefon` for legacy rows (migration `20260909203234_AddAddressPhone`); create/update validation requires `+905XXXXXXXXX`.
 
 ## Multi-Image Support, Admin Category Navigation, and Address Controller Refactoring (2026-09-10)
@@ -232,8 +239,11 @@ The two bullets above are now **superseded** by this pass — kept above for his
   - `AdminSidebar.js` highlights the "Kategoriler" menu item when visiting either Turkish or English category routes (`/admin/kategoriler`, `/admin/categories`, `/admin/add-category`).
   - `AdminProductsPage.js` auto-refreshes category choices dynamically on modal open via `getCategoriesSync()`, ensuring newly added categories immediately appear in product category dropdowns.
   - `categoryService.js` routes `POST` requests to `endpoints.categories.create()` (`/api/categories` or `/api/admin/kategori`).
-- **Address Controller Separation & Architecture**:
-  - Turkish administrative address lookup endpoints (provinces, districts, neighborhoods) are housed in `TurkeyAddressLookupController.cs` mapped to `/api/locations`, `/api/lookup/turkey-address`, and `/api/address`.
-  - Authenticated user personal address CRUD endpoints are isolated in `UserAddressesController.cs` mapped to `/api/users/addresses` and `/api/adres` with `[Authorize]`.
-  - Subclasses `AddressController` and `AdresController` are decorated with `[NonController]` to provide backward compatibility without causing route collision `AmbiguousMatchException` in ASP.NET Core routing.
+- **Address Controller Consolidation (2026-09-10)**:
+  - This supersedes the prior split-controller notes: canonical personal-address routes are `/api/profile/addresses`, and public country-aware lookups are `/api/addresslookup`.
 
+
+## Public Product Detail Read Model (2026-09-11)
+- `GET /api/urun/{id}` is the complete customer product-detail payload: it loads category, images, product-level `Ozellikler`, and active `Varyantlar` through `GetUrunQuery`.
+- The dedicated public collection reads are `/api/urun/{urunId}/ozellikler` (ordered by `Siralama`) and `/api/urun/{urunId}/varyantlar` (active variants only). They remain MediatR query handlers; controllers do not access `IShopAppDbContext`.
+- `GetUrunQuery(IncludePassive: true)` remains the admin detail path and includes passive variants. The frontend product-detail service consumes the nested collections from its single `GET /api/urun/{id}` response instead of issuing redundant requests.

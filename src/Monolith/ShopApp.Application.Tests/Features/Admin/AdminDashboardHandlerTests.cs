@@ -72,10 +72,10 @@ public class AdminDashboardHandlerTests
         context.Urun.Add(urun);
         await context.SaveChangesAsync();
 
-        context.UrunTur.AddRange(
-            new UrunTur { UrunId = urun.Id, Ad = "S", StokKod = "SK-S", StokAded = 2, AktifMi = true },   // low stock
-            new UrunTur { UrunId = urun.Id, Ad = "M", StokKod = "SK-M", StokAded = 20, AktifMi = true },  // plenty
-            new UrunTur { UrunId = urun.Id, Ad = "L", StokKod = "SK-L", StokAded = 0, AktifMi = false });  // passive, ignored
+        context.UrunVaryant.AddRange(
+            new UrunVaryant { UrunId = urun.Id, Beden = "S", StokKod = "SK-S", StokAdet = 2, AktifMi = true },   // low stock
+            new UrunVaryant { UrunId = urun.Id, Beden = "M", StokKod = "SK-M", StokAdet = 20, AktifMi = true },  // plenty
+            new UrunVaryant { UrunId = urun.Id, Beden = "L", StokKod = "SK-L", StokAdet = 0, AktifMi = false });  // passive, ignored
         await context.SaveChangesAsync();
 
         var identityMock = new Mock<IIdentityService>();
@@ -84,9 +84,9 @@ public class AdminDashboardHandlerTests
 
         Assert.Equal(1, result.LowStockCount);
         Assert.Single(result.LowStockProducts);
-        Assert.Equal("S", result.LowStockProducts[0].UrunTurAd);
+        Assert.Equal("S", result.LowStockProducts[0].UrunVaryantAd);
         Assert.Equal("Tişört", result.LowStockProducts[0].UrunAd);
-        Assert.Equal(2, result.LowStockProducts[0].StokAded);
+        Assert.Equal(2, result.LowStockProducts[0].StokAdet);
     }
 
     [Fact]

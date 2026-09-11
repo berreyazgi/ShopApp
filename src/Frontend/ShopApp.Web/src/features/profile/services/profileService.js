@@ -1,9 +1,9 @@
 /**
- * profileService.js — Profil ve Adres API Servisi
+ * profileService.js — Profile and address API service
  *
  * Backend:
- *  - ProfilController: GET /api/profil, PUT /api/profil
- *  - AdresController:  GET /api/adres, POST /api/adres, PUT /api/adres/{id}, DELETE /api/adres/{id}
+ *  - ProfileController: GET /api/profile, PUT /api/profile
+ *  - ProfileController: GET/POST /api/profile/addresses and GET/PUT/DELETE /api/profile/addresses/{id}
  *
  * Auth: Tüm istekler Authorization: Bearer {token} gerektirir.
  * apiClient token'ı otomatik olarak ekler.
@@ -71,17 +71,17 @@ export async function getAddresses() {
 
 /** @returns {Promise<Array<{ id: number, name: string }>>} */
 export async function getAddressProvinces() {
-  return apiClient.get(endpoints.address.provinces());
+  return apiClient.get(endpoints.addressLookup.subdivisions());
 }
 
 /** @returns {Promise<Array<{ id: number, name: string }>>} */
 export async function getAddressDistricts(provinceId) {
-  return apiClient.get(endpoints.address.districts(provinceId));
+  return apiClient.get(endpoints.addressLookup.districts(provinceId));
 }
 
 /** @returns {Promise<Array<{ id: number, name: string }>>} */
 export async function getAddressNeighborhoods(provinceId, districtId) {
-  return apiClient.get(endpoints.address.neighborhoods(provinceId, districtId));
+  return apiClient.get(endpoints.addressLookup.neighborhoods(provinceId, districtId));
 }
 
 

@@ -44,7 +44,7 @@ public class ShopAppDbContext : IdentityDbContext<KayitliKullanici, IdentityRole
     public DbSet<Urun> Urun => Set<Urun>();
     public DbSet<Kategori> Kategori => Set<Kategori>();
     public DbSet<UrunGorsel> UrunGorsel => Set<UrunGorsel>();
-    public DbSet<UrunTur> UrunTur => Set<UrunTur>();
+    public DbSet<UrunVaryant> UrunVaryant => Set<UrunVaryant>();
     public DbSet<UrunOzellik> UrunOzellik => Set<UrunOzellik>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

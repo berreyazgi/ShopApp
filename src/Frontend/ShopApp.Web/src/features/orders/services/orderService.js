@@ -33,7 +33,7 @@
  *  ResultSiparisUrunleriDto {
  *    id:                 Guid (string)
  *    siparisId:          Guid (string)
- *    urunTurId:          Guid (string)
+ *    urunVaryantId:          Guid (string)
  *    urunIsmi:           string
  *    urunAciklamasi:     string | null
  *    stokTakipNumarasi:  string | null
@@ -45,7 +45,7 @@
  *
  *  CreateSiparisUrunuCommand {
  *    siparisId:          Guid (string)  — must match the route siparisId
- *    urunTurId:          Guid (string)
+ *    urunVaryantId:          Guid (string)
  *    urunIsmi:           string
  *    urunAciklamasi:     string | null
  *    stokTakipNumarasi:  string | null
@@ -152,7 +152,7 @@ export async function getOrderItemById(siparisId, urunId) {
  *
  * @param {string} siparisId
  * @param {{
- *   urunTurId: string,
+ *   urunVaryantId: string,
  *   urunIsmi: string,
  *   urunAciklamasi?: string | null,
  *   stokTakipNumarasi?: string | null,

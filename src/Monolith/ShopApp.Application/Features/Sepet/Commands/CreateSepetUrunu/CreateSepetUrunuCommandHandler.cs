@@ -19,24 +19,24 @@ public sealed class CreateSepetUrunuCommandHandler(
             throw new KeyNotFoundException($"Sepet '{request.SepetId}' bulunamadı.");
 
         // The variant/product relationship and its price are always resolved
-        // server-side — the client only ever supplies UrunTurId + quantity.
-        var urunTur = await context.UrunTur
+        // server-side — the client only ever supplies UrunVaryantId + quantity.
+        var urunVaryant = await context.UrunVaryant
             .Include(t => t.Urun)
-            .FirstOrDefaultAsync(t => t.Id == request.UrunTurId, cancellationToken)
-            ?? throw new KeyNotFoundException($"Ürün varyantı '{request.UrunTurId}' bulunamadı.");
+            .FirstOrDefaultAsync(t => t.Id == request.UrunVaryantId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Ürün varyantı '{request.UrunVaryantId}' bulunamadı.");
 
-        if (!urunTur.AktifMi)
+        if (!urunVaryant.AktifMi)
             throw new InvalidOperationException("Bu ürün varyantı artık satışta değil.");
-        if (!urunTur.Urun.AktifMi)
+        if (!urunVaryant.Urun.AktifMi)
             throw new InvalidOperationException("Bu ürün artık satışta değil.");
 
-        var existingLine = sepet.Urunler.FirstOrDefault(u => u.UrunTurId == request.UrunTurId);
+        var existingLine = sepet.Urunler.FirstOrDefault(u => u.UrunVaryantId == request.UrunVaryantId);
         var requestedTotal = (existingLine?.UrunMiktar ?? 0) + request.UrunMiktar;
 
-        if (requestedTotal > urunTur.StokAded)
+        if (requestedTotal > urunVaryant.StokAdet)
             throw new InvalidOperationException("Seçtiğiniz üründen yeterli stok bulunmuyor.");
 
-        var authoritativePrice = urunTur.Urun.Fiyat + urunTur.FiyatFarki;
+        var authoritativePrice = urunVaryant.Urun.Fiyat + urunVaryant.FiyatFarki;
 
         Guid resultId;
         if (existingLine is not null)
@@ -48,7 +48,7 @@ public sealed class CreateSepetUrunuCommandHandler(
         }
         else
         {
-            var eklenen = sepet.UrunEkle(request.UrunTurId, request.UrunMiktar, authoritativePrice, customer.KullaniciId);
+            var eklenen = sepet.UrunEkle(request.UrunVaryantId, request.UrunMiktar, authoritativePrice, customer.KullaniciId);
             resultId = eklenen.Id;
         }
 

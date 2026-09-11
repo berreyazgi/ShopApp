@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ShopApp.Application.Common.Interfaces;
 using ShopApp.Application.Features.Urun.Commands.UpdateUrun;
-using ShopApp.Application.Features.Urun.Commands.UpdateUrunTur;
+using ShopApp.Application.Features.Urun.Commands.UpdateUrunVaryant;
 using ShopApp.Application.Tests.TestSupport;
 using ShopApp.Domain.Urun.Entities;
 using ShopApp.Infrastructure.Persistence.Context;
@@ -14,7 +14,7 @@ namespace ShopApp.Application.Tests.Features.Urun;
 /// <summary>
 /// Covers admin edit workflow correctness: toggling AktifMi, and making sure a
 /// root-product update or a variant SKU/stock update never erases or duplicates
-/// the other side of the Urun/UrunTur relationship.
+/// the other side of the Urun/UrunVaryant relationship.
 /// </summary>
 public class UrunEditPreservationTests
 {
@@ -28,7 +28,7 @@ public class UrunEditPreservationTests
         return new ShopAppDbContext(options);
     }
 
-    private static (UrunEntity urun, UrunTur tur) SeedProductWithVariant(ShopAppDbContext context)
+    private static (UrunEntity urun, UrunVaryant tur) SeedProductWithVariant(ShopAppDbContext context)
     {
         var kategori = new Kategori { KategoriAd = "Giyim" };
         context.Kategori.Add(kategori);
@@ -43,16 +43,16 @@ public class UrunEditPreservationTests
         };
         context.Urun.Add(urun);
 
-        var tur = new UrunTur
+        var tur = new UrunVaryant
         {
             UrunId = urun.Id,
-            Ad = "Standart",
+            Beden = "Standart",
             StokKod = "ABC-100",
-            StokAded = 32,
+            StokAdet = 32,
             FiyatFarki = 0m,
             AktifMi = true,
         };
-        context.UrunTur.Add(tur);
+        context.UrunVaryant.Add(tur);
         context.SaveChanges();
 
         return (urun, tur);
@@ -96,7 +96,7 @@ public class UrunEditPreservationTests
     }
 
     [Fact]
-    public async Task UpdateUrun_ChangingOnlyPrice_DoesNotAlterExistingUrunTur()
+    public async Task UpdateUrun_ChangingOnlyPrice_DoesNotAlterExistingUrunVaryant()
     {
         using var context = CreateContext();
         var (urun, tur) = SeedProductWithVariant(context);
@@ -111,29 +111,29 @@ public class UrunEditPreservationTests
         var reloadedUrun = await context.Urun.AsNoTracking().FirstAsync(x => x.Id == urun.Id);
         Assert.Equal(550m, reloadedUrun.Fiyat);
 
-        var reloadedTur = await context.UrunTur.AsNoTracking().FirstAsync(x => x.Id == tur.Id);
+        var reloadedTur = await context.UrunVaryant.AsNoTracking().FirstAsync(x => x.Id == tur.Id);
         Assert.Equal("ABC-100", reloadedTur.StokKod);
-        Assert.Equal(32, reloadedTur.StokAded);
-        Assert.Single(await context.UrunTur.Where(x => x.UrunId == urun.Id).ToListAsync());
+        Assert.Equal(32, reloadedTur.StokAdet);
+        Assert.Single(await context.UrunVaryant.Where(x => x.UrunId == urun.Id).ToListAsync());
     }
 
     [Fact]
-    public async Task UpdateUrunTur_ChangingStokKod_PreservesStokAded_AndDoesNotCreateDuplicateVariant()
+    public async Task UpdateUrunVaryant_ChangingStokKod_PreservesStokAdet_AndDoesNotCreateDuplicateVariant()
     {
         using var context = CreateContext();
         var (urun, tur) = SeedProductWithVariant(context);
 
-        var urunTurRepo = new GenericUrunRepository<UrunTur>(context);
+        var urunVaryantRepo = new GenericUrunRepository<UrunVaryant>(context);
         var urunRepo = new GenericUrunRepository<UrunEntity>(context);
-        var handler = new UpdateUrunTurCommandHandler(urunTurRepo, urunRepo, CustomerContextFactory.For(Admin).Object);
+        var handler = new UpdateUrunVaryantCommandHandler(urunVaryantRepo, urunRepo, CustomerContextFactory.For(Admin).Object);
 
-        var command = new UpdateUrunTurCommand(urun.Id, tur.Id, tur.Ad, tur.StokAded, StokKod: "ABC-101", tur.FiyatFarki, tur.AktifMi);
+        var command = new UpdateUrunVaryantCommand(urun.Id, tur.Id, tur.Beden, tur.Renk, tur.StokAdet, StokKod: "ABC-101", tur.FiyatFarki, tur.AktifMi);
         await handler.Handle(command, CancellationToken.None);
 
-        var reloaded = await context.UrunTur.AsNoTracking().FirstAsync(x => x.Id == tur.Id);
+        var reloaded = await context.UrunVaryant.AsNoTracking().FirstAsync(x => x.Id == tur.Id);
         Assert.Equal("ABC-101", reloaded.StokKod);
-        Assert.Equal(32, reloaded.StokAded);
+        Assert.Equal(32, reloaded.StokAdet);
 
-        Assert.Single(await context.UrunTur.Where(x => x.UrunId == urun.Id).ToListAsync());
+        Assert.Single(await context.UrunVaryant.Where(x => x.UrunId == urun.Id).ToListAsync());
     }
 }

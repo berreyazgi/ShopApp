@@ -70,7 +70,17 @@ async function request(method, path, options = {}) {
     init.body = JSON.stringify(options.body);
   }
 
-  const response = await fetch(url, init);
+  let response;
+  try {
+    response = await fetch(url, init);
+  } catch (networkError) {
+    // fetch() itself throws (API down, DNS/connection failure, CORS, offline)
+    // rather than resolving with a response — normalize it the same way as an
+    // HTTP error so callers never see "Failed to fetch" in the UI, while the
+    // real cause stays inspectable in the console.
+    console.error('[apiClient] Network request failed:', method, url, networkError);
+    throw { status: 0, code: 'NETWORK_ERROR', message: 'Sunucuya ulaşılamıyor.' };
+  }
 
   if (response.status === 401) {
     if (unauthorizedHandler) unauthorizedHandler();

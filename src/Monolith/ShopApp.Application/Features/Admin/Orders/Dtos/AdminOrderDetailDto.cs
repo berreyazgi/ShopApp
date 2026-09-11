@@ -13,7 +13,7 @@ public sealed record AdminOrderCustomerDto(
 public sealed record AdminOrderItemDto(
     Guid Id,
     Guid UrunId,
-    Guid UrunTurId,
+    Guid UrunVaryantId,
     string UrunIsmi,
     string? UrunAciklamasi,
     string? StokTakipNumarasi,

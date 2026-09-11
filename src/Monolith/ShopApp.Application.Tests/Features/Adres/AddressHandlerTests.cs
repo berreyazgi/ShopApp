@@ -3,6 +3,7 @@ using ShopApp.Application.Common.Interfaces;
 using ShopApp.Application.Features.Adres.Commands.CreateAddress;
 using ShopApp.Application.Features.Adres.Commands.DeleteAddress;
 using ShopApp.Application.Features.Adres.Commands.UpdateAddress;
+using ShopApp.Application.Features.Adres.Queries.GetMyAddress;
 using ShopApp.Application.Features.Adres.Queries.GetMyAddresses;
 using ShopApp.Application.Features.Adres.Dtos;
 using ShopApp.Application.Tests.TestSupport;
@@ -61,7 +62,7 @@ public class AddressHandlerTests
     }
 
     [Fact]
-    public async Task UserAddressesController_GetMyAddresses_DelegatesToMediator()
+    public async Task ProfileController_GetAddresses_DelegatesToMediator()
     {
         var mediatorMock = new Moq.Mock<MediatR.IMediator>();
         var addresses = new List<AddressDto>
@@ -71,12 +72,34 @@ public class AddressHandlerTests
         mediatorMock.Setup(m => m.Send(Moq.It.IsAny<GetMyAddresses.GetMyAddressesQuery>(), Moq.It.IsAny<CancellationToken>()))
             .ReturnsAsync(addresses);
 
-        var controller = new src.Monolith.ShopApp.Api.Controllers.UserAddressesController(mediatorMock.Object);
-        var actionResult = await controller.GetMyAddresses(CancellationToken.None);
+        var controller = new src.Monolith.ShopApp.Api.Controllers.ProfileController(mediatorMock.Object);
+        var actionResult = await controller.GetAddresses(CancellationToken.None);
 
         var okResult = Assert.IsType<Microsoft.AspNetCore.Mvc.OkObjectResult>(actionResult.Result);
         var returned = Assert.IsType<List<AddressDto>>(okResult.Value);
         Assert.Single(returned);
+    }
+
+    [Fact]
+    public async Task GetMyAddress_ReturnsOnlyAnAddressOwnedByTheCurrentCustomer()
+    {
+        using var context = TestDbContext.Create();
+        var currentCustomerId = Guid.NewGuid();
+        var currentUserId = Guid.NewGuid();
+        var ownedAddress = Address.Olustur(currentCustomerId, 90, 34, 1, 101, 34000, "Kadıköy Mah.", currentUserId);
+        var otherAddress = Address.Olustur(Guid.NewGuid(), 90, 34, 1, 102, 34001, "Başka Adres", Guid.NewGuid());
+        context.Adresler.AddRange(ownedAddress, otherAddress);
+        await context.SaveChangesAsync();
+
+        var handler = new GetMyAddress.GetMyAddressQueryHandler(
+            context,
+            CustomerContextFactory.For(new CurrentCustomer(currentCustomerId, currentUserId)).Object);
+
+        var result = await handler.Handle(new GetMyAddress.GetMyAddressQuery(ownedAddress.Id), CancellationToken.None);
+
+        Assert.Equal(ownedAddress.Id, result.Id);
+        await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+            handler.Handle(new GetMyAddress.GetMyAddressQuery(otherAddress.Id), CancellationToken.None));
     }
 
     [Fact]

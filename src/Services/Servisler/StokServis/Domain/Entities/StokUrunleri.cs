@@ -4,7 +4,7 @@ namespace StokServis.Domain.Entities;
 
 public class StokUrunleri : BaseEntity
 {
-    public Guid UrunTurId { get; set; }
+    public Guid UrunVaryantId { get; set; }
 
     public Guid DepoId { get; set; }
 

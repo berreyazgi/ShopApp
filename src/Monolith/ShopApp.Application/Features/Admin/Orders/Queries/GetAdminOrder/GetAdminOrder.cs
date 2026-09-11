@@ -47,7 +47,7 @@ public class GetAdminOrder
             var items = order.Urunler.Select(u => new AdminOrderItemDto(
                 u.Id,
                 u.UrunId,
-                u.UrunTurId,
+                u.UrunVaryantId,
                 u.UrunIsmi,
                 u.UrunAciklamasi,
                 u.StokTakipNumarasi,

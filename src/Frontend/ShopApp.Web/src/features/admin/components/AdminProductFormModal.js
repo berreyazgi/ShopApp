@@ -27,7 +27,9 @@ export function createAdminProductFormModal({
   const isEdit = !!product;
   const modalTitle = isEdit ? 'Ürünü Düzenle' : 'Yeni Ürün Ekle';
   const saveLabel = isEdit ? 'Güncelle' : 'Kaydet';
+  const savingLabel = isEdit ? 'Güncelleniyor...' : 'Kaydediliyor...';
 
+  let isSaving = false;
   let imageList = [];
   if (Array.isArray(product?.images) && product.images.length > 0) {
     imageList = product.images.map((img, i) => {
@@ -76,7 +78,10 @@ export function createAdminProductFormModal({
   closeBtn.className = 'admin-modal__close';
   closeBtn.setAttribute('aria-label', 'Kapat');
   closeBtn.appendChild(createIcon('close', { size: 18 }));
-  closeBtn.addEventListener('click', close);
+  closeBtn.addEventListener('click', () => {
+    if (isSaving) return;
+    close();
+  });
   header.appendChild(closeBtn);
 
   modal.appendChild(header);
@@ -89,10 +94,12 @@ export function createAdminProductFormModal({
   form.className = 'admin-product-modal__form';
   form.noValidate = true;
 
-  // Error Summary Box
+  // Error Summary Box — reused for both the client-side validation summary
+  // and API/network save errors (see showError()/getFriendlyErrorMessage()).
   const errorBox = document.createElement('div');
   errorBox.className = 'admin-form-error-box';
   errorBox.style.display = 'none';
+  errorBox.setAttribute('aria-live', 'polite');
   form.appendChild(errorBox);
 
   // Two-column container
@@ -119,7 +126,7 @@ export function createAdminProductFormModal({
   const skuCatRow = document.createElement('div');
   skuCatRow.className = 'admin-form-row';
 
-  // SKU — maps 1:1 to UrunTur.StokKod, which the backend requires (non-empty).
+  // SKU — maps 1:1 to UrunVaryant.StokKod, which the backend requires (non-empty).
   const skuGroup = document.createElement('div');
   skuGroup.className = 'admin-form-group';
   skuGroup.innerHTML = `
@@ -170,6 +177,24 @@ export function createAdminProductFormModal({
   }
   skuCatRow.appendChild(catGroup);
   leftCol.appendChild(skuCatRow);
+
+  const variantOptionsRow = document.createElement('div');
+  variantOptionsRow.className = 'admin-form-row';
+  variantOptionsRow.innerHTML = `
+    <div class="admin-form-group">
+      <label class="admin-form-label" for="prod-modal-beden">Beden</label>
+      <input type="text" id="prod-modal-beden" class="admin-form-input" maxlength="50" placeholder="Örn: M" />
+    </div>
+    <div class="admin-form-group">
+      <label class="admin-form-label" for="prod-modal-renk">Renk</label>
+      <input type="text" id="prod-modal-renk" class="admin-form-input" maxlength="100" placeholder="Örn: Siyah" />
+    </div>
+  `;
+  const bedenInput = variantOptionsRow.querySelector('#prod-modal-beden');
+  const renkInput = variantOptionsRow.querySelector('#prod-modal-renk');
+  bedenInput.value = product?.variantBeden ?? '';
+  renkInput.value = product?.variantRenk ?? '';
+  leftCol.appendChild(variantOptionsRow);
 
   // Brand — required by CreateUrunCommand.MarkaAd
   const brandGroup = document.createElement('div');
@@ -227,6 +252,18 @@ export function createAdminProductFormModal({
   const descInput = descGroup.querySelector('#prod-modal-desc');
   if (product) descInput.value = product.description || product.aciklama || '';
   leftCol.appendChild(descGroup);
+
+  const attributesGroup = document.createElement('div');
+  attributesGroup.className = 'admin-form-group';
+  attributesGroup.innerHTML = `
+    <label class="admin-form-label" for="prod-modal-attributes">Ürün Özellikleri</label>
+    <textarea id="prod-modal-attributes" class="admin-form-input admin-form-textarea" rows="4" placeholder="Her satır: Özellik Adı: Değer\nÖrn: Kumaş: %100 Pamuk"></textarea>
+  `;
+  const attributesInput = attributesGroup.querySelector('#prod-modal-attributes');
+  attributesInput.value = (product?.attributes ?? [])
+    .map((attribute) => `${attribute.name}: ${attribute.value}`)
+    .join('\n');
+  leftCol.appendChild(attributesGroup);
 
   // Status (Active toggle)
   const statusGroup = document.createElement('div');
@@ -439,7 +476,10 @@ export function createAdminProductFormModal({
   const { element: cancelBtn } = createButton({
     label: 'İptal',
     variant: 'secondary',
-    onClick: close,
+    onClick: () => {
+      if (isSaving) return;
+      close();
+    },
   });
   footer.appendChild(cancelBtn);
 
@@ -453,19 +493,142 @@ export function createAdminProductFormModal({
   modal.appendChild(footer);
   overlay.appendChild(modal);
 
+  // Registry of the fields that get red-border + inline-message highlighting,
+  // keyed by a local name used by both client-side validation below and the
+  // backend field-error mapping in applyBackendFieldErrors(). Scoped lookups
+  // (rather than document.querySelector by id) so this stays correct even if
+  // more than one instance of this modal is ever open at once.
+  const fieldControls = {
+    name: { input: nameInput, errorEl: nameGroup.querySelector('#prod-modal-name-error') },
+    sku: { input: skuInput, errorEl: skuGroup.querySelector('#prod-modal-sku-error') },
+    category: { input: catSelect, errorEl: catGroup.querySelector('#prod-modal-cat-error') },
+    brand: { input: brandInput, errorEl: brandGroup.querySelector('#prod-modal-brand-error') },
+    price: { input: priceInput, errorEl: priceGroup.querySelector('#prod-modal-price-error') },
+    stock: { input: stockInput, errorEl: stockGroup.querySelector('#prod-modal-stock-error') },
+  };
+
+  // Backend FluentValidation PropertyName -> local field key, so a 400 response's
+  // error.body.errors (see AdminUrunController's ValidationException handling)
+  // can highlight the exact input, not just show a generic message.
+  const BACKEND_FIELD_MAP = {
+    UrunAd: 'name', Name: 'name',
+    StokKod: 'sku', InitialStokKod: 'sku',
+    KategoriId: 'category', CategoryId: 'category',
+    MarkaAd: 'brand', Brand: 'brand',
+    Fiyat: 'price', Price: 'price',
+    StokAdet: 'stock', InitialStokAdet: 'stock',
+  };
+
+  function markFieldInvalid(key, message) {
+    const control = fieldControls[key];
+    if (!control) return;
+    control.input.classList.add('admin-form-input--invalid');
+    if (control.errorEl && message) control.errorEl.textContent = message;
+  }
+
+  function clearFieldInvalid(key) {
+    const control = fieldControls[key];
+    if (!control) return;
+    control.input.classList.remove('admin-form-input--invalid');
+    if (control.errorEl) control.errorEl.textContent = '';
+  }
+
+  // Once the admin edits a highlighted field, drop that field's red border/message
+  // immediately rather than making them resubmit to see it clear.
+  Object.entries(fieldControls).forEach(([key, control]) => {
+    const eventName = control.input.tagName === 'SELECT' ? 'change' : 'input';
+    control.input.addEventListener(eventName, () => clearFieldInvalid(key));
+  });
+
+  /**
+   * Highlights the specific inputs named in a 400 response's field errors
+   * (see AdminUrunController's `errors: [{ field, message }]` shape). Never
+   * called for network/500 errors, which carry no such list — general
+   * failures stay in the error box instead of marking unrelated fields red.
+   */
+  function applyBackendFieldErrors(error) {
+    const fieldErrors = Array.isArray(error?.body?.errors) ? error.body.errors : [];
+    fieldErrors.forEach((fieldError) => {
+      const backendField = typeof fieldError === 'object' ? fieldError?.field : null;
+      const localKey = backendField ? BACKEND_FIELD_MAP[backendField] : null;
+      const message = typeof fieldError?.message === 'string' ? fieldError.message.trim() : '';
+      if (localKey && message) markFieldInvalid(localKey, message);
+    });
+  }
+
   function showError(msg) {
     errorBox.textContent = msg;
     errorBox.style.display = 'block';
+    errorBox.setAttribute('role', 'alert');
+    errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   function clearErrors() {
     errorBox.textContent = '';
     errorBox.style.display = 'none';
-    const errorSpans = form.querySelectorAll('.admin-form-error');
-    errorSpans.forEach((s) => { s.textContent = ''; });
+    Object.keys(fieldControls).forEach(clearFieldInvalid);
   }
 
-  function handleSubmit() {
+  function setSavingState(saving) {
+    isSaving = saving;
+    submitBtn.disabled = saving;
+    submitBtn.textContent = saving ? savingLabel : saveLabel;
+    cancelBtn.disabled = saving;
+    closeBtn.disabled = saving;
+  }
+
+  /**
+   * Converts a rejected apiClient error (`{ status, message, body }`, or the
+   * `{ status: 0, code: 'NETWORK_ERROR' }` shape used when the network request
+   * itself never reaches the server) into a Turkish message safe to show an
+   * admin — never the raw HTTP status text, exception type, or backend stack trace.
+   */
+  function getFriendlyErrorMessage(error) {
+    const status = error?.status;
+    const failLabel = isEdit ? 'Ürün güncellenemedi' : 'Ürün eklenemedi';
+
+    if (status === 0 || error?.code === 'NETWORK_ERROR') {
+      return 'Ürün kaydedilirken bir sorun oluştu.\nLütfen biraz sonra tekrar deneyin.';
+    }
+
+    if (status === 400) {
+      const fieldErrors = Array.isArray(error?.body?.errors) ? error.body.errors : [];
+      const lines = fieldErrors
+        .map((e) => (typeof e === 'string' ? e : e?.message))
+        .filter((line) => typeof line === 'string' && line.trim());
+      if (lines.length > 0) {
+        return `${failLabel}:\n\n${lines.map((line) => `• ${line}`).join('\n')}`;
+      }
+      return `${failLabel}.\nLütfen belirtilen alanları kontrol edip tekrar deneyin.`;
+    }
+
+    if (status === 401) {
+      return 'Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.';
+    }
+
+    if (status === 403) {
+      return 'Bu işlemi gerçekleştirmek için yönetici yetkiniz bulunmuyor.';
+    }
+
+    if (status === 404) {
+      const safeMessage = typeof error?.body?.message === 'string' ? error.body.message.trim() : '';
+      return safeMessage || 'Seçilen kategori artık mevcut değil. Lütfen başka bir kategori seçin.';
+    }
+
+    if (status === 409) {
+      const safeMessage = typeof error?.body?.message === 'string' ? error.body.message.trim() : '';
+      return safeMessage || 'Bu stok kodu başka bir ürün tarafından kullanılıyor. Lütfen farklı bir stok kodu girin.';
+    }
+
+    if (typeof status === 'number' && status >= 500) {
+      return 'Ürün kaydedilirken bir sorun oluştu.\nLütfen biraz sonra tekrar deneyin.';
+    }
+
+    return `${failLabel}.\nLütfen bilgileri kontrol edip tekrar deneyin.`;
+  }
+
+  async function handleSubmit() {
+    if (isSaving) return;
     clearErrors();
     let hasError = false;
 
@@ -475,36 +638,47 @@ export function createAdminProductFormModal({
     const brand = String(brandInput.value ?? '').trim();
     const priceRaw = String(priceInput.value ?? '').trim();
     const stockRaw = String(stockInput.value ?? '').trim();
+    const variantBeden = String(bedenInput.value ?? '').trim() || null;
+    const variantRenk = String(renkInput.value ?? '').trim() || null;
     const description = String(descInput.value ?? '').trim();
+    const attributes = String(attributesInput.value ?? '').split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line, order) => {
+        const separator = line.indexOf(':');
+        return separator > 0
+          ? { name: line.slice(0, separator).trim(), value: line.slice(separator + 1).trim(), order }
+          : { name: line, value: '', order };
+      });
     const isActive = activeInput.checked;
 
     if (!name) {
-      document.querySelector('#prod-modal-name-error') && (document.querySelector('#prod-modal-name-error').textContent = 'Ürün adı zorunludur.');
+      markFieldInvalid('name', 'Ürün adı zorunludur.');
       hasError = true;
     }
 
     if (!categoryId) {
-      document.querySelector('#prod-modal-cat-error') && (document.querySelector('#prod-modal-cat-error').textContent = 'Kategori seçimi zorunludur.');
+      markFieldInvalid('category', 'Kategori seçimi zorunludur.');
       hasError = true;
     }
 
     if (!brand) {
-      document.querySelector('#prod-modal-brand-error') && (document.querySelector('#prod-modal-brand-error').textContent = 'Marka zorunludur.');
+      markFieldInvalid('brand', 'Marka zorunludur.');
       hasError = true;
     }
 
     if (!sku) {
-      document.querySelector('#prod-modal-sku-error') && (document.querySelector('#prod-modal-sku-error').textContent = 'SKU / Stok Kodu zorunludur.');
+      markFieldInvalid('sku', 'SKU / Stok Kodu zorunludur.');
       hasError = true;
     }
 
     if (!priceRaw || isNaN(Number(priceRaw)) || Number(priceRaw) < 0) {
-      document.querySelector('#prod-modal-price-error') && (document.querySelector('#prod-modal-price-error').textContent = 'Geçerli bir fiyat giriniz (0 veya daha büyük).');
+      markFieldInvalid('price', 'Geçerli bir fiyat giriniz (0 veya daha büyük).');
       hasError = true;
     }
 
     if (!stockRaw || isNaN(Number(stockRaw)) || Number(stockRaw) < 0) {
-      document.querySelector('#prod-modal-stock-error') && (document.querySelector('#prod-modal-stock-error').textContent = 'Geçerli bir stok miktarı giriniz.');
+      markFieldInvalid('stock', 'Geçerli bir stok miktarı giriniz.');
       hasError = true;
     }
 
@@ -545,12 +719,16 @@ export function createAdminProductFormModal({
       marka: brand,
       price: Number(priceRaw),
       fiyat: Number(priceRaw),
-      // Persisted on UrunTur (SKU/stock live on the product's variant, not on
-      // Urun itself) — see productsService.js persistVariant(). urunTurId,
+      // Persisted on UrunVaryant (SKU/stock live on the product's variant, not on
+      // Urun itself) — see productsService.js persistVariant(). urunVaryantId,
       // variantAd, variantFiyatFarki and variantIsActive above (spread from
       // `product`) identify which existing variant to update, if any.
       stock: parseInt(stockRaw, 10),
       stok: parseInt(stockRaw, 10),
+      variantBeden,
+      variantRenk,
+      attributes,
+      existingAttributes: product?.attributes ?? [],
       description,
       aciklama: description,
       isActive,
@@ -562,10 +740,19 @@ export function createAdminProductFormModal({
       selectedImageFile: selectedFile,
     };
 
-    if (typeof onSave === 'function') {
-      onSave(payload);
+    try {
+      setSavingState(true);
+      if (typeof onSave === 'function') {
+        await onSave(payload);
+      }
+      close();
+    } catch (error) {
+      console.error('[AdminProductFormModal] Product save failed:', error);
+      applyBackendFieldErrors(error);
+      showError(getFriendlyErrorMessage(error));
+    } finally {
+      setSavingState(false);
     }
-    close();
   }
 
   function close() {
@@ -575,11 +762,13 @@ export function createAdminProductFormModal({
   }
 
   function handleKeydown(e) {
+    if (isSaving) return;
     if (e.key === 'Escape') close();
   }
 
   document.addEventListener('keydown', handleKeydown);
   overlay.addEventListener('click', (e) => {
+    if (isSaving) return;
     if (e.target === overlay) close();
   });
 

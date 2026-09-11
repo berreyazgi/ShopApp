@@ -20,7 +20,7 @@ public sealed class StokUrunleriConfiguration : IEntityTypeConfiguration<StokUru
         builder.Property(x => x.OlusturmaTarihi)
             .IsRequired();
 
-        builder.Property(x => x.UrunTurId)
+        builder.Property(x => x.UrunVaryantId)
             .IsRequired()
             .HasColumnName("UrunTipiId");
 
@@ -38,10 +38,10 @@ public sealed class StokUrunleriConfiguration : IEntityTypeConfiguration<StokUru
         builder.Property(x => x.DepoKonumu)
             .HasMaxLength(100);
 
-        builder.HasIndex(x => new { x.UrunTurId, x.DepoId })
+        builder.HasIndex(x => new { x.UrunVaryantId, x.DepoId })
             .IsUnique();
 
-        builder.HasIndex(x => x.UrunTurId);
+        builder.HasIndex(x => x.UrunVaryantId);
 
         builder.HasMany(x => x.Hareketler)
             .WithOne(x => x.StokUrunleri)

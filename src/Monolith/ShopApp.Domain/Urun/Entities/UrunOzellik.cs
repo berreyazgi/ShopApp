@@ -1,13 +1,11 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using src.Monolith.ShopApp.Domain.Common;
 
 namespace ShopApp.Domain.Urun.Entities;
 
 public class UrunOzellik : BaseEntity
 {
-    [Column("UrunTipiId")]
-    public Guid UrunTurId { get; set; }
+    public Guid UrunId { get; set; }
 
     [Required]
     [MaxLength(200)]
@@ -15,16 +13,22 @@ public class UrunOzellik : BaseEntity
 
     [Required]
     [MaxLength(500)]
-    public string OzellikDeger { get; set; } = null!;
+    public string Deger { get; set; } = null!;
 
-    // Navigation property
-    public UrunTur UrunTur { get; set; } = null!;
+    public int Siralama { get; set; }
 
-    public UrunOzellik(string ozellikAd, string ozellikDeger, Guid urunTurId)
+    public Urun Urun { get; set; } = null!;
+
+    private UrunOzellik()
     {
+    }
+
+    public UrunOzellik(Guid urunId, string ozellikAd, string deger, int siralama = 0)
+    {
+        UrunId = urunId;
         OzellikAd = ozellikAd;
-        OzellikDeger = ozellikDeger;
-        UrunTurId = urunTurId;
+        Deger = deger;
+        Siralama = siralama;
     }
     
 }

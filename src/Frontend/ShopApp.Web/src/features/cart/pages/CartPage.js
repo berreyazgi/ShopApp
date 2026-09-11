@@ -38,7 +38,7 @@ const FREE_SHIPPING_THRESHOLD = 500;
 /** Maps a backend ResultSepetUrunDto to the shape CartItem.js renders. */
 function mapCartLine(dto) {
   const variant = (dto.ozellikler ?? [])
-    .map((o) => `${o.ozellikAd}: ${o.ozellikDeger}`)
+    .map((o) => `${o.ozellikAd}: ${o.deger}`)
     .join(', ');
 
   return {

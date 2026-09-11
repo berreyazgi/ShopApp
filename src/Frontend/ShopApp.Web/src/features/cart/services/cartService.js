@@ -28,23 +28,23 @@
  *  ResultSepetUrunDto {
  *    id:            Guid (string)
  *    sepetId:       Guid (string)
- *    urunTurId:     Guid (string)
+ *    urunVaryantId:     Guid (string)
  *    urunId:        Guid (string)
  *    urunAd:        string
  *    gorselUrl:     string | null
- *    ozellikler:    [{ id, urunTurId, ozellikAd, ozellikDeger }]
+ *    ozellikler:    [{ id, urunVaryantId, ozellikAd, deger }]
  *    urunMiktar:    number
- *    fiyatGecmis:   number  — resolved server-side (Urun.Fiyat + UrunTur.FiyatFarki), never client-supplied
+ *    fiyatGecmis:   number  — resolved server-side (Urun.Fiyat + UrunVaryant.FiyatFarki), never client-supplied
  *    toplamTutar:   number  — computed on the server
  *  }
  *
  *  CreateSepetUrunuCommand {
  *    sepetId:       Guid (string)  — must match the route sepetId
- *    urunTurId:     Guid (string)
+ *    urunVaryantId:     Guid (string)
  *    urunMiktar:    number
  *  }
  *  NOTE: price is never part of this payload — the backend resolves it from
- *  the UrunTur's parent Urun. Sending a price here would be ignored even if
+ *  the UrunVaryant's parent Urun. Sending a price here would be ignored even if
  *  present.
  *
  *  UpdateSepetUrunuCommand {
@@ -166,13 +166,13 @@ export async function getCartItemById(sepetId, urunId) {
  * Maps to: POST /api/sepet/{sepetId}/urunler
  *
  * @param {string} sepetId
- * @param {{ urunTurId: string, urunMiktar: number }} payload
+ * @param {{ urunVaryantId: string, urunMiktar: number }} payload
  * @returns {Promise<{ id: string }>}
  */
 export async function addCartItem(sepetId, payload) {
   return apiClient.post(endpoints.cart.cartItems(sepetId), {
     sepetId,
-    urunTurId: payload.urunTurId,
+    urunVaryantId: payload.urunVaryantId,
     urunMiktar: payload.urunMiktar,
   });
 }

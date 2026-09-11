@@ -13,7 +13,7 @@ public class UrunConfiguration : IEntityTypeConfiguration<Urun>
 
         b.HasIndex(x => x.KategoriId);
 
-        b.HasMany(x => x.UrunTurleri)
+        b.HasMany(x => x.Varyantlar)
             .WithOne(x => x.Urun)
             .HasForeignKey(x => x.UrunId)
             .OnDelete(DeleteBehavior.Cascade);

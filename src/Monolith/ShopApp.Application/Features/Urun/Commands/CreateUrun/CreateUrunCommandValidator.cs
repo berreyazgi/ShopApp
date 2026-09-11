@@ -13,5 +13,16 @@ public sealed class CreateUrunCommandValidator : AbstractValidator<CreateUrunCom
         RuleFor(x => x.GecmisFiyat).GreaterThanOrEqualTo(0);
         RuleForEach(x => x.ImageUrls)
             .NotEmpty().WithMessage("Görsel URL boş olamaz.");
+
+        // Mirrors CreateUrunVaryantCommandValidator — only enforced when the
+        // caller actually asked for an initial variant (InitialStokKod set).
+        RuleFor(x => x.InitialStokKod).MaximumLength(100)
+            .When(x => x.InitialStokKod is not null);
+        RuleFor(x => x.InitialStokAdet).GreaterThanOrEqualTo(0)
+            .When(x => x.InitialStokAdet is not null);
+        RuleFor(x => x.InitialBeden).MaximumLength(50)
+            .When(x => x.InitialBeden is not null);
+        RuleFor(x => x.InitialRenk).MaximumLength(100)
+            .When(x => x.InitialRenk is not null);
     }
 }

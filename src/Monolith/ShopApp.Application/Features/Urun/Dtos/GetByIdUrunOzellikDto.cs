@@ -2,7 +2,8 @@ namespace ShopApp.Application.Features.Urun.Dtos;
 
 public record GetByIdUrunOzellikDto(
     Guid Id,
-    Guid UrunTurId,
+    Guid UrunId,
     string OzellikAd,
-    string OzellikDeger
+    string Deger,
+    int Siralama
 );

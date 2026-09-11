@@ -1,12 +1,13 @@
 using MediatR;
 using ShopApp.Application.Common.Interfaces;
 using ShopApp.Domain.Urun.Entities;
+using UrunEntity = ShopApp.Domain.Urun.Entities.Urun;
 
 namespace ShopApp.Application.Features.Urun.Commands.CreateUrunOzellik;
 
 public sealed class CreateUrunOzellikCommandHandler(
     IGenericUrunRepository<UrunOzellik> ozellikRepository,
-    IGenericUrunRepository<UrunTur> urunTurRepository,
+    IGenericUrunRepository<UrunEntity> urunRepository,
     ICurrentCustomerContext currentCustomerContext)
     : IRequestHandler<CreateUrunOzellikCommand, Guid>
 {
@@ -14,11 +15,11 @@ public sealed class CreateUrunOzellikCommandHandler(
     {
         var kullaniciId = await currentCustomerContext.GetCurrentKullaniciIdAsync(cancellationToken);
 
-        var urunTur = await urunTurRepository.GetByIdAsync(request.UrunTurId, cancellationToken);
-        if (urunTur is null)
-            throw new KeyNotFoundException($"Ürün türü '{request.UrunTurId}' bulunamadı.");
+        var urun = await urunRepository.GetByIdAsync(request.UrunId, cancellationToken);
+        if (urun is null)
+            throw new KeyNotFoundException($"Ürün '{request.UrunId}' bulunamadı.");
 
-        var ozellik = new UrunOzellik(request.OzellikAd, request.OzellikDeger, request.UrunTurId)
+        var ozellik = new UrunOzellik(request.UrunId, request.OzellikAd, request.Deger, request.Siralama)
         {
             OlusturanKullaniciId = kullaniciId
         };

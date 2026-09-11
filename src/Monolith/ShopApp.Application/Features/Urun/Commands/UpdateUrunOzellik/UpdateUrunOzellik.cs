@@ -3,7 +3,8 @@ using MediatR;
 namespace ShopApp.Application.Features.Urun.Commands.UpdateUrunOzellik;
 
 public sealed record UpdateUrunOzellikCommand(
-    Guid UrunTurId,
+    Guid UrunId,
     Guid Id,
     string OzellikAd,
-    string OzellikDeger) : IRequest;
+    string Deger,
+    int Siralama = 0) : IRequest;

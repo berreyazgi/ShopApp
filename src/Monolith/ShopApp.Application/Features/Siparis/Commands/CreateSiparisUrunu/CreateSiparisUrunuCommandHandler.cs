@@ -17,7 +17,7 @@ public sealed class CreateSiparisUrunuCommandHandler(
             throw new KeyNotFoundException($"Sipariş '{request.SiparisId}' bulunamadı.");
 
         var urun = siparis.UrunEkle(
-            request.UrunTurId,
+            request.UrunVaryantId,
             request.UrunId,
             request.UrunIsmi,
             request.UrunAciklamasi,
@@ -25,7 +25,9 @@ public sealed class CreateSiparisUrunuCommandHandler(
             request.UrunMiktar,
             request.UrunBirimFiyat,
             request.IndirimOrani,
-            customer.KullaniciId);
+            customer.KullaniciId,
+            request.Beden,
+            request.Renk);
 
         await siparisRepository.UpdateAsync(siparis, cancellationToken);
         return urun.Id;

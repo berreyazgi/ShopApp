@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShopApp.Application.Features.Siparis.Dtos;
-using ShopApp.Application.Features.Siparis.Dtos;
 using ShopApp.Application.Features.Siparis.Commands.CreateSiparis;
 using ShopApp.Application.Features.Siparis.Commands.DeleteSiparis;
 using ShopApp.Application.Features.Siparis.Commands.UpdateSiparis;
@@ -11,7 +10,6 @@ using ShopApp.Application.Features.Siparis.Queries;
 using ShopApp.Application.Features.Siparis.Commands.CreateSiparisUrunu;
 using ShopApp.Application.Features.Siparis.Commands.DeleteSiparisUrunu;
 using ShopApp.Application.Features.Siparis.Commands.UpdateSiparisUrunu;
-using ShopApp.Application.Features.Siparis.Queries;
 
 namespace src.Monolith.ShopApp.Api.Controllers;
 

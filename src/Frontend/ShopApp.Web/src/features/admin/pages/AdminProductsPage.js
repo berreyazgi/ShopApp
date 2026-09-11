@@ -34,6 +34,7 @@ import { createAdminProductGrid } from '../components/AdminProductGrid.js';
 import { createAdminProductList } from '../components/AdminProductList.js';
 import { createAdminProductFormModal } from '../components/AdminProductFormModal.js';
 import { createLoadingState, createEmptyState, createErrorState } from '../../../shared/components/StateView/StateView.js';
+import { showToast } from '../../../shared/components/Toast/Toast.js';
 import { createIcon } from '../../../shared/components/Icon/Icon.js';
 import { getCategoriesSync } from '../../categories/services/categoryService.js';
 import { getAdminProducts, getAdminProductById, getCategories, createProduct, updateProduct, deleteProduct } from '../../products/services/productsService.js';
@@ -192,7 +193,7 @@ export default function AdminProductsPage(props = {}) {
   }
 
   // Product cards/rows only carry the list DTO (no SKU/stock — those live on
-  // UrunTur, not on the list-level Urun projection). Opening the edit modal
+  // UrunVaryant, not on the list-level Urun projection). Opening the edit modal
   // with that DTO directly is what made SKU/stock show up blank, so fetch the
   // full detail (GET /api/admin/urun/{id}, active or passive) first and open
   // the modal only once it has arrived.
@@ -249,6 +250,7 @@ export default function AdminProductsPage(props = {}) {
           }
           products = products.filter((p) => (p.id ?? p.urunId) !== pid);
           renderPage();
+          showToast({ type: 'success', message: 'Ürün başarıyla silindi.' });
         } catch (err) {
           alert(err?.message || 'Ürün silinemedi.');
         }
@@ -258,37 +260,49 @@ export default function AdminProductsPage(props = {}) {
     document.body.appendChild(activeModalInstance.element);
   }
 
+  // Errors are intentionally left uncaught: the caller (AdminProductFormModal's
+  // onSave) awaits this and is responsible for turning a rejection into a
+  // friendly in-modal message, since it owns the form's error UI and saving state.
   async function handleSaveProduct(payload) {
     const isNew = !payload.id && !payload.urunId;
 
-    try {
-      let saved = payload;
-      if (isNew) {
-        // Persist to the real backend (POST /api/admin/urun)
-        saved = await createProduct(payload);
-        saved = enrichWithCategoryNames([saved], categories)[0];
-      } else {
-        // Persist to the real backend (PUT /api/admin/urun/{id})
-        const pid = String(payload.id ?? payload.urunId);
-        saved = await updateProduct(pid, payload);
-        saved = enrichWithCategoryNames([saved], categories)[0];
-      }
-
-      if (typeof props.onSaveProduct === 'function') {
-        props.onSaveProduct(saved);
-      }
-
-      const pid = saved.id ?? saved.urunId;
-      const existingIndex = products.findIndex((p) => (p.id ?? p.urunId) === pid);
-      if (existingIndex !== -1) {
-        products[existingIndex] = saved;
-      } else {
-        products.unshift(saved);
-      }
-      renderPage();
-    } catch (err) {
-      alert(err?.message || 'Ürün kaydedilemedi.');
+    let saved = payload;
+    if (isNew) {
+      // Persist to the real backend (POST /api/admin/urun)
+      saved = await createProduct(payload);
+      saved = enrichWithCategoryNames([saved], categories)[0];
+    } else {
+      // Persist to the real backend (PUT /api/admin/urun/{id})
+      const pid = String(payload.id ?? payload.urunId);
+      saved = await updateProduct(pid, payload);
+      saved = enrichWithCategoryNames([saved], categories)[0];
     }
+
+    if (typeof props.onSaveProduct === 'function') {
+      props.onSaveProduct(saved);
+    }
+
+    const pid = saved.id ?? saved.urunId;
+    const existingIndex = products.findIndex((p) => (p.id ?? p.urunId) === pid);
+    if (existingIndex !== -1) {
+      products[existingIndex] = saved;
+    } else {
+      products.unshift(saved);
+    }
+    renderPage();
+
+    // Fires only once the product list above already reflects the
+    // authoritative backend state — never an optimistic "it probably worked".
+    if (saved.partialWarning) {
+      showToast({ type: 'warning', message: saved.partialWarning, duration: 5000 });
+    } else {
+      showToast({
+        type: 'success',
+        message: isNew ? 'Ürün başarıyla eklendi.' : 'Ürün başarıyla güncellendi.',
+      });
+    }
+
+    return saved;
   }
 
   function closeActiveModal() {

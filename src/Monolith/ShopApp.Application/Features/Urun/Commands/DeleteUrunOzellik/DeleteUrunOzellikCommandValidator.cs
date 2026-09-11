@@ -6,7 +6,7 @@ public sealed class DeleteUrunOzellikCommandValidator : AbstractValidator<Delete
 {
     public DeleteUrunOzellikCommandValidator()
     {
-        RuleFor(x => x.UrunTurId).NotEmpty();
+        RuleFor(x => x.UrunId).NotEmpty();
         RuleFor(x => x.Id).NotEmpty();
     }
 }

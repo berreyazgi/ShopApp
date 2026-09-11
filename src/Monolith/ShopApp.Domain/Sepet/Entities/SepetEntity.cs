@@ -28,9 +28,9 @@ public class SepetEntity : BaseEntity
         MarkAsUpdated();
     }
 
-    public SepetUrunu UrunEkle(Guid urunTurId, int urunMiktar, decimal fiyatGecmis, Guid olusturanKullaniciId)
+    public SepetUrunu UrunEkle(Guid urunVaryantId, int urunMiktar, decimal fiyatGecmis, Guid olusturanKullaniciId)
     {
-        var urun = SepetUrunu.Olustur(Id, urunTurId, urunMiktar, fiyatGecmis, olusturanKullaniciId);
+        var urun = SepetUrunu.Olustur(Id, urunVaryantId, urunMiktar, fiyatGecmis, olusturanKullaniciId);
         Urunler.Add(urun);
         return urun;
     }

@@ -7,7 +7,11 @@ public class SiparisUrunleri : BaseEntity
     public Guid SiparisId { get; private set; }
 
     public Guid UrunId { get; private set; }
-    public Guid UrunTurId { get; private set; }
+    public Guid UrunVaryantId { get; private set; }
+
+    public string? Beden { get; private set; }
+
+    public string? Renk { get; private set; }
 
     public string UrunIsmi { get; private set; } = null!;
     public string? UrunAciklamasi { get; private set; }
@@ -29,21 +33,25 @@ public class SiparisUrunleri : BaseEntity
     public static SiparisUrunleri Olustur(
         Guid siparisId,
         Guid urunId,
-        Guid urunTurId,
+        Guid urunVaryantId,
         string urunIsmi,
         string? urunAciklamasi,
         string? stokTakipNumarasi,
         int urunMiktar,
         decimal urunBirimFiyat,
         decimal indirimOrani,
-        Guid olusturanKullaniciId) => new()
+        Guid olusturanKullaniciId,
+        string? beden = null,
+        string? renk = null) => new()
     {
         SiparisId = siparisId,
         UrunId = urunId,
-        UrunTurId = urunTurId,
+        UrunVaryantId = urunVaryantId,
         UrunIsmi = urunIsmi,
         UrunAciklamasi = urunAciklamasi,
         StokTakipNumarasi = stokTakipNumarasi,
+        Beden = beden,
+        Renk = renk,
         UrunMiktar = urunMiktar,
         UrunBirimFiyat = urunBirimFiyat,
         IndirimOrani = indirimOrani,

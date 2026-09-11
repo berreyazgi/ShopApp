@@ -8,6 +8,6 @@ public class UrunOzelligiConfiguration : IEntityTypeConfiguration<UrunOzelligi>
 {
     public void Configure(EntityTypeBuilder<UrunOzelligi> b)
     {
-        b.HasIndex(x => new { x.UrunTurId, x.OzellikAdi });
+        b.HasIndex(x => new { x.UrunVaryantId, x.OzellikAdi });
     }
 }

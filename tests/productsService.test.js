@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 
 /**
  * Exercises productsService.js against a stubbed fetch, covering the
- * SKU/stock (UrunTur) wiring: detail mapping surfaces the primary variant's
- * stockCode/stock as top-level urunTurId/sku/stock, product creation persists
+ * SKU/stock (UrunVaryant) wiring: detail mapping surfaces the primary variant's
+ * stockCode/stock as top-level urunVaryantId/sku/stock, product creation persists
  * an initial variant, and editing an existing product updates that same
  * variant instead of creating a second one.
  */
@@ -27,7 +27,7 @@ function stubFetch(handlers) {
   };
 }
 
-test('getAdminProductById maps the primary UrunTur variant to urunTurId/sku/stock', async () => {
+test('getAdminProductById maps the primary UrunVaryant variant to urunVaryantId/sku/stock', async () => {
   stubFetch({
     'GET /api/admin/urun/prod-1': () => ({
       body: {
@@ -42,12 +42,13 @@ test('getAdminProductById maps the primary UrunTur variant to urunTurId/sku/stoc
         gorselUrl: null,
         aktifMi: true,
         gorseller: [],
-        urunTurleri: [
+        varyantlar: [
           {
-            id: 'tur-1',
+            id: 'varyant-1',
             urunId: 'prod-1',
-            ad: '42',
-            stokAded: 15,
+            beden: '42',
+            renk: null,
+            stokAdet: 15,
             stokKod: 'NIKE-AM-42',
             fiyatFarki: 0,
             aktifMi: true,
@@ -61,16 +62,63 @@ test('getAdminProductById maps the primary UrunTur variant to urunTurId/sku/stoc
   const { getAdminProductById } = await import('../src/Frontend/ShopApp.Web/src/features/products/services/productsService.js');
   const detail = await getAdminProductById('prod-1');
 
-  assert.equal(detail.urunTurId, 'tur-1');
+  assert.equal(detail.urunVaryantId, 'varyant-1');
   assert.equal(detail.sku, 'NIKE-AM-42');
   assert.equal(detail.stock, 15);
 });
 
-test('createProduct persists the entered SKU/stock as a new UrunTur (not left on the client only)', async () => {
+test('getProductById uses the single detail response for persisted attributes and active variants', async () => {
+  stubFetch({
+    'GET /api/urun/prod-1': () => ({
+      body: {
+        id: 'prod-1',
+        kategoriId: 'cat-1',
+        kategoriAd: 'Kadın Giyim',
+        urunAd: 'Oversize Basic T-Shirt',
+        fiyat: 799.9,
+        markaAd: 'ShopApp',
+        gorseller: [{ id: 'image-1', gorselUrl: 'https://example.test/tshirt.jpg' }],
+        ozellikler: [
+          { id: 'attribute-2', urunId: 'prod-1', ozellikAd: 'Kalıp', deger: 'Oversize', siralama: 2 },
+          { id: 'attribute-1', urunId: 'prod-1', ozellikAd: 'Kumaş', deger: '%100 Pamuk', siralama: 1 },
+        ],
+        varyantlar: [{
+          id: 'varyant-1',
+          urunId: 'prod-1',
+          beden: 'M',
+          renk: 'Siyah',
+          stokKod: 'TSHIRT-BLK-M',
+          stokAdet: 5,
+          fiyatFarki: 0,
+          aktifMi: true,
+        }],
+      },
+    }),
+  });
+
+  const { getProductById } = await import('../src/Frontend/ShopApp.Web/src/features/products/services/productsService.js');
+  const detail = await getProductById('prod-1');
+
+  assert.equal(detail.images[0], 'https://example.test/tshirt.jpg');
+  assert.deepEqual(
+    detail.attributes.map((attribute) => [attribute.name, attribute.value]),
+    [['Kumaş', '%100 Pamuk'], ['Kalıp', 'Oversize']]);
+  assert.equal(detail.variants[0].id, 'varyant-1');
+  assert.equal(detail.variants[0].beden, 'M');
+  assert.equal(detail.variants[0].renk, 'Siyah');
+});
+
+test('createProduct sends the initial SKU/stock in the same POST as the product (atomic create, no separate UrunVaryant call)', async () => {
   const calls = [];
   stubFetch({
+    // No 'POST /api/admin/urun/new-prod/varyantlar' handler is registered —
+    // if createProduct() still called it (the old two-step flow), stubFetch
+    // would throw "Unexpected fetch call" and fail this test. The backend
+    // (CreateUrunCommandHandler) now attaches the initial UrunVaryant to the
+    // same SaveChanges call as the product itself, so the frontend only needs
+    // to send everything in the one POST /api/admin/urun request.
     'POST /api/admin/urun': (body) => { calls.push(['create', body]); return { body: { id: 'new-prod' } }; },
-    'POST /api/admin/urun/new-prod/tur': (body) => { calls.push(['createTur', body]); return { body: { id: 'new-tur' } }; },
+    'GET /api/admin/urun': () => ({ body: [{ id: 'new-prod', kategoriId: 'cat-1', urunAd: 'Yeni Ürün', fiyat: 100, markaAd: 'Marka', toplamStok: 10 }] }),
   });
 
   const { createProduct } = await import('../src/Frontend/ShopApp.Web/src/features/products/services/productsService.js');
@@ -84,21 +132,41 @@ test('createProduct persists the entered SKU/stock as a new UrunTur (not left on
     isActive: true,
   });
 
+  assert.equal(calls.length, 1, 'Only the single create request must fire');
   assert.equal(calls[0][0], 'create');
-  assert.equal(calls[1][0], 'createTur');
-  assert.equal(calls[1][1].stokKod, 'SKU-NEW');
-  assert.equal(calls[1][1].stokAded, 10);
+  assert.equal(calls[0][1].initialStokKod, 'SKU-NEW');
+  assert.equal(calls[0][1].initialStokAdet, 10);
   assert.equal(saved.sku, 'SKU-NEW');
   assert.equal(saved.stock, 10);
-  assert.equal(saved.urunTurId, 'new-tur');
 });
 
-test('updateProduct with an existing urunTurId updates that variant instead of creating a duplicate', async () => {
+test('createProduct without a SKU does not send initial variant fields, and creates no variant', async () => {
+  const calls = [];
+  stubFetch({
+    'POST /api/admin/urun': (body) => { calls.push(body); return { body: { id: 'new-prod-2' } }; },
+    'GET /api/admin/urun': () => ({ body: [{ id: 'new-prod-2', kategoriId: 'cat-1', urunAd: 'SKU\'suz Ürün', fiyat: 50, markaAd: 'Marka' }] }),
+  });
+
+  const { createProduct } = await import('../src/Frontend/ShopApp.Web/src/features/products/services/productsService.js');
+  await createProduct({
+    categoryId: 'cat-1',
+    name: 'SKU\'suz Ürün',
+    price: 50,
+    brand: 'Marka',
+    isActive: true,
+  });
+
+  assert.equal(calls.length, 1);
+  assert.equal('initialStokKod' in calls[0], false, 'No SKU means no initial variant fields should be sent at all');
+});
+
+test('updateProduct with an existing urunVaryantId updates that variant instead of creating a duplicate', async () => {
   const calls = [];
   stubFetch({
     'PUT /api/admin/urun/prod-1': (body) => { calls.push(['updateRoot', body]); return { body: null, status: 204 }; },
-    'PUT /api/admin/urun/prod-1/tur/tur-1': (body) => { calls.push(['updateTur', body]); return { body: null, status: 204 }; },
-    'POST /api/admin/urun/prod-1/tur': (body) => { calls.push(['createTur', body]); return { body: { id: 'should-not-happen' } }; },
+    'PUT /api/admin/urun/prod-1/varyantlar/varyant-1': (body) => { calls.push(['updateVaryant', body]); return { body: null, status: 204 }; },
+    'POST /api/admin/urun/prod-1/varyantlar': (body) => { calls.push(['createVaryant', body]); return { body: { id: 'should-not-happen' } }; },
+    'GET /api/admin/urun': () => ({ body: [{ id: 'prod-1', kategoriId: 'cat-1', urunAd: 'Deri Ceket', fiyat: 1600, markaAd: 'Marka' }] }),
   });
 
   const { updateProduct } = await import('../src/Frontend/ShopApp.Web/src/features/products/services/productsService.js');
@@ -107,19 +175,20 @@ test('updateProduct with an existing urunTurId updates that variant instead of c
     name: 'Deri Ceket',
     price: 1600,
     brand: 'Marka',
-    urunTurId: 'tur-1',
+    urunVaryantId: 'varyant-1',
     sku: 'ABC-100',
     stock: 32,
-    variantAd: 'Standart',
+    variantBeden: null,
+    variantRenk: null,
     variantFiyatFarki: 0,
     variantIsActive: true,
     isActive: true,
   });
 
   const kinds = calls.map((c) => c[0]);
-  assert.ok(kinds.includes('updateTur'), 'Must call UpdateUrunTur for the existing variant');
-  assert.ok(!kinds.includes('createTur'), 'Must not create a second UrunTur when one already exists');
+  assert.ok(kinds.includes('updateVaryant'), 'Must call UpdateUrunVaryant for the existing variant');
+  assert.ok(!kinds.includes('createVaryant'), 'Must not create a second UrunVaryant when one already exists');
   assert.equal(saved.sku, 'ABC-100');
   assert.equal(saved.stock, 32);
-  assert.equal(saved.urunTurId, 'tur-1');
+  assert.equal(saved.urunVaryantId, 'varyant-1');
 });

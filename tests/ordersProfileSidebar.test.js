@@ -298,7 +298,7 @@ test('createProfileSidebar activates exactly "Siparişlerim" when activeItem is 
 
 test('OrderListPage loads real profile + orders and shows the sidebar with Siparişlerim active', async () => {
   stubFetch({
-    'GET /api/profil': () => ({ body: sampleUser }),
+    'GET /api/profile': () => ({ body: sampleUser }),
     'GET /api/siparis': () => ({
       body: [
         { id: 'ord-1', siparisNumarasi: 'SIP-1', durumIsmi: 'Hazırlanıyor', araToplam: 100, indirimTutari: 0, kargoFiyat: 0, toplamFiyat: 100 },
@@ -326,7 +326,7 @@ test('OrderListPage loads real profile + orders and shows the sidebar with Sipar
 
 test('OrderListPage: clicking "Hesabım" in the sidebar navigates to /profil', async () => {
   stubFetch({
-    'GET /api/profil': () => ({ body: sampleUser }),
+    'GET /api/profile': () => ({ body: sampleUser }),
     'GET /api/siparis': () => ({ body: [] }),
   });
   global.window.__lastPush = null;
@@ -344,7 +344,7 @@ test('OrderListPage: clicking "Hesabım" in the sidebar navigates to /profil', a
 
 test('OrderListPage preserves the existing empty-orders state when the customer has no orders', async () => {
   stubFetch({
-    'GET /api/profil': () => ({ body: sampleUser }),
+    'GET /api/profile': () => ({ body: sampleUser }),
     'GET /api/siparis': () => ({ body: [] }),
   });
 
@@ -357,7 +357,7 @@ test('OrderListPage preserves the existing empty-orders state when the customer 
 
 test('OrderListPage preserves the existing orders error state when getAllOrders fails, without breaking the sidebar', async () => {
   stubFetch({
-    'GET /api/profil': () => ({ body: sampleUser }),
+    'GET /api/profile': () => ({ body: sampleUser }),
     'GET /api/siparis': () => ({ ok: false, status: 500, body: { message: 'Sunucu hatası' } }),
   });
 
@@ -372,7 +372,7 @@ test('OrderListPage preserves the existing orders error state when getAllOrders 
 
 test('OrderListPage shows a real error/retry state (not fake profile data) when getProfile fails', async () => {
   stubFetch({
-    'GET /api/profil': () => ({ ok: false, status: 500, body: { message: 'Profil alınamadı' } }),
+    'GET /api/profile': () => ({ ok: false, status: 500, body: { message: 'Profil alınamadı' } }),
   });
 
   const page = OrderListPage();

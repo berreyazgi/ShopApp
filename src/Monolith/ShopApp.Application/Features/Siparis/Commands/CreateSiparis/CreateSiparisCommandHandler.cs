@@ -8,7 +8,7 @@ namespace ShopApp.Application.Features.Siparis.Commands.CreateSiparis;
 
 /// <summary>
 /// Converts the authenticated customer's active basket into an order:
-/// re-validates every line against the current, authoritative Urun/UrunTur
+/// re-validates every line against the current, authoritative Urun/UrunVaryant
 /// state (active + stock), snapshots it into SiparisUrunleri, then closes
 /// the basket. All reads/writes happen against one IShopAppDbContext and are
 /// committed in a single SaveChangesAsync so the order and basket-closure
@@ -44,10 +44,10 @@ public sealed class CreateSiparisCommandHandler(
         if (!hasAddress)
             throw new InvalidOperationException("Sipariş oluşturabilmek için önce teslimat adresi eklemelisiniz.");
 
-        var urunTurIds = sepet.Urunler.Select(u => u.UrunTurId).ToList();
-        var urunTurler = await context.UrunTur
+        var urunVaryantIds = sepet.Urunler.Select(u => u.UrunVaryantId).ToList();
+        var urunVaryantler = await context.UrunVaryant
             .Include(t => t.Urun)
-            .Where(t => urunTurIds.Contains(t.Id))
+            .Where(t => urunVaryantIds.Contains(t.Id))
             .ToDictionaryAsync(t => t.Id, cancellationToken);
 
         var siparisNumarasi = $"SIP-{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid().ToString("N")[..6].ToUpperInvariant()}";
@@ -59,27 +59,29 @@ public sealed class CreateSiparisCommandHandler(
             // Re-validate against the CURRENT catalog/stock state — the basket
             // may have been sitting for a while, so its stored FiyatGecmis
             // and the item's continued availability cannot be trusted as-is.
-            if (!urunTurler.TryGetValue(sepetUrunu.UrunTurId, out var urunTur))
+            if (!urunVaryantler.TryGetValue(sepetUrunu.UrunVaryantId, out var urunVaryant))
                 throw new InvalidOperationException("Sepetinizdeki bir ürün artık mevcut değil.");
 
-            if (!urunTur.AktifMi || !urunTur.Urun.AktifMi)
-                throw new InvalidOperationException($"'{urunTur.Urun.UrunAd}' artık satışta değil.");
+            if (!urunVaryant.AktifMi || !urunVaryant.Urun.AktifMi)
+                throw new InvalidOperationException($"'{urunVaryant.Urun.UrunAd}' artık satışta değil.");
 
-            if (sepetUrunu.UrunMiktar > urunTur.StokAded)
-                throw new InvalidOperationException($"'{urunTur.Urun.UrunAd}' için yeterli stok bulunmuyor.");
+            if (sepetUrunu.UrunMiktar > urunVaryant.StokAdet)
+                throw new InvalidOperationException($"'{urunVaryant.Urun.UrunAd}' için yeterli stok bulunmuyor.");
 
-            var birimFiyat = urunTur.Urun.Fiyat + urunTur.FiyatFarki;
+            var birimFiyat = urunVaryant.Urun.Fiyat + urunVaryant.FiyatFarki;
 
             var satir = siparis.UrunEkle(
-                urunTur.Id,
-                urunTur.UrunId,
-                $"{urunTur.Urun.UrunAd} ({urunTur.Ad})",
-                urunTur.Urun.Detay,
-                urunTur.StokKod,
+                urunVaryant.Id,
+                urunVaryant.UrunId,
+                $"{urunVaryant.Urun.UrunAd} ({urunVaryant.Renk ?? urunVaryant.Beden ?? "Standart"})",
+                urunVaryant.Urun.Detay,
+                urunVaryant.StokKod,
                 sepetUrunu.UrunMiktar,
                 birimFiyat,
                 indirimOrani: 0m,
-                customer.KullaniciId);
+                customer.KullaniciId,
+                urunVaryant.Beden,
+                urunVaryant.Renk);
 
             araToplam += satir.ToplamFiyat;
         }
