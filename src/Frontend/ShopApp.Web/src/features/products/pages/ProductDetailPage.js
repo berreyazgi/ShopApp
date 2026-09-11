@@ -1,15 +1,15 @@
 /**
  * ProductDetailPage.js — Product Detail Page
  *
- * Loads a real product (Urun) plus its UrunTur variants and each variant's
+ * Loads a real product (Urun) plus its UrunVaryant variants and each variant's
  * UrunOzellik properties from the backend, lets the customer pick a value
  * for every property (Beden, Renk, or any arbitrary property name — nothing
- * is hardcoded), resolves that selection to exactly one UrunTur, and adds it
+ * is hardcoded), resolves that selection to exactly one UrunVaryant, and adds it
  * to the authenticated customer's active Sepet.
  *
  * Property values and available combinations come entirely from the
- * UrunTur/UrunOzellik data the backend returns — no combination is ever
- * invented client-side, and no urunTurId is ever generated on the frontend.
+ * UrunVaryant/UrunOzellik data the backend returns — no combination is ever
+ * invented client-side, and no urunVaryantId is ever generated on the frontend.
  *
  * Exported as default so the router can import it dynamically.
  */
@@ -33,28 +33,18 @@ import { getOrCreateActiveCart, addCartItem } from '../../cart/services/cartServ
  * @returns {{ name: string, values: string[] }[]}
  */
 function buildPropertyGroups(variants) {
-  const order = [];
-  const valuesByName = new Map();
-
-  variants.forEach((variant) => {
-    variant.properties.forEach((prop) => {
-      if (!valuesByName.has(prop.name)) {
-        valuesByName.set(prop.name, new Set());
-        order.push(prop.name);
-      }
-      valuesByName.get(prop.name).add(prop.value);
-    });
-  });
-
-  return order.map((name) => ({ name, values: Array.from(valuesByName.get(name)) }));
+  return [
+    { name: "Beden", values: Array.from(new Set(variants.map((variant) => variant.beden).filter(Boolean))) },
+    { name: "Renk", values: Array.from(new Set(variants.map((variant) => variant.renk).filter(Boolean))) },
+  ].filter((group) => group.values.length > 0);
 }
 
 function variantMatchesSelection(variant, selected, requiredNames) {
   return requiredNames.every((name) =>
-    variant.properties.some((p) => p.name === name && p.value === selected[name]));
+    (name === "Beden" ? variant.beden : variant.renk) === selected[name]);
 }
 
-/** Returns the single UrunTur matching the full selection, or null if incomplete/no match. */
+/** Returns the single UrunVaryant matching the full selection, or null if incomplete/no match. */
 function resolveVariant(variants, selected, requiredNames) {
   if (requiredNames.some((name) => !selected[name])) return null;
   return variants.find((v) => variantMatchesSelection(v, selected, requiredNames)) ?? null;
@@ -138,7 +128,8 @@ function renderProductDetail(product, relatedProducts) {
   // selection — pre-fill it so the customer doesn't have to click through
   // a single-option selector.
   if (variants.length === 1) {
-    variants[0].properties.forEach((p) => { selected[p.name] = p.value; });
+    if (variants[0].beden) selected.Beden = variants[0].beden;
+    if (variants[0].renk) selected.Renk = variants[0].renk;
   }
 
   let quantity = 1;
@@ -221,7 +212,7 @@ function renderProductDetail(product, relatedProducts) {
   info.appendChild(stockNotice);
 
   // Options — one <select> per property group, built entirely from the
-  // OzellikAd/OzellikDeger values the backend returned.
+  // OzellikAd/Deger values the backend returned.
   const options = document.createElement('div');
   options.className = 'pdp-options';
 
@@ -436,7 +427,7 @@ function renderProductDetail(product, relatedProducts) {
     setAddToCartLoading(true);
     try {
       const cart = await getOrCreateActiveCart();
-      await addCartItem(cart.id, { urunTurId: variant.id, urunMiktar: quantity });
+      await addCartItem(cart.id, { urunVaryantId: variant.id, urunMiktar: quantity });
 
       if (goToCartAfter) {
         navigate('/sepet');
@@ -474,6 +465,25 @@ function renderProductDetail(product, relatedProducts) {
   // ── Lower Content Area
   const lower = document.createElement('div');
   lower.className = 'pdp-lower';
+
+  if ((product.attributes ?? []).length > 0) {
+    const attributesSection = document.createElement('section');
+    const attributesTitle = document.createElement('h2');
+    attributesTitle.className = 'pdp-related__title';
+    attributesTitle.textContent = 'Ürün Özellikleri';
+    attributesSection.appendChild(attributesTitle);
+
+    const attributesList = document.createElement('dl');
+    product.attributes.forEach((attribute) => {
+      const term = document.createElement('dt');
+      term.textContent = attribute.name;
+      const definition = document.createElement('dd');
+      definition.textContent = attribute.value;
+      attributesList.append(term, definition);
+    });
+    attributesSection.appendChild(attributesList);
+    lower.appendChild(attributesSection);
+  }
 
   // Related Products — only rendered when the backend actually returns some.
   if (relatedProducts.length > 0) {

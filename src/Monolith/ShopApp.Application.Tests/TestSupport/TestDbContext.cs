@@ -18,7 +18,7 @@ public sealed class TestDbContext(DbContextOptions<TestDbContext> options) : DbC
     public DbSet<Urun> Urun => Set<Urun>();
     public DbSet<Kategori> Kategori => Set<Kategori>();
     public DbSet<UrunGorsel> UrunGorsel => Set<UrunGorsel>();
-    public DbSet<UrunTur> UrunTur => Set<UrunTur>();
+    public DbSet<UrunVaryant> UrunVaryant => Set<UrunVaryant>();
     public DbSet<UrunOzellik> UrunOzellik => Set<UrunOzellik>();
 
     public static TestDbContext Create()

@@ -50,7 +50,7 @@ public class SiparisEntity : BaseEntity
     }
 
     public SiparisUrunleri UrunEkle(
-        Guid urunTurId,
+        Guid urunVaryantId,
         Guid urunId,
         string urunIsmi,
         string? urunAciklamasi,
@@ -58,19 +58,23 @@ public class SiparisEntity : BaseEntity
         int urunMiktar,
         decimal urunBirimFiyat,
         decimal indirimOrani,
-        Guid olusturanKullaniciId)
+        Guid olusturanKullaniciId,
+        string? beden = null,
+        string? renk = null)
     {
         var urun = SiparisUrunleri.Olustur(
             Id,
             urunId,
-            urunTurId,
+            urunVaryantId,
             urunIsmi,
             urunAciklamasi,
             stokTakipNumarasi,
             urunMiktar,
             urunBirimFiyat,
             indirimOrani,
-            olusturanKullaniciId);
+            olusturanKullaniciId,
+            beden,
+            renk);
         Urunler.Add(urun);
         return urun;
     }

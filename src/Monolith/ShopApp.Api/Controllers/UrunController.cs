@@ -32,4 +32,30 @@ public sealed class UrunController : ControllerBase
             return NotFound(new { message = exception.Message });
         }
     }
+
+    [HttpGet("{urunId:guid}/ozellikler")]
+    public async Task<ActionResult<List<ResultUrunOzellikDto>>> GetOzellikler(Guid urunId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return Ok(await _mediator.Send(new GetUrunOzellikleri.GetUrunOzellikleriQuery(urunId), cancellationToken));
+        }
+        catch (KeyNotFoundException exception)
+        {
+            return NotFound(new { message = exception.Message });
+        }
+    }
+
+    [HttpGet("{urunId:guid}/varyantlar")]
+    public async Task<ActionResult<List<ResultUrunVaryantDto>>> GetVaryantlar(Guid urunId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return Ok(await _mediator.Send(new GetUrunVaryantlar.GetUrunVaryantlarQuery(urunId), cancellationToken));
+        }
+        catch (KeyNotFoundException exception)
+        {
+            return NotFound(new { message = exception.Message });
+        }
+    }
 }

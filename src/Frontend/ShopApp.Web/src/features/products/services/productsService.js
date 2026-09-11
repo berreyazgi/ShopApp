@@ -13,8 +13,8 @@
  *  - POST   /api/admin/urun            (AdminUrunController, Admin only)
  *  - PUT    /api/admin/urun/{id}       (AdminUrunController, Admin only)
  *  - DELETE /api/admin/urun/{id}       (AdminUrunController, Admin only)
- *  - POST   /api/admin/urun/{urunId}/tur          (AdminUrunController, Admin only)
- *  - PUT    /api/admin/urun/{urunId}/tur/{id}     (AdminUrunController, Admin only)
+ *  - POST   /api/admin/urun/{urunId}/varyantlar          (AdminUrunController, Admin only)
+ *  - PUT    /api/admin/urun/{urunId}/varyantlar/{id}     (AdminUrunController, Admin only)
  *
  * Frontend <-> Backend field mapping (list — ResultUrunDto):
  *
@@ -32,8 +32,8 @@
  *
  * Detail (GetByIdUrunDto) additionally carries:
  *   gorseller:    [{ id, gorselUrl }]
- *   urunTurleri:  [{ id, urunId, ad, stokAded, stokKod, fiyatFarki, aktifMi,
- *                    ozellikler: [{ id, urunTurId, ozellikAd, ozellikDeger }] }]
+ *   ozellikler:   [{ id, urunId, ozellikAd, deger, siralama }]
+ *   varyantlar:   [{ id, urunId, beden, renk, stokAdet, stokKod, fiyatFarki, aktifMi }]
  *
  * NOTE: getRelatedProducts() has no backend equivalent yet (no CQRS query
  * for "related products" exists) — it returns an empty list rather than
@@ -86,34 +86,35 @@ function mapFromBackend(dto) {
 function mapOzellik(o) {
   return {
     id: o.id,
-    urunTurId: o.urunTurId,
+    urunId: o.urunId,
     name: o.ozellikAd,
-    value: o.ozellikDeger,
+    value: o.deger,
+    order: o.siralama ?? 0,
   };
 }
 
-/** Maps a backend GetByIdUrunTurDto (variant) to the frontend variant shape. */
+/** Maps a backend ResultUrunVaryantDto (variant) to the frontend variant shape. */
 function mapVariant(dto) {
   return {
     id: dto.id,
     productId: dto.urunId,
-    name: dto.ad,
-    stock: dto.stokAded,
+    beden: dto.beden ?? null,
+    renk: dto.renk ?? null,
+    stock: dto.stokAdet,
     stockCode: dto.stokKod,
     priceDelta: dto.fiyatFarki,
     isActive: dto.aktifMi,
-    properties: (dto.ozellikler ?? []).map(mapOzellik),
   };
 }
 
 /**
  * Maps a backend GetByIdUrunDto (product detail) to the frontend product-detail shape.
  *
- * SKU / stock live on UrunTur (a product can have several variants), not on Urun
+ * SKU / stock live on UrunVaryant (a product can have several variants), not on Urun
  * itself. The current admin form is a single-variant UX with no concept of
  * choosing between variants, so it edits the *first* variant returned by the
  * backend — that variant's real, persisted id/stockCode/stock are surfaced here
- * as `urunTurId`/`sku`/`stock` so the edit form loads and preserves them instead
+ * as `urunVaryantId`/`sku`/`stock` so the edit form loads and preserves them instead
  * of showing blank/fake values. `variants` (the full list) is also kept on the
  * object so a future multi-variant UI can iterate over it without changing this
  * mapping.
@@ -125,7 +126,7 @@ function mapDetailFromBackend(dto) {
   }
   if (images.length === 0 && dto.gorselUrl) images.push(dto.gorselUrl);
 
-  const variants = (dto.urunTurleri ?? []).map(mapVariant);
+  const variants = (dto.varyantlar ?? []).map(mapVariant);
   const primaryVariant = variants[0] ?? null;
 
   return {
@@ -141,11 +142,13 @@ function mapDetailFromBackend(dto) {
     images,
     isActive: dto.aktifMi ?? true,
     variants,
+    attributes: (dto.ozellikler ?? []).map(mapOzellik).sort((a, b) => a.order - b.order),
     // Primary-variant convenience fields consumed by AdminProductFormModal.
-    urunTurId: primaryVariant?.id ?? null,
+    urunVaryantId: primaryVariant?.id ?? null,
     sku: primaryVariant?.stockCode ?? '',
     stock: primaryVariant?.stock ?? 0,
-    variantAd: primaryVariant?.name ?? null,
+    variantBeden: primaryVariant?.beden ?? null,
+    variantRenk: primaryVariant?.renk ?? null,
     variantFiyatFarki: primaryVariant?.priceDelta ?? 0,
     variantIsActive: primaryVariant?.isActive ?? true,
   };
@@ -223,7 +226,7 @@ export async function getProductsByCategory(kategoriId) {
 
 /**
  * Returns the full detail record for a single product, including its
- * UrunTur variants and each variant's UrunOzellik properties.
+ * UrunVaryant variants and product-level UrunOzellik attributes.
  * Maps to: GET /api/urun/{id}
  *
  * @param {string} productId
@@ -280,19 +283,43 @@ export async function getRelatedProducts() {
   return [];
 }
 
+async function persistAttributes(urunId, payload) {
+  const attributes = payload.attributes ?? [];
+  const existing = payload.existingAttributes ?? [];
+
+  await Promise.all(existing.slice(attributes.length).map((attribute) =>
+    apiClient.delete(endpoints.adminUrun.deleteOzellik(urunId, attribute.id))));
+
+  await Promise.all(attributes.map((attribute, index) => {
+    const body = {
+      urunId,
+      ozellikAd: attribute.name,
+      deger: attribute.value,
+      siralama: attribute.order ?? index,
+    };
+    const current = existing[index];
+    if (current?.id) {
+      return apiClient.put(
+        endpoints.adminUrun.updateOzellik(urunId, current.id),
+        { ...body, id: current.id });
+    }
+    return apiClient.post(endpoints.adminUrun.createOzellik(urunId), body);
+  }));
+}
+
 /**
- * Creates or updates the UrunTur (variant) that holds a product's SKU/stock,
+ * Creates or updates the UrunVaryant (variant) that holds a product's SKU/stock,
  * called right after the root Urun is saved. The admin form is single-variant,
  * so:
- *  - `payload.urunTurId` present  -> UpdateUrunTurCommand on that exact variant
- *    (preserves its Ad/FiyatFarki/AktifMi, which the form doesn't expose).
- *  - `payload.urunTurId` absent   -> CreateUrunTurCommand — only reached when
+ *  - `payload.urunVaryantId` present  -> UpdateUrunVaryantCommand on that exact variant
+ *    (preserves its Beden/Renk/FiyatFarki/AktifMi, which the form doesn't expose).
+ *  - `payload.urunVaryantId` absent   -> CreateUrunVaryantCommand — only reached when
  *    the product genuinely has no variant yet (a brand-new product, or a
  *    legacy product saved before SKU/stock existed on it).
  * Never creates a second variant for a product that already has one.
  * @param {string} urunId
  * @param {any} payload
- * @returns {Promise<{ id: string, stokKod: string, stokAded: number } | null>}
+ * @returns {Promise<{ id: string, stokKod: string, stokAdet: number } | null>}
  */
 async function persistVariant(urunId, payload) {
   const stockValue = payload.stock ?? payload.stok;
@@ -300,25 +327,26 @@ async function persistVariant(urunId, payload) {
 
   const variantBody = {
     urunId,
-    ad: payload.variantAd || 'Standart',
-    stokAded: Number(stockValue),
+    beden: payload.variantBeden ?? null,
+    renk: payload.variantRenk ?? null,
+    stokAdet: Number(stockValue),
     stokKod: String(payload.sku ?? '').trim(),
     fiyatFarki: Number(payload.variantFiyatFarki ?? 0),
     aktifMi: payload.variantIsActive !== undefined ? !!payload.variantIsActive : true,
   };
 
-  if (payload.urunTurId) {
-    await apiClient.put(endpoints.adminUrun.updateTur(urunId, payload.urunTurId), { ...variantBody, id: payload.urunTurId });
-    return { id: payload.urunTurId, stokKod: variantBody.stokKod, stokAded: variantBody.stokAded };
+  if (payload.urunVaryantId) {
+    await apiClient.put(endpoints.adminUrun.updateVaryant(urunId, payload.urunVaryantId), { ...variantBody, id: payload.urunVaryantId });
+    return { id: payload.urunVaryantId, stokKod: variantBody.stokKod, stokAdet: variantBody.stokAdet };
   }
 
-  const { id } = await apiClient.post(endpoints.adminUrun.createTur(urunId), variantBody);
-  return { id, stokKod: variantBody.stokKod, stokAded: variantBody.stokAded };
+  const { id } = await apiClient.post(endpoints.adminUrun.createVaryant(urunId), variantBody);
+  return { id, stokKod: variantBody.stokKod, stokAdet: variantBody.stokAdet };
 }
 
 /**
  * Creates a new product via POST /api/admin/urun (Admin only), then persists
- * its SKU/stock as a UrunTur via persistVariant().
+ * its SKU/stock as a UrunVaryant via persistVariant().
  * @param {{ categoryId: string, name: string, description?: string, price: number, brand: string, previousPrice?: number, imageUrl?: string, isActive?: boolean, sku?: string, stock?: number }} payload
  * @returns {Promise<any>}
  */
@@ -340,16 +368,17 @@ export async function createProduct(payload) {
 
   const { id } = await apiClient.post(endpoints.adminUrun.create(), body);
   const variant = await persistVariant(id, payload);
+  await persistAttributes(id, payload);
   return fetchAuthoritativeProduct(id, variant);
 }
 
 /**
  * Updates an existing product via PUT /api/admin/urun/{id} (Admin only), then
- * persists its SKU/stock as a UrunTur via persistVariant() — updating the
- * existing variant identified by payload.urunTurId rather than creating a new
- * one, so unrelated variant data (Ad/FiyatFarki/AktifMi) survives untouched.
+ * persists its SKU/stock as a UrunVaryant via persistVariant() — updating the
+ * existing variant identified by payload.urunVaryantId rather than creating a new
+ * one, so unrelated variant data (Beden/Renk/FiyatFarki/AktifMi) survives untouched.
  * @param {string} id
- * @param {{ categoryId?: string, name?: string, description?: string, price?: number, brand?: string, previousPrice?: number, imageUrl?: string, isActive?: boolean, sku?: string, stock?: number, urunTurId?: string }} payload
+ * @param {{ categoryId?: string, name?: string, description?: string, price?: number, brand?: string, previousPrice?: number, imageUrl?: string, isActive?: boolean, sku?: string, stock?: number, urunVaryantId?: string }} payload
  * @returns {Promise<any>}
  */
 export async function updateProduct(id, payload) {
@@ -371,6 +400,7 @@ export async function updateProduct(id, payload) {
 
   await apiClient.put(endpoints.adminUrun.update(id), body);
   const variant = await persistVariant(id, payload);
+  await persistAttributes(id, payload);
   return fetchAuthoritativeProduct(id, variant);
 }
 
@@ -381,14 +411,14 @@ export async function updateProduct(id, payload) {
  * carried over from the submitted form payload, which can go stale (e.g. if
  * the backend recalculates/rejects something).
  * @param {string} id
- * @param {{ id: string, stokKod: string, stokAded: number } | null} variant
+ * @param {{ id: string, stokKod: string, stokAdet: number } | null} variant
  * @returns {Promise<any>}
  */
 async function fetchAuthoritativeProduct(id, variant) {
   const products = await getAdminProducts();
   const found = products.find((p) => String(p.id) === String(id));
   if (!found) return null;
-  return variant ? { ...found, urunTurId: variant.id, sku: variant.stokKod } : found;
+  return variant ? { ...found, urunVaryantId: variant.id, sku: variant.stokKod, stock: variant.stokAdet, stok: variant.stokAdet } : found;
 }
 
 /**

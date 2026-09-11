@@ -1,7 +1,7 @@
 /**
  * SavedAddressesCard.js — Kayıtlı Adresler Kartı
  *
- * GET /api/adres üzerinden gelen gerçek adresleri listeler.
+ * GET /api/profile/addresses üzerinden gelen gerçek adresleri listeler.
  * "Yeni Adres Ekle", "Düzenle" ve "Sil" butonlarını barındırır.
  * Boş ise temiz bir boş durum gösterir.
  */

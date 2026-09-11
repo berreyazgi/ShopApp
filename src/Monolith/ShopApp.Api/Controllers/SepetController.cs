@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShopApp.Application.Features.Sepet.Dtos;
-using ShopApp.Application.Features.Sepet.Dtos;
 using ShopApp.Application.Features.Sepet.Commands.CreateSepet;
 using ShopApp.Application.Features.Sepet.Commands.DeleteSepet;
 using ShopApp.Application.Features.Sepet.Commands.UpdateSepet;
@@ -11,7 +10,6 @@ using ShopApp.Application.Features.Sepet.Queries;
 using ShopApp.Application.Features.Sepet.Commands.CreateSepetUrunu;
 using ShopApp.Application.Features.Sepet.Commands.DeleteSepetUrunu;
 using ShopApp.Application.Features.Sepet.Commands.UpdateSepetUrunu;
-using ShopApp.Application.Features.Sepet.Queries;
 
 namespace src.Monolith.ShopApp.Api.Controllers;
 

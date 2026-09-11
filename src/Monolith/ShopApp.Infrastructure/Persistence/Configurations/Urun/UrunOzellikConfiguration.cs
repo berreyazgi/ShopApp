@@ -9,6 +9,9 @@ public class UrunOzellikConfiguration : IEntityTypeConfiguration<UrunOzellik>
     public void Configure(EntityTypeBuilder<UrunOzellik> b)
     {
         b.ToTable("UrunOzellik", "Urunler");
-        b.HasIndex(x => new { x.UrunTurId, x.OzellikAd });
+        b.Property(x => x.OzellikAd).HasMaxLength(200).IsRequired();
+        b.Property(x => x.Deger).HasMaxLength(500).IsRequired();
+        b.Property(x => x.Siralama).IsRequired();
+        b.HasIndex(x => new { x.UrunId, x.OzellikAd });
     }
 }

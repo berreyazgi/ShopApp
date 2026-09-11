@@ -12,7 +12,7 @@ public class SepetMapping : Profile
         CreateMap<SepetEntity, GetByIdSepetDto>().ReverseMap();
 
         // ResultSepetUrunDto is built manually in GetSepetUrunleri/GetSepetUrunu —
-        // it resolves UrunId/UrunAd/GorselUrl/Ozellikler through UrunTur/Urun,
+        // it resolves UrunId/UrunAd/GorselUrl/Ozellikler through UrunVaryant/Urun,
         // which AutoMapper can't reach from SepetUrunu alone.
         CreateMap<SepetUrunu, GetByIdSepetUrunDto>().ReverseMap();
     }

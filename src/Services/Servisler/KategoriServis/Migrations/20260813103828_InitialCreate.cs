@@ -103,7 +103,7 @@ namespace KategoriServis.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UrunId = table.Column<Guid>(type: "uuid", nullable: false),
                     Ad = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
-                    StokAdedi = table.Column<int>(type: "integer", nullable: false),
+                    StokAdeti = table.Column<int>(type: "integer", nullable: false),
                     StokKodu = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     FiyatFarki = table.Column<decimal>(type: "numeric(8,2)", precision: 18, scale: 2, nullable: false),
                     AktifMi = table.Column<bool>(type: "boolean", nullable: false),
@@ -130,7 +130,7 @@ namespace KategoriServis.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UrunTipiId = table.Column<Guid>(type: "uuid", nullable: false),
                     OzellikAdi = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    OzellikDegeri = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Degeri = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     OlusturmaTarihi = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     GuncellemeTarihi = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },

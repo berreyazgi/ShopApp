@@ -5,14 +5,15 @@ using Microsoft.AspNetCore.Mvc;
 using ShopApp.Application.Features.Urun.Commands.CreateUrun;
 using ShopApp.Application.Features.Urun.Commands.CreateUrunGorsel;
 using ShopApp.Application.Features.Urun.Commands.CreateUrunOzellik;
-using ShopApp.Application.Features.Urun.Commands.CreateUrunTur;
+using ShopApp.Application.Features.Urun.Commands.CreateUrunVaryant;
 using ShopApp.Application.Features.Urun.Commands.DeleteUrun;
 using ShopApp.Application.Features.Urun.Commands.DeleteUrunGorsel;
 using ShopApp.Application.Features.Urun.Commands.DeleteUrunOzellik;
+using ShopApp.Application.Features.Urun.Commands.DeleteUrunVaryant;
 using ShopApp.Application.Features.Urun.Commands.UpdateUrun;
 using ShopApp.Application.Features.Urun.Commands.UpdateUrunGorsel;
 using ShopApp.Application.Features.Urun.Commands.UpdateUrunOzellik;
-using ShopApp.Application.Features.Urun.Commands.UpdateUrunTur;
+using ShopApp.Application.Features.Urun.Commands.UpdateUrunVaryant;
 using ShopApp.Application.Features.Urun.Dtos;
 using ShopApp.Application.Features.Urun.Queries;
 
@@ -100,8 +101,8 @@ public sealed class AdminUrunController : ControllerBase
         }
     }
 
-    [HttpPost("{urunId:guid}/tur")]
-    public async Task<IActionResult> CreateTur(Guid urunId, [FromBody] CreateUrunTurCommand command, CancellationToken cancellationToken)
+    [HttpPost("{urunId:guid}/varyantlar")]
+    public async Task<IActionResult> CreateVaryant(Guid urunId, [FromBody] CreateUrunVaryantCommand command, CancellationToken cancellationToken)
     {
         if (command.UrunId != urunId)
             return BadRequest(new { message = "İstek gövdesindeki ürün kimliği rota kimliğiyle eşleşmelidir." });
@@ -125,11 +126,11 @@ public sealed class AdminUrunController : ControllerBase
         }
     }
 
-    [HttpPut("{urunId:guid}/tur/{id:guid}")]
-    public async Task<IActionResult> UpdateTur(Guid urunId, Guid id, [FromBody] UpdateUrunTurCommand command, CancellationToken cancellationToken)
+    [HttpPut("{urunId:guid}/varyantlar/{id:guid}")]
+    public async Task<IActionResult> UpdateVaryant(Guid urunId, Guid id, [FromBody] UpdateUrunVaryantCommand command, CancellationToken cancellationToken)
     {
         if (command.UrunId != urunId || command.Id != id)
-            return BadRequest(new { message = "İstek gövdesindeki ürün türü kimliği rota kimliğiyle eşleşmelidir." });
+            return BadRequest(new { message = "İstek gövdesindeki varyant kimliği rota kimliğiyle eşleşmelidir." });
 
         try
         {
@@ -147,6 +148,20 @@ public sealed class AdminUrunController : ControllerBase
                 message = exception.Message,
                 errors = exception.Errors.Select(e => new { field = e.PropertyName, message = e.ErrorMessage })
             });
+        }
+    }
+
+    [HttpDelete("{urunId:guid}/varyantlar/{id:guid}")]
+    public async Task<IActionResult> DeleteVaryant(Guid urunId, Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _mediator.Send(new DeleteUrunVaryantCommand(urunId, id), cancellationToken);
+            return NoContent();
+        }
+        catch (KeyNotFoundException exception)
+        {
+            return NotFound(new { message = exception.Message });
         }
     }
 
@@ -227,13 +242,12 @@ public sealed class AdminUrunController : ControllerBase
         }
     }
 
-    [HttpGet("{urunId:guid}/tur/{urunTurId:guid}/ozellik")]
-    public async Task<ActionResult<List<ResultUrunOzellikDto>>> GetOzellikler(Guid urunId, Guid urunTurId, CancellationToken cancellationToken)
+    [HttpGet("{urunId:guid}/ozellik")]
+    public async Task<ActionResult<List<ResultUrunOzellikDto>>> GetOzellikler(Guid urunId, CancellationToken cancellationToken)
     {
         try
         {
-            await _mediator.Send(new GetUrunTur.GetUrunTurQuery(urunId, urunTurId), cancellationToken);
-            return Ok(await _mediator.Send(new GetUrunOzellikleri.GetUrunOzellikleriQuery(urunTurId), cancellationToken));
+            return Ok(await _mediator.Send(new GetUrunOzellikleri.GetUrunOzellikleriQuery(urunId), cancellationToken));
         }
         catch (KeyNotFoundException exception)
         {
@@ -241,17 +255,16 @@ public sealed class AdminUrunController : ControllerBase
         }
     }
 
-    [HttpPost("{urunId:guid}/tur/{urunTurId:guid}/ozellik")]
-    public async Task<IActionResult> CreateOzellik(Guid urunId, Guid urunTurId, [FromBody] CreateUrunOzellikCommand command, CancellationToken cancellationToken)
+    [HttpPost("{urunId:guid}/ozellik")]
+    public async Task<IActionResult> CreateOzellik(Guid urunId, [FromBody] CreateUrunOzellikCommand command, CancellationToken cancellationToken)
     {
-        if (command.UrunTurId != urunTurId)
+        if (command.UrunId != urunId)
             return BadRequest(new { message = "İstek gövdesindeki ürün türü kimliği rota kimliğiyle eşleşmelidir." });
 
         try
         {
-            await _mediator.Send(new GetUrunTur.GetUrunTurQuery(urunId, urunTurId), cancellationToken);
             var id = await _mediator.Send(command, cancellationToken);
-            return CreatedAtAction(nameof(GetOzellikler), new { urunId, urunTurId }, new { id });
+            return CreatedAtAction(nameof(GetOzellikler), new { urunId }, new { id });
         }
         catch (KeyNotFoundException exception)
         {
@@ -267,15 +280,14 @@ public sealed class AdminUrunController : ControllerBase
         }
     }
 
-    [HttpPut("{urunId:guid}/tur/{urunTurId:guid}/ozellik/{id:guid}")]
-    public async Task<IActionResult> UpdateOzellik(Guid urunId, Guid urunTurId, Guid id, [FromBody] UpdateUrunOzellikCommand command, CancellationToken cancellationToken)
+    [HttpPut("{urunId:guid}/ozellik/{id:guid}")]
+    public async Task<IActionResult> UpdateOzellik(Guid urunId, Guid id, [FromBody] UpdateUrunOzellikCommand command, CancellationToken cancellationToken)
     {
-        if (command.UrunTurId != urunTurId || command.Id != id)
+        if (command.UrunId != urunId || command.Id != id)
             return BadRequest(new { message = "İstek gövdesindeki ürün özelliği kimliği rota kimliğiyle eşleşmelidir." });
 
         try
         {
-            await _mediator.Send(new GetUrunTur.GetUrunTurQuery(urunId, urunTurId), cancellationToken);
             await _mediator.Send(command, cancellationToken);
             return NoContent();
         }
@@ -293,13 +305,12 @@ public sealed class AdminUrunController : ControllerBase
         }
     }
 
-    [HttpDelete("{urunId:guid}/tur/{urunTurId:guid}/ozellik/{id:guid}")]
-    public async Task<IActionResult> DeleteOzellik(Guid urunId, Guid urunTurId, Guid id, CancellationToken cancellationToken)
+    [HttpDelete("{urunId:guid}/ozellik/{id:guid}")]
+    public async Task<IActionResult> DeleteOzellik(Guid urunId, Guid id, CancellationToken cancellationToken)
     {
         try
         {
-            await _mediator.Send(new GetUrunTur.GetUrunTurQuery(urunId, urunTurId), cancellationToken);
-            await _mediator.Send(new DeleteUrunOzellikCommand(urunTurId, id), cancellationToken);
+            await _mediator.Send(new DeleteUrunOzellikCommand(urunId, id), cancellationToken);
             return NoContent();
         }
         catch (KeyNotFoundException exception)

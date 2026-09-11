@@ -293,6 +293,11 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Deger")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("timestamp with time zone");
 
@@ -310,35 +315,31 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<string>("OzellikDeger")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                    b.Property<int>("Siralama")
+                        .HasColumnType("integer");
 
-                    b.Property<Guid>("UrunTurId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("UrunTipiId");
+                    b.Property<Guid>("UrunId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UrunTurId", "OzellikAd");
+                    b.HasIndex("UrunId", "OzellikAd");
 
                     b.ToTable("UrunOzellik", "Urunler");
                 });
 
-            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.UrunTur", b =>
+            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.UrunVaryant", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Ad")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
-
                     b.Property<bool>("AktifMi")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Beden")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<decimal>("FiyatFarki")
                         .HasPrecision(18, 2)
@@ -356,7 +357,11 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("OlusturmaTarihi")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("StokAded")
+                    b.Property<string>("Renk")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("StokAdet")
                         .HasColumnType("integer");
 
                     b.Property<string>("StokKod")
@@ -374,7 +379,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("UrunId");
 
-                    b.ToTable("UrunTur", "Urunler");
+                    b.ToTable("UrunVaryant", "Urunler");
                 });
 
             modelBuilder.Entity("ShopApp.Infrastructure.Identity.Models.KayitliKullanici", b =>
@@ -661,7 +666,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<int>("UrunMiktar")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("UrunTurId")
+                    b.Property<Guid>("UrunVaryantId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -745,6 +750,10 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Beden")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
                     b.Property<DateTime?>("GuncellemeTarihi")
                         .HasColumnType("timestamp with time zone");
 
@@ -760,6 +769,10 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
                     b.Property<DateTime>("OlusturmaTarihi")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Renk")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<Guid>("SiparisId")
                         .HasColumnType("uuid");
@@ -790,7 +803,7 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                     b.Property<int>("UrunMiktar")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("UrunTurId")
+                    b.Property<Guid>("UrunVaryantId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -885,19 +898,19 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("ShopApp.Domain.Urun.Entities.UrunOzellik", b =>
                 {
-                    b.HasOne("ShopApp.Domain.Urun.Entities.UrunTur", "UrunTur")
+                    b.HasOne("ShopApp.Domain.Urun.Entities.Urun", "Urun")
                         .WithMany("Ozellikler")
-                        .HasForeignKey("UrunTurId")
+                        .HasForeignKey("UrunId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("UrunTur");
+                    b.Navigation("Urun");
                 });
 
-            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.UrunTur", b =>
+            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.UrunVaryant", b =>
                 {
                     b.HasOne("ShopApp.Domain.Urun.Entities.Urun", "Urun")
-                        .WithMany("UrunTurleri")
+                        .WithMany("Varyantlar")
                         .HasForeignKey("UrunId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -980,12 +993,9 @@ namespace ShopApp.Infrastructure.Persistence.Migrations
                 {
                     b.Navigation("Gorseller");
 
-                    b.Navigation("UrunTurleri");
-                });
-
-            modelBuilder.Entity("ShopApp.Domain.Urun.Entities.UrunTur", b =>
-                {
                     b.Navigation("Ozellikler");
+
+                    b.Navigation("Varyantlar");
                 });
 
             modelBuilder.Entity("src.Monolith.ShopApp.Domain.Sepet.Entities.SepetEntity", b =>

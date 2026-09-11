@@ -16,7 +16,7 @@ public sealed class SepetUrunuConfiguration : BaseEntityConfiguration<SepetUrunu
         builder.Property(x => x.SepetId)
             .IsRequired();
 
-        builder.Property(x => x.UrunTurId)
+        builder.Property(x => x.UrunVaryantId)
             .IsRequired();
 
         builder.Property(x => x.UrunMiktar)

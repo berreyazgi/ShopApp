@@ -192,7 +192,7 @@ export default function AdminProductsPage(props = {}) {
   }
 
   // Product cards/rows only carry the list DTO (no SKU/stock — those live on
-  // UrunTur, not on the list-level Urun projection). Opening the edit modal
+  // UrunVaryant, not on the list-level Urun projection). Opening the edit modal
   // with that DTO directly is what made SKU/stock show up blank, so fetch the
   // full detail (GET /api/admin/urun/{id}, active or passive) first and open
   // the modal only once it has arrived.

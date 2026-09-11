@@ -29,9 +29,9 @@ public class AddressLookupTests
     }
 
     [Fact]
-    public void TurkeyAddressLookupController_ReturnsNotFoundForUnknownParent()
+    public void AddressLookupController_ReturnsNotFoundForUnknownSubdivision()
     {
-        var controller = new TurkeyAddressLookupController(new MissingAddressService());
+        var controller = new AddressLookupController(new MissingAddressService());
 
         var result = controller.GetDistricts(999);
 
@@ -39,11 +39,20 @@ public class AddressLookupTests
     }
 
     [Fact]
-    public void AddressController_ReturnsNotFoundForUnknownParent()
+    public void AddressLookupController_ListsOnlyTurkeyAndRejectsUnsupportedCountries()
     {
-        var controller = new TurkeyAddressLookupController(new MissingAddressService());
+        var controller = new AddressLookupController(new MissingAddressService());
 
-        var result = controller.GetDistricts(999);
+        var countriesResult = controller.GetCountries();
+        var countries = Assert.IsType<OkObjectResult>(countriesResult.Result);
+        var supportedCountries = Assert.IsAssignableFrom<IReadOnlyList<AddressCountryDto>>(countries.Value);
+        Assert.Collection(supportedCountries, country =>
+        {
+            Assert.Equal("TR", country.Code);
+            Assert.Equal("Türkiye", country.Name);
+        });
+
+        var result = controller.GetSubdivisions("US");
 
         Assert.IsType<NotFoundObjectResult>(result.Result);
     }

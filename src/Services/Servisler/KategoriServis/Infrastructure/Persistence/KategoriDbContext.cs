@@ -7,7 +7,7 @@ public class KategoriDbContext(DbContextOptions<KategoriDbContext> options) : Db
 {
     public DbSet<Kategori> Kategoriler => Set<Kategori>();
     public DbSet<Urun> Urunler => Set<Urun>();
-    public DbSet<UrunTur> UrunTurleri => Set<UrunTur>();
+    public DbSet<UrunVaryant> Varyantlar => Set<UrunVaryant>();
     public DbSet<UrunOzelligi> UrunOzellikleri => Set<UrunOzelligi>();
     public DbSet<UrunGorseli> UrunGorselleri => Set<UrunGorseli>();
 

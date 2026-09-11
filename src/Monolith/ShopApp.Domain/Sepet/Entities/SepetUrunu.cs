@@ -6,7 +6,7 @@ namespace src.Monolith.ShopApp.Domain.Sepet.Entities;
 public class SepetUrunu : BaseEntity
 {
     public Guid SepetId { get; private set; }
-    public Guid UrunTurId { get; private set; }
+    public Guid UrunVaryantId { get; private set; }
 
     public int UrunMiktar { get; private set; }
 
@@ -16,10 +16,10 @@ public class SepetUrunu : BaseEntity
 
     private SepetUrunu() { }
 
-    public static SepetUrunu Olustur(Guid sepetId, Guid urunTurId, int urunMiktar, decimal fiyatGecmis, Guid olusturanKullaniciId) => new()
+    public static SepetUrunu Olustur(Guid sepetId, Guid urunVaryantId, int urunMiktar, decimal fiyatGecmis, Guid olusturanKullaniciId) => new()
     {
         SepetId = sepetId,
-        UrunTurId = urunTurId,
+        UrunVaryantId = urunVaryantId,
         UrunMiktar = urunMiktar,
         FiyatGecmis = fiyatGecmis,
         OlusturanKullaniciId = olusturanKullaniciId

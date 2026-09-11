@@ -119,7 +119,7 @@ export function createAdminProductFormModal({
   const skuCatRow = document.createElement('div');
   skuCatRow.className = 'admin-form-row';
 
-  // SKU — maps 1:1 to UrunTur.StokKod, which the backend requires (non-empty).
+  // SKU — maps 1:1 to UrunVaryant.StokKod, which the backend requires (non-empty).
   const skuGroup = document.createElement('div');
   skuGroup.className = 'admin-form-group';
   skuGroup.innerHTML = `
@@ -170,6 +170,24 @@ export function createAdminProductFormModal({
   }
   skuCatRow.appendChild(catGroup);
   leftCol.appendChild(skuCatRow);
+
+  const variantOptionsRow = document.createElement('div');
+  variantOptionsRow.className = 'admin-form-row';
+  variantOptionsRow.innerHTML = `
+    <div class="admin-form-group">
+      <label class="admin-form-label" for="prod-modal-beden">Beden</label>
+      <input type="text" id="prod-modal-beden" class="admin-form-input" maxlength="50" placeholder="Örn: M" />
+    </div>
+    <div class="admin-form-group">
+      <label class="admin-form-label" for="prod-modal-renk">Renk</label>
+      <input type="text" id="prod-modal-renk" class="admin-form-input" maxlength="100" placeholder="Örn: Siyah" />
+    </div>
+  `;
+  const bedenInput = variantOptionsRow.querySelector('#prod-modal-beden');
+  const renkInput = variantOptionsRow.querySelector('#prod-modal-renk');
+  bedenInput.value = product?.variantBeden ?? '';
+  renkInput.value = product?.variantRenk ?? '';
+  leftCol.appendChild(variantOptionsRow);
 
   // Brand — required by CreateUrunCommand.MarkaAd
   const brandGroup = document.createElement('div');
@@ -227,6 +245,18 @@ export function createAdminProductFormModal({
   const descInput = descGroup.querySelector('#prod-modal-desc');
   if (product) descInput.value = product.description || product.aciklama || '';
   leftCol.appendChild(descGroup);
+
+  const attributesGroup = document.createElement('div');
+  attributesGroup.className = 'admin-form-group';
+  attributesGroup.innerHTML = `
+    <label class="admin-form-label" for="prod-modal-attributes">Ürün Özellikleri</label>
+    <textarea id="prod-modal-attributes" class="admin-form-input admin-form-textarea" rows="4" placeholder="Her satır: Özellik Adı: Değer\nÖrn: Kumaş: %100 Pamuk"></textarea>
+  `;
+  const attributesInput = attributesGroup.querySelector('#prod-modal-attributes');
+  attributesInput.value = (product?.attributes ?? [])
+    .map((attribute) => `${attribute.name}: ${attribute.value}`)
+    .join('\n');
+  leftCol.appendChild(attributesGroup);
 
   // Status (Active toggle)
   const statusGroup = document.createElement('div');
@@ -475,7 +505,18 @@ export function createAdminProductFormModal({
     const brand = String(brandInput.value ?? '').trim();
     const priceRaw = String(priceInput.value ?? '').trim();
     const stockRaw = String(stockInput.value ?? '').trim();
+    const variantBeden = String(bedenInput.value ?? '').trim() || null;
+    const variantRenk = String(renkInput.value ?? '').trim() || null;
     const description = String(descInput.value ?? '').trim();
+    const attributes = String(attributesInput.value ?? '').split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line, order) => {
+        const separator = line.indexOf(':');
+        return separator > 0
+          ? { name: line.slice(0, separator).trim(), value: line.slice(separator + 1).trim(), order }
+          : { name: line, value: '', order };
+      });
     const isActive = activeInput.checked;
 
     if (!name) {
@@ -545,12 +586,16 @@ export function createAdminProductFormModal({
       marka: brand,
       price: Number(priceRaw),
       fiyat: Number(priceRaw),
-      // Persisted on UrunTur (SKU/stock live on the product's variant, not on
-      // Urun itself) — see productsService.js persistVariant(). urunTurId,
+      // Persisted on UrunVaryant (SKU/stock live on the product's variant, not on
+      // Urun itself) — see productsService.js persistVariant(). urunVaryantId,
       // variantAd, variantFiyatFarki and variantIsActive above (spread from
       // `product`) identify which existing variant to update, if any.
       stock: parseInt(stockRaw, 10),
       stok: parseInt(stockRaw, 10),
+      variantBeden,
+      variantRenk,
+      attributes,
+      existingAttributes: product?.attributes ?? [],
       description,
       aciklama: description,
       isActive,

@@ -34,7 +34,7 @@ public class SiparisCommandHandlerTests
         context.SaveChanges();
     }
 
-    private static (UrunEntity urun, UrunTur tur) SeedActiveVariant(TestDbContext context, decimal fiyat, decimal fiyatFarki, int stok)
+    private static (UrunEntity urun, UrunVaryant tur) SeedActiveVariant(TestDbContext context, decimal fiyat, decimal fiyatFarki, int stok)
     {
         var kategori = new Kategori { KategoriAd = "Test Kategori", AktifMi = true };
         context.Kategori.Add(kategori);
@@ -50,16 +50,16 @@ public class SiparisCommandHandlerTests
         };
         context.Urun.Add(urun);
 
-        var tur = new UrunTur
+        var tur = new UrunVaryant
         {
             UrunId = urun.Id,
-            Ad = "M / Siyah",
-            StokAded = stok,
+            Beden = "M / Siyah",
+            StokAdet = stok,
             StokKod = "SK-1",
             FiyatFarki = fiyatFarki,
             AktifMi = true,
         };
-        context.UrunTur.Add(tur);
+        context.UrunVaryant.Add(tur);
         context.SaveChanges();
 
         return (urun, tur);
@@ -83,9 +83,9 @@ public class SiparisCommandHandlerTests
         var siparis = await context.Siparisler.Include(s => s.Urunler).FirstAsync(s => s.Id == siparisId);
         Assert.Single(siparis.Urunler);
         var satir = siparis.Urunler.First();
-        Assert.Equal(tur.Id, satir.UrunTurId);
+        Assert.Equal(tur.Id, satir.UrunVaryantId);
         Assert.Equal(urun.Id, satir.UrunId);
-        Assert.Equal(1100m, satir.UrunBirimFiyat); // Urun.Fiyat + UrunTur.FiyatFarki, never the basket's stale price
+        Assert.Equal(1100m, satir.UrunBirimFiyat); // Urun.Fiyat + UrunVaryant.FiyatFarki, never the basket's stale price
         Assert.Equal(2200m, satir.ToplamFiyat);
         Assert.Equal(2200m, siparis.ToplamFiyat);
 

@@ -16,7 +16,7 @@ public sealed class SiparisUrunleriConfiguration : BaseEntityConfiguration<Sipar
         builder.Property(x => x.SiparisId)
             .IsRequired();
 
-        builder.Property(x => x.UrunTurId)
+        builder.Property(x => x.UrunVaryantId)
             .IsRequired();
 
         builder.Property(x => x.UrunIsmi)
@@ -28,6 +28,12 @@ public sealed class SiparisUrunleriConfiguration : BaseEntityConfiguration<Sipar
 
         builder.Property(x => x.StokTakipNumarasi)
             .HasMaxLength(500);
+
+        builder.Property(x => x.Beden)
+            .HasMaxLength(50);
+
+        builder.Property(x => x.Renk)
+            .HasMaxLength(100);
 
         builder.Property(x => x.UrunMiktar)
             .IsRequired();

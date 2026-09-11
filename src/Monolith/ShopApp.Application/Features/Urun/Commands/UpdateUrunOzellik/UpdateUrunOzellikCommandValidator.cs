@@ -6,15 +6,17 @@ public sealed class UpdateUrunOzellikCommandValidator : AbstractValidator<Update
 {
     public UpdateUrunOzellikCommandValidator()
     {
-        RuleFor(x => x.UrunTurId).NotEqual(Guid.Empty);
+        RuleFor(x => x.UrunId).NotEqual(Guid.Empty);
         RuleFor(x => x.Id).NotEmpty();
 
         RuleFor(x => x.OzellikAd)
             .NotEmpty()
             .MaximumLength(200);
 
-        RuleFor(x => x.OzellikDeger)
+        RuleFor(x => x.Deger)
             .NotEmpty()
             .MaximumLength(500);
+
+        RuleFor(x => x.Siralama).GreaterThanOrEqualTo(0);
     }
 }

@@ -32,27 +32,27 @@ public class GetSepetUrunleri
             if (urunler.Count == 0)
                 return [];
 
-            var urunTurIds = urunler.Select(u => u.UrunTurId).Distinct().ToList();
-            var urunTurler = await context.UrunTur
+            var urunVaryantIds = urunler.Select(u => u.UrunVaryantId).Distinct().ToList();
+            var urunVaryantler = await context.UrunVaryant
                 .AsNoTracking()
-                .Include(t => t.Urun)
-                .Include(t => t.Ozellikler)
-                .Where(t => urunTurIds.Contains(t.Id))
+                .Include(t => t.Urun).ThenInclude(u => u.Ozellikler)
+
+                .Where(t => urunVaryantIds.Contains(t.Id))
                 .ToDictionaryAsync(t => t.Id, cancellationToken);
 
-            return urunler.Select(u => ToDto(u, urunTurler.GetValueOrDefault(u.UrunTurId))).ToList();
+            return urunler.Select(u => ToDto(u, urunVaryantler.GetValueOrDefault(u.UrunVaryantId))).ToList();
         }
     }
 
-    internal static ResultSepetUrunDto ToDto(src.Monolith.ShopApp.Domain.Sepet.Entities.SepetUrunu sepetUrunu, ShopApp.Domain.Urun.Entities.UrunTur? urunTur) =>
+    internal static ResultSepetUrunDto ToDto(src.Monolith.ShopApp.Domain.Sepet.Entities.SepetUrunu sepetUrunu, ShopApp.Domain.Urun.Entities.UrunVaryant? urunVaryant) =>
         new(
             sepetUrunu.Id,
             sepetUrunu.SepetId,
-            sepetUrunu.UrunTurId,
-            urunTur?.UrunId ?? Guid.Empty,
-            urunTur?.Urun.UrunAd ?? "Ürün bulunamadı",
-            urunTur?.Urun.GorselUrl,
-            urunTur?.Ozellikler.Select(o => new ResultUrunOzellikDto(o.Id, o.UrunTurId, o.OzellikAd, o.OzellikDeger)).ToList() ?? [],
+            sepetUrunu.UrunVaryantId,
+            urunVaryant?.UrunId ?? Guid.Empty,
+            urunVaryant?.Urun.UrunAd ?? "Ürün bulunamadı",
+            urunVaryant?.Urun.GorselUrl,
+            urunVaryant?.Urun.Ozellikler.Select(o => new ResultUrunOzellikDto(o.Id, o.UrunId, o.OzellikAd, o.Deger, o.Siralama)).ToList() ?? [],
             sepetUrunu.UrunMiktar,
             sepetUrunu.FiyatGecmis);
 }

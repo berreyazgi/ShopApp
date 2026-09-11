@@ -71,6 +71,8 @@ export const endpoints = {
   urun: {
     list:           (kategoriId) => kategoriId ? `/api/urun?kategoriId=${kategoriId}` : '/api/urun',
     byId:           (id) => `/api/urun/${id}`,
+    ozellikler:     (id) => `/api/urun/${id}/ozellikler`,
+    varyantlar:     (id) => `/api/urun/${id}/varyantlar`,
   },
   // Admin-only reads (AdminUrunController GET) return active AND passive
   // products/details — the public `urun` endpoints above hide passive ones.
@@ -80,8 +82,12 @@ export const endpoints = {
     create:         () => '/api/admin/urun',
     update:         (id) => `/api/admin/urun/${id}`,
     delete:         (id) => `/api/admin/urun/${id}`,
-    createTur:      (urunId) => `/api/admin/urun/${urunId}/tur`,
-    updateTur:      (urunId, turId) => `/api/admin/urun/${urunId}/tur/${turId}`,
+    createVaryant:  (urunId) => `/api/admin/urun/${urunId}/varyantlar`,
+    updateVaryant:  (urunId, varyantId) => `/api/admin/urun/${urunId}/varyantlar/${varyantId}`,
+    deleteVaryant:  (urunId, varyantId) => `/api/admin/urun/${urunId}/varyantlar/${varyantId}`,
+    createOzellik:  (urunId) => `/api/admin/urun/${urunId}/ozellik`,
+    updateOzellik:  (urunId, ozellikId) => `/api/admin/urun/${urunId}/ozellik/${ozellikId}`,
+    deleteOzellik:  (urunId, ozellikId) => `/api/admin/urun/${urunId}/ozellik/${ozellikId}`,
   },
 
   // ── Admin Müşteri & Sipariş ──────────────────────────────────────────────
@@ -138,29 +144,22 @@ export const endpoints = {
 
   // ── Profile ──────────────────────────────────────────────────────────────
   profile: {
-    get:            () => '/api/profil',
-    update:         () => '/api/profil',
+    get:            () => '/api/profile',
+    update:         () => '/api/profile',
   },
 
   // ── Address ──────────────────────────────────────────────────────────────
   address: {
-    list:           () => '/api/adres',
-    create:         () => '/api/adres',
-    update:         (id) => `/api/adres/${id}`,
-    delete:         (id) => `/api/adres/${id}`,
-    provinces:      () => '/api/address/provinces',
-    districts:      (provinceId) => `/api/address/districts/${provinceId}`,
-    neighborhoods:  (provinceId, districtId) => `/api/address/neighborhoods/${districtId}?provinceId=${provinceId}`,
+    list:           () => '/api/profile/addresses',
+    get:            (id) => `/api/profile/addresses/${id}`,
+    create:         () => '/api/profile/addresses',
+    update:         (id) => `/api/profile/addresses/${id}`,
+    delete:         (id) => `/api/profile/addresses/${id}`,
   },
-  locations: {
-    provinces:      () => '/api/locations/provinces',
-    districts:      (provinceId) => `/api/locations/districts/${provinceId}`,
-    neighborhoods:  (provinceId, districtId) => `/api/locations/neighborhoods/${districtId}?provinceId=${provinceId}`,
-  },
-  userAddresses: {
-    list:           () => '/api/users/addresses',
-    create:         () => '/api/users/addresses',
-    update:         (id) => `/api/users/addresses/${id}`,
-    delete:         (id) => `/api/users/addresses/${id}`,
+  addressLookup: {
+    countries:      () => '/api/addresslookup/countries',
+    subdivisions:   (countryCode = 'TR') => `/api/addresslookup/countries/${countryCode}/subdivisions`,
+    districts:      (subdivisionId, countryCode = 'TR') => `/api/addresslookup/subdivisions/${subdivisionId}/districts?countryCode=${countryCode}`,
+    neighborhoods:  (subdivisionId, districtId, countryCode = 'TR') => `/api/addresslookup/subdivisions/${subdivisionId}/districts/${districtId}/neighborhoods?countryCode=${countryCode}`,
   },
 };

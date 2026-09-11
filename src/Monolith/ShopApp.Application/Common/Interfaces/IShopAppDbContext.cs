@@ -16,7 +16,7 @@ public interface IShopAppDbContext
     DbSet<Urun> Urun { get; }
     DbSet<Kategori> Kategori { get; }
     DbSet<UrunGorsel> UrunGorsel { get; }
-    DbSet<UrunTur> UrunTur { get; }
+    DbSet<UrunVaryant> UrunVaryant { get; }
     DbSet<UrunOzellik> UrunOzellik { get; }    
     
     DbSet<Address> Adresler { get; }

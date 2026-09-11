@@ -167,23 +167,23 @@ namespace KategoriServis.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<string>("OzellikDegeri")
+                    b.Property<string>("Degeri")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<Guid>("UrunTurId")
+                    b.Property<Guid>("UrunVaryantId")
                         .HasColumnType("uuid")
                         .HasColumnName("UrunTipiId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UrunTurId", "OzellikAdi");
+                    b.HasIndex("UrunVaryantId", "OzellikAdi");
 
                     b.ToTable("UrunOzellikleri", "katalog");
                 });
 
-            modelBuilder.Entity("KategoriServis.Domain.Entities.UrunTur", b =>
+            modelBuilder.Entity("KategoriServis.Domain.Entities.UrunVaryant", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -207,7 +207,7 @@ namespace KategoriServis.Migrations
                     b.Property<DateTime>("OlusturmaTarihi")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("StokAdedi")
+                    b.Property<int>("StokAdeti")
                         .HasColumnType("integer");
 
                     b.Property<string>("StokKodu")
@@ -262,19 +262,19 @@ namespace KategoriServis.Migrations
 
             modelBuilder.Entity("KategoriServis.Domain.Entities.UrunOzelligi", b =>
                 {
-                    b.HasOne("KategoriServis.Domain.Entities.UrunTur", "UrunTur")
+                    b.HasOne("KategoriServis.Domain.Entities.UrunVaryant", "UrunVaryant")
                         .WithMany("Ozellikler")
-                        .HasForeignKey("UrunTurId")
+                        .HasForeignKey("UrunVaryantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("UrunTur");
+                    b.Navigation("UrunVaryant");
                 });
 
-            modelBuilder.Entity("KategoriServis.Domain.Entities.UrunTur", b =>
+            modelBuilder.Entity("KategoriServis.Domain.Entities.UrunVaryant", b =>
                 {
                     b.HasOne("KategoriServis.Domain.Entities.Urun", "Urun")
-                        .WithMany("UrunTurleri")
+                        .WithMany("Varyantlar")
                         .HasForeignKey("UrunId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -293,10 +293,10 @@ namespace KategoriServis.Migrations
                 {
                     b.Navigation("Gorseller");
 
-                    b.Navigation("UrunTurleri");
+                    b.Navigation("Varyantlar");
                 });
 
-            modelBuilder.Entity("KategoriServis.Domain.Entities.UrunTur", b =>
+            modelBuilder.Entity("KategoriServis.Domain.Entities.UrunVaryant", b =>
                 {
                     b.Navigation("Ozellikler");
                 });

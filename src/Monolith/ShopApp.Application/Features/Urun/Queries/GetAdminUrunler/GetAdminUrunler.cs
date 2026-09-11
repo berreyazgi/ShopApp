@@ -11,7 +11,7 @@ public class GetAdminUrunler
     /// Admin-only product list — always includes active AND passive products
     /// (the admin catalogue must keep a passive product manageable), and
     /// carries each product's real ToplamStok, summed across all of its
-    /// persisted UrunTur rows rather than picking an arbitrary variant.
+    /// persisted UrunVaryant rows rather than picking an arbitrary variant.
     /// </summary>
     public sealed record GetAdminUrunlerQuery(Guid? KategoriId = null) : IRequest<List<AdminUrunListDto>>;
 
@@ -33,7 +33,7 @@ public class GetAdminUrunler
                     x.GecmisFiyat,
                     x.GorselUrl,
                     x.AktifMi,
-                    x.UrunTurleri.Sum(t => t.StokAded)))
+                    x.Varyantlar.Sum(t => t.StokAdet)))
                 .ToListAsync(cancellationToken);
         }
     }

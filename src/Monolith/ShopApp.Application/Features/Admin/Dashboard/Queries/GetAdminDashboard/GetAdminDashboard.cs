@@ -31,14 +31,14 @@ public class GetAdminDashboard
             var pendingOrders = await context.Siparisler.AsNoTracking()
                 .CountAsync(s => s.DurumId == (int)SiparisDurum.BekleyenOdeme, cancellationToken);
 
-            var lowStockCount = await context.UrunTur.AsNoTracking()
-                .CountAsync(t => t.AktifMi && t.StokAded <= LowStockThreshold, cancellationToken);
+            var lowStockCount = await context.UrunVaryant.AsNoTracking()
+                .CountAsync(t => t.AktifMi && t.StokAdet <= LowStockThreshold, cancellationToken);
 
-            var lowStockProducts = await context.UrunTur.AsNoTracking()
-                .Where(t => t.AktifMi && t.StokAded <= LowStockThreshold)
-                .OrderBy(t => t.StokAded)
+            var lowStockProducts = await context.UrunVaryant.AsNoTracking()
+                .Where(t => t.AktifMi && t.StokAdet <= LowStockThreshold)
+                .OrderBy(t => t.StokAdet)
                 .Take(LowStockListLimit)
-                .Select(t => new AdminLowStockItemDto(t.UrunId, t.Id, t.Urun.UrunAd, t.Ad, t.StokAded))
+                .Select(t => new AdminLowStockItemDto(t.UrunId, t.Id, t.Urun.UrunAd, t.Renk ?? t.Beden ?? t.StokKod, t.StokAdet))
                 .ToListAsync(cancellationToken);
 
             // Reuses GetAdminOrders rather than duplicating its Musteri/Identity

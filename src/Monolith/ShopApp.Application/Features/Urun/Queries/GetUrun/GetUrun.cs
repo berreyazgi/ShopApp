@@ -24,7 +24,8 @@ public class GetUrun
                 .AsNoTracking()
                 .Include(x => x.Kategori)
                 .Include(x => x.Gorseller)
-                .Include(x => x.UrunTurleri).ThenInclude(t => t.Ozellikler)
+                .Include(x => x.Varyantlar.Where(varyant => request.IncludePassive || varyant.AktifMi))
+                .Include(x => x.Ozellikler)
                 .FirstOrDefaultAsync(x => x.Id == request.Id && (request.IncludePassive || x.AktifMi), cancellationToken)
                 ?? throw new KeyNotFoundException($"Ürün '{request.Id}' bulunamadı.");
 

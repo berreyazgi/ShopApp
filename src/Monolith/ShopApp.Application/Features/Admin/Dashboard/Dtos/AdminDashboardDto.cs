@@ -11,10 +11,10 @@ public sealed record AdminDashboardOrderDto(
 
 public sealed record AdminLowStockItemDto(
     Guid UrunId,
-    Guid UrunTurId,
+    Guid UrunVaryantId,
     string UrunAd,
-    string UrunTurAd,
-    int StokAded
+    string UrunVaryantAd,
+    int StokAdet
 );
 
 public sealed record AdminDashboardDto(

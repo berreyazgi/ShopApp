@@ -15,8 +15,8 @@ public class GenericUrunRepositoryTests
         await AssertCrudAsync(new UrunEntity { UrunAd = "Ürün", MarkaAd = "Marka" });
         await AssertCrudAsync(new Kategori { KategoriAd = "Kategori" });
         await AssertCrudAsync(new UrunGorsel { GorselUrl = "https://example.com/image.jpg" });
-        await AssertCrudAsync(new UrunOzellik("Renk", "Mavi", Guid.NewGuid()));
-        await AssertCrudAsync(new UrunTur { Ad = "Tür", StokKod = "SKU-1" });
+        await AssertCrudAsync(new UrunOzellik(Guid.NewGuid(), "Renk", "Mavi"));
+        await AssertCrudAsync(new UrunVaryant { UrunId = Guid.NewGuid(), Beden = "M", StokKod = "SKU-1" });
     }
 
     private static async Task AssertCrudAsync<TEntity>(TEntity entity) where TEntity : BaseEntity

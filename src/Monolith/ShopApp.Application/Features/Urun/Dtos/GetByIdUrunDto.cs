@@ -12,7 +12,8 @@ public record GetByIdUrunDto(
     string? GorselUrl,
     bool AktifMi,
     List<ResultUrunGorselDto> Gorseller,
-    List<GetByIdUrunTurDto> UrunTurleri,
+    List<ResultUrunVaryantDto> Varyantlar,
+    List<ResultUrunOzellikDto> Ozellikler,
     List<string>? ImageUrls = null
 )
 {

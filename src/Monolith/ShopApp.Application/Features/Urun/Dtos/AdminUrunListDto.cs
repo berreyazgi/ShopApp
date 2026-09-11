@@ -2,7 +2,7 @@ namespace ShopApp.Application.Features.Urun.Dtos;
 
 /// <summary>
 /// Admin product list projection — like ResultUrunDto but additionally
-/// carries ToplamStok (the sum of this product's persisted UrunTur.StokAded
+/// carries ToplamStok (the sum of this product's persisted UrunVaryant.StokAdet
 /// rows), so the admin product list/card stock badge never has to fall back
 /// to a fake/neutral value. Kept separate from the public ResultUrunDto/
 /// UrunController contract, which has no need for stock.

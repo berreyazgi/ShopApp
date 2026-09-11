@@ -3,6 +3,7 @@ using MediatR;
 namespace ShopApp.Application.Features.Urun.Commands.CreateUrunOzellik;
 
 public sealed record CreateUrunOzellikCommand(
-    Guid UrunTurId,
+    Guid UrunId,
     string OzellikAd,
-    string OzellikDeger) : IRequest<Guid>;
+    string Deger,
+    int Siralama = 0) : IRequest<Guid>;

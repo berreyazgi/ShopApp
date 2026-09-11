@@ -715,7 +715,7 @@ test('createAdminProductFormModal validates inputs and emits onSave in create & 
   stockInp.value = '25';
   catSelect.value = 'Giyim';
 
-  // SKU is required (UrunTur.StokKod is a non-empty backend field) — submit
+  // SKU is required (UrunVaryant.StokKod is a non-empty backend field) — submit
   // must still fail without it.
   submitBtn.dispatchEvent({ type: 'click' });
   assert.equal(savedData, null, 'Must not submit with empty SKU');
@@ -733,10 +733,10 @@ test('createAdminProductFormModal validates inputs and emits onSave in create & 
 
   // 2. Edit Mode: Pre-populates existing product from full detail (as
   // productsService.getAdminProductById()/getProductById() would supply it —
-  // urunTurId/sku/stock come from the product's UrunTur variant).
+  // urunVaryantId/sku/stock come from the product's UrunVaryant variant).
   const existingProduct = {
     id: 'p-edit',
-    urunTurId: 'tur-99',
+    urunVaryantId: 'tur-99',
     name: 'Deri Ceket',
     sku: 'CKT-99',
     category: 'Giyim',
@@ -770,7 +770,7 @@ test('createAdminProductFormModal validates inputs and emits onSave in create & 
   assert.equal(editSaved.price, 1600);
   assert.equal(editSaved.sku, 'CKT-99', 'Changing price must preserve existing SKU');
   assert.equal(editSaved.stock, 5, 'Changing price must preserve existing stock');
-  assert.equal(editSaved.urunTurId, 'tur-99', 'Must keep editing the same UrunTur, not create a new one');
+  assert.equal(editSaved.urunVaryantId, 'tur-99', 'Must keep editing the same UrunVaryant, not create a new one');
 
   editModal.close();
 });
@@ -778,7 +778,7 @@ test('createAdminProductFormModal validates inputs and emits onSave in create & 
 test('createAdminProductFormModal preserves isActive:false (passive) instead of defaulting to active', () => {
   const passiveProduct = {
     id: 'p-passive',
-    urunTurId: 'tur-passive',
+    urunVaryantId: 'tur-passive',
     name: 'Pasif Ürün',
     sku: 'PSV-01',
     stock: 3,

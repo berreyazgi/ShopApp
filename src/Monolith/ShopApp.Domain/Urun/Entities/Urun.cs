@@ -39,7 +39,8 @@ public class Urun : BaseEntity
 
     // Navigation properties
     public Kategori Kategori { get; set; } = null!;
-    public ICollection<UrunTur> UrunTurleri { get; set; } = new List<UrunTur>();
+    public ICollection<UrunVaryant> Varyantlar { get; set; } = new List<UrunVaryant>();
+    public ICollection<UrunOzellik> Ozellikler { get; set; } = new List<UrunOzellik>();
     public ICollection<UrunGorsel> Gorseller { get; set; } = new List<UrunGorsel>();
 
     [NotMapped]

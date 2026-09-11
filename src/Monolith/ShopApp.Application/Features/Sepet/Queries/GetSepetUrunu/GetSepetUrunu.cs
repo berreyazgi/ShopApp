@@ -24,13 +24,13 @@ public class GetSepetUrunu
                 .FirstOrDefaultAsync(cancellationToken)
                 ?? throw new KeyNotFoundException($"Sepet Ürünü '{request.Id}' bulunamadı.");
 
-            var urunTur = await context.UrunTur
+            var urunVaryant = await context.UrunVaryant
                 .AsNoTracking()
-                .Include(t => t.Urun)
-                .Include(t => t.Ozellikler)
-                .FirstOrDefaultAsync(t => t.Id == urun.UrunTurId, cancellationToken);
+                .Include(t => t.Urun).ThenInclude(u => u.Ozellikler)
 
-            return GetSepetUrunleri.ToDto(urun, urunTur);
+                .FirstOrDefaultAsync(t => t.Id == urun.UrunVaryantId, cancellationToken);
+
+            return GetSepetUrunleri.ToDto(urun, urunVaryant);
         }
     }
 }

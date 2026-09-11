@@ -14,16 +14,17 @@ public class UrunMapping : Profile
             .ForCtorParam(nameof(ResultUrunDto.ImageUrls), opt => opt.MapFrom(src => src.Gorseller.OrderBy(g => g.GorselSira).Select(g => g.GorselUrl).ToList()));
         CreateMap<ResultUrunDto, Urun>();
         CreateMap<UrunGorsel, ResultUrunGorselDto>().ReverseMap();
-        CreateMap<UrunTur, ResultUrunTurDto>().ReverseMap();
+        CreateMap<UrunVaryant, ResultUrunVaryantDto>().ReverseMap();
         CreateMap<UrunOzellik, ResultUrunOzellikDto>().ReverseMap();
 
         CreateMap<Kategori, GetByIdKategoriDto>();
         CreateMap<Urun, GetByIdUrunDto>()
             .ForCtorParam(nameof(GetByIdUrunDto.KategoriAd), opt => opt.MapFrom(src => src.Kategori.KategoriAd))
             .ForCtorParam(nameof(GetByIdUrunDto.Gorseller), opt => opt.MapFrom(src => src.Gorseller.OrderBy(g => g.GorselSira).ToList()))
+            .ForCtorParam(nameof(GetByIdUrunDto.Ozellikler), opt => opt.MapFrom(src => src.Ozellikler.OrderBy(o => o.Siralama).ToList()))
+            .ForCtorParam(nameof(GetByIdUrunDto.Varyantlar), opt => opt.MapFrom(src => src.Varyantlar.ToList()))
             .ForCtorParam(nameof(GetByIdUrunDto.ImageUrls), opt => opt.MapFrom(src => src.Gorseller.OrderBy(g => g.GorselSira).Select(g => g.GorselUrl).ToList()));
         CreateMap<UrunGorsel, GetByIdUrunGorselDto>();
-        CreateMap<UrunTur, GetByIdUrunTurDto>();
         CreateMap<UrunOzellik, GetByIdUrunOzellikDto>();
 
         CreateMap<Urun, ProductDto>()
