@@ -1,0 +1,42 @@
+/* ============================================================
+   Toast.css – Toast notification host/stack styles
+   ============================================================ */
+
+.toast-host {
+  position: fixed;
+  top: var(--space-6);
+  right: var(--space-6);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: min(360px, calc(100vw - var(--space-8)));
+  pointer-events: none;
+}
+
+.toast-item {
+  pointer-events: auto;
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-md);
+  transition: opacity var(--transition-base) ease, transform var(--transition-base) ease;
+}
+
+.toast-item--leaving {
+  opacity: 0;
+  transform: translateX(16px);
+}
+
+@media (max-width: 480px) {
+  .toast-host {
+    top: var(--space-4);
+    right: var(--space-4);
+    left: var(--space-4);
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast-item {
+    transition: none;
+  }
+}

@@ -2,6 +2,8 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using ShopApp.Application.Features.Urun.Commands.CreateUrun;
 using ShopApp.Application.Features.Urun.Commands.CreateUrunGorsel;
 using ShopApp.Application.Features.Urun.Commands.CreateUrunOzellik;
@@ -59,6 +61,22 @@ public sealed class AdminUrunController : ControllerBase
         catch (KeyNotFoundException exception)
         {
             return NotFound(new { message = exception.Message });
+        }
+        catch (ValidationException exception)
+        {
+            return BadRequest(new
+            {
+                message = exception.Message,
+                errors = exception.Errors.Select(e => new { field = e.PropertyName, message = e.ErrorMessage })
+            });
+        }
+        catch (DbUpdateException exception) when (IsStokKodConflict(exception))
+        {
+            // command.InitialStokKod conflicted with an existing variant's SKU.
+            // Because it's attached to the same SaveChanges call as the product
+            // itself (see CreateUrunCommandHandler), the whole insert rolled
+            // back — no orphaned Urun is left behind to clean up here.
+            return Conflict(new { message = "Bu stok kodu başka bir ürün tarafından kullanılıyor." });
         }
     }
 
@@ -124,6 +142,22 @@ public sealed class AdminUrunController : ControllerBase
                 errors = exception.Errors.Select(e => new { field = e.PropertyName, message = e.ErrorMessage })
             });
         }
+        catch (DbUpdateException exception) when (IsStokKodConflict(exception))
+        {
+            // The product itself is a separate row created by a prior POST
+            // /api/admin/urun request, so a SKU conflict on its first variant
+            // leaves it orphaned (zero variants, unreachable from the normal
+            // product flows) unless it's cleaned up here. A product that already
+            // has other variants is left untouched — only this failed variant
+            // is being rejected.
+            var current = await _mediator.Send(new GetUrun.GetUrunQuery(urunId, IncludePassive: true), cancellationToken);
+            if (current.Varyantlar.Count == 0)
+            {
+                await _mediator.Send(new DeleteUrunCommand(urunId), cancellationToken);
+            }
+
+            return Conflict(new { message = "Bu stok kodu başka bir ürün tarafından kullanılıyor." });
+        }
     }
 
     [HttpPut("{urunId:guid}/varyantlar/{id:guid}")]
@@ -149,7 +183,20 @@ public sealed class AdminUrunController : ControllerBase
                 errors = exception.Errors.Select(e => new { field = e.PropertyName, message = e.ErrorMessage })
             });
         }
+        catch (DbUpdateException exception) when (IsStokKodConflict(exception))
+        {
+            return Conflict(new { message = "Bu stok kodu başka bir ürün tarafından kullanılıyor." });
+        }
     }
+
+    // UrunVaryant.StokKod carries a database-level unique index (see
+    // UrunVaryantConfiguration), since SKUs must be unique across the whole
+    // catalog, not just within one product. Nothing upstream (validator, handler)
+    // checks that today, so a duplicate only surfaces here, as a Postgres unique
+    // violation — translate it into a 409 the admin can act on instead of a raw 500.
+    private static bool IsStokKodConflict(DbUpdateException exception)
+        => exception.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } postgresException
+           && postgresException.ConstraintName == "IX_UrunVaryant_StokKod";
 
     [HttpDelete("{urunId:guid}/varyantlar/{id:guid}")]
     public async Task<IActionResult> DeleteVaryant(Guid urunId, Guid id, CancellationToken cancellationToken)

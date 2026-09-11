@@ -108,12 +108,17 @@ test('getProductById uses the single detail response for persisted attributes an
   assert.equal(detail.variants[0].renk, 'Siyah');
 });
 
-test('createProduct persists the entered SKU/stock as a new UrunVaryant (not left on the client only)', async () => {
+test('createProduct sends the initial SKU/stock in the same POST as the product (atomic create, no separate UrunVaryant call)', async () => {
   const calls = [];
   stubFetch({
+    // No 'POST /api/admin/urun/new-prod/varyantlar' handler is registered —
+    // if createProduct() still called it (the old two-step flow), stubFetch
+    // would throw "Unexpected fetch call" and fail this test. The backend
+    // (CreateUrunCommandHandler) now attaches the initial UrunVaryant to the
+    // same SaveChanges call as the product itself, so the frontend only needs
+    // to send everything in the one POST /api/admin/urun request.
     'POST /api/admin/urun': (body) => { calls.push(['create', body]); return { body: { id: 'new-prod' } }; },
-    'POST /api/admin/urun/new-prod/varyantlar': (body) => { calls.push(['createVaryant', body]); return { body: { id: 'new-varyant' } }; },
-    'GET /api/admin/urun': () => ({ body: [{ id: 'new-prod', kategoriId: 'cat-1', urunAd: 'Yeni Ürün', fiyat: 100, markaAd: 'Marka' }] }),
+    'GET /api/admin/urun': () => ({ body: [{ id: 'new-prod', kategoriId: 'cat-1', urunAd: 'Yeni Ürün', fiyat: 100, markaAd: 'Marka', toplamStok: 10 }] }),
   });
 
   const { createProduct } = await import('../src/Frontend/ShopApp.Web/src/features/products/services/productsService.js');
@@ -127,13 +132,32 @@ test('createProduct persists the entered SKU/stock as a new UrunVaryant (not lef
     isActive: true,
   });
 
+  assert.equal(calls.length, 1, 'Only the single create request must fire');
   assert.equal(calls[0][0], 'create');
-  assert.equal(calls[1][0], 'createVaryant');
-  assert.equal(calls[1][1].stokKod, 'SKU-NEW');
-  assert.equal(calls[1][1].stokAdet, 10);
+  assert.equal(calls[0][1].initialStokKod, 'SKU-NEW');
+  assert.equal(calls[0][1].initialStokAdet, 10);
   assert.equal(saved.sku, 'SKU-NEW');
   assert.equal(saved.stock, 10);
-  assert.equal(saved.urunVaryantId, 'new-varyant');
+});
+
+test('createProduct without a SKU does not send initial variant fields, and creates no variant', async () => {
+  const calls = [];
+  stubFetch({
+    'POST /api/admin/urun': (body) => { calls.push(body); return { body: { id: 'new-prod-2' } }; },
+    'GET /api/admin/urun': () => ({ body: [{ id: 'new-prod-2', kategoriId: 'cat-1', urunAd: 'SKU\'suz Ürün', fiyat: 50, markaAd: 'Marka' }] }),
+  });
+
+  const { createProduct } = await import('../src/Frontend/ShopApp.Web/src/features/products/services/productsService.js');
+  await createProduct({
+    categoryId: 'cat-1',
+    name: 'SKU\'suz Ürün',
+    price: 50,
+    brand: 'Marka',
+    isActive: true,
+  });
+
+  assert.equal(calls.length, 1);
+  assert.equal('initialStokKod' in calls[0], false, 'No SKU means no initial variant fields should be sent at all');
 });
 
 test('updateProduct with an existing urunVaryantId updates that variant instead of creating a duplicate', async () => {

@@ -345,14 +345,21 @@ async function persistVariant(urunId, payload) {
 }
 
 /**
- * Creates a new product via POST /api/admin/urun (Admin only), then persists
- * its SKU/stock as a UrunVaryant via persistVariant().
+ * Creates a new product via POST /api/admin/urun (Admin only). Its initial
+ * SKU/stock (UrunVaryant) is sent in the SAME request via the InitialStokKod/
+ * InitialStokAdet/etc. fields, which CreateUrunCommandHandler attaches to the
+ * product's own Varyantlar collection before the single SaveChanges call that
+ * persists it — this makes "product + first SKU" one atomic insert, so a
+ * conflict (e.g. a StokKod already used elsewhere) rolls back the whole
+ * product instead of leaving an orphaned, variant-less Urun row behind.
  * @param {{ categoryId: string, name: string, description?: string, price: number, brand: string, previousPrice?: number, imageUrl?: string, isActive?: boolean, sku?: string, stock?: number }} payload
  * @returns {Promise<any>}
  */
 export async function createProduct(payload) {
   const imageUrls = payload.imageUrls || (Array.isArray(payload.images) ? payload.images.map(img => typeof img === 'string' ? img : (img.url || img.imageUrl || img.gorselUrl)).filter(Boolean) : null);
   const mainImage = payload.imageUrl ?? payload.gorselUrl ?? (imageUrls && imageUrls.length > 0 ? imageUrls[0] : null);
+  const sku = String(payload.sku ?? '').trim();
+  const stockValue = payload.stock ?? payload.stok;
 
   const body = {
     kategoriId: payload.categoryId ?? payload.kategoriId,
@@ -364,12 +371,44 @@ export async function createProduct(payload) {
     gorselUrl: mainImage,
     ...(imageUrls && imageUrls.length > 0 ? { imageUrls } : {}),
     aktifMi: payload.isActive !== undefined ? payload.isActive : (payload.aktiflik ?? true),
+    ...(sku ? {
+      initialStokKod: sku,
+      initialStokAdet: stockValue !== undefined && stockValue !== null ? Number(stockValue) : 0,
+      initialBeden: payload.variantBeden ?? null,
+      initialRenk: payload.variantRenk ?? null,
+      initialFiyatFarki: Number(payload.variantFiyatFarki ?? 0),
+    } : {}),
   };
 
   const { id } = await apiClient.post(endpoints.adminUrun.create(), body);
-  const variant = await persistVariant(id, payload);
-  await persistAttributes(id, payload);
-  return fetchAuthoritativeProduct(id, variant);
+
+  // Attributes (Özellikler) are the one remaining non-atomic step — unlike
+  // SKU/stock they're optional metadata, so a product with a name/price/SKU
+  // already exists and is usable even if this specific step fails. Report
+  // that as a soft warning on the returned product rather than as a create
+  // failure — the product was NOT lost, only its attribute rows.
+  let attributesFailed = false;
+  try {
+    await persistAttributes(id, payload);
+  } catch (attributesError) {
+    console.error('[productsService] Product created, but saving its attributes failed:', attributesError);
+    attributesFailed = true;
+  }
+
+  // The atomic create response only returns the product's id (its variant's
+  // own generated id isn't echoed back), so the list/grid can't get its SKU
+  // from a re-fetch of GET /api/admin/urun (AdminUrunListDto carries no SKU —
+  // only ToplamStok). Build the merge from what was actually just sent instead;
+  // it's accurate because the backend either persisted exactly this or rolled
+  // the whole product back (surfacing as a rejection well before this line).
+  // Opening Edit afterwards still re-fetches the real variant id fresh, so a
+  // null id here is harmless.
+  const knownVariant = sku ? { id: null, stokKod: sku, stokAdet: body.initialStokAdet ?? 0 } : null;
+  const saved = await fetchAuthoritativeProduct(id, knownVariant);
+  if (attributesFailed && saved) {
+    saved.partialWarning = 'Ürün oluşturuldu ancak özellik bilgileri kaydedilemedi. Ürünü düzenleyerek tekrar deneyebilirsiniz.';
+  }
+  return saved;
 }
 
 /**
@@ -399,9 +438,24 @@ export async function updateProduct(id, payload) {
   };
 
   await apiClient.put(endpoints.adminUrun.update(id), body);
+  // The variant PUT (SKU/stock) is left as a genuine failure if it errors —
+  // SKU is required, so a rejected update there (e.g. a StokKod conflict)
+  // must surface to the admin, not be silently downgraded.
   const variant = await persistVariant(id, payload);
-  await persistAttributes(id, payload);
-  return fetchAuthoritativeProduct(id, variant);
+
+  let attributesFailed = false;
+  try {
+    await persistAttributes(id, payload);
+  } catch (attributesError) {
+    console.error('[productsService] Product updated, but saving its attributes failed:', attributesError);
+    attributesFailed = true;
+  }
+
+  const saved = await fetchAuthoritativeProduct(id, variant);
+  if (attributesFailed && saved) {
+    saved.partialWarning = 'Ürün güncellendi ancak özellik bilgileri kaydedilemedi. Tekrar deneyebilirsiniz.';
+  }
+  return saved;
 }
 
 /**

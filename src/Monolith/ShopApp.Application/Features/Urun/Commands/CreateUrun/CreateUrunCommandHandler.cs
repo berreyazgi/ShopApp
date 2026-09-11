@@ -65,6 +65,27 @@ public sealed class CreateUrunCommandHandler(
             }];
         }
 
+        // Attaching the initial variant to the Urun's own Varyantlar collection
+        // (rather than a separate CreateUrunVaryantCommand/SaveChanges call)
+        // makes product + first SKU one atomic insert: AddAsync below persists
+        // the whole graph in a single SaveChangesAsync, so a StokKod conflict
+        // rolls back the product too instead of leaving an orphaned Urun with
+        // no usable variant.
+        if (!string.IsNullOrWhiteSpace(request.InitialStokKod))
+        {
+            urun.Varyantlar = [new UrunVaryant
+            {
+                UrunId = urun.Id,
+                Beden = request.InitialBeden,
+                Renk = request.InitialRenk,
+                StokAdet = request.InitialStokAdet ?? 0,
+                StokKod = request.InitialStokKod.Trim(),
+                FiyatFarki = request.InitialFiyatFarki ?? 0,
+                AktifMi = true,
+                OlusturanKullaniciId = customer.KullaniciId
+            }];
+        }
+
         await urunRepository.AddAsync(urun, cancellationToken);
         return urun.Id;
     }

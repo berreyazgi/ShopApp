@@ -18,7 +18,7 @@ export function createCategoryCard(category) {
   bg.className = 'cat-card__bg';
 
   const image = document.createElement('img');
-  image.className = 'product-image';
+  image.className = 'cat-card__image';
   image.src = imageUrl;
   image.alt = name;
   image.loading = 'lazy';

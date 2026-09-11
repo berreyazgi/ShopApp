@@ -1187,6 +1187,214 @@ test('createAdminProductFormModal supports multi-image addition, removal, and ma
   modal.close();
 });
 
+function fillValidProductForm(modal) {
+  modal.element.querySelector('#prod-modal-name').value = 'Async Ürün';
+  modal.element.querySelector('#prod-modal-sku').value = 'ASYNC-01';
+  modal.element.querySelector('#prod-modal-price').value = '50';
+  modal.element.querySelector('#prod-modal-stock').value = '3';
+  modal.element.querySelector('#prod-modal-cat').value = 'Giyim';
+}
+
+test('createAdminProductFormModal awaits async onSave, shows a saving state, blocks duplicate submits, and closes only once it resolves', async () => {
+  let resolveSave;
+  let saveCallCount = 0;
+  const savePromise = new Promise((resolve) => { resolveSave = resolve; });
+
+  let closed = false;
+  const modal = createAdminProductFormModal({
+    categories: [{ id: 'cat-1', name: 'Giyim' }],
+    onSave: () => { saveCallCount += 1; return savePromise; },
+    onClose: () => { closed = true; },
+  });
+
+  fillValidProductForm(modal);
+
+  const submitBtn = modal.element.querySelectorAll('.admin-modal__footer button')[1];
+  const cancelBtn = modal.element.querySelectorAll('.admin-modal__footer button')[0];
+  submitBtn.dispatchEvent({ type: 'click' });
+
+  assert.equal(saveCallCount, 1, 'onSave must be invoked once for the click');
+  assert.equal(submitBtn.disabled, true, 'Kaydet must be disabled while the save is in flight');
+  assert.equal(submitBtn.textContent, 'Kaydediliyor...', 'Kaydet must switch to a saving label');
+  assert.equal(cancelBtn.disabled, true, 'İptal must be disabled while saving so the modal cannot be dismissed mid-request');
+  assert.equal(closed, false, 'Modal must not close before the save resolves');
+
+  // A duplicate click while the request is in flight must not fire a second save.
+  submitBtn.dispatchEvent({ type: 'click' });
+  assert.equal(saveCallCount, 1, 'Repeated clicks while saving must not send a duplicate request');
+
+  resolveSave({ id: 'new-1' });
+  await savePromise;
+  await Promise.resolve();
+  await Promise.resolve();
+
+  assert.equal(closed, true, 'Modal must close once the save succeeds');
+  assert.equal(submitBtn.disabled, false, 'Kaydet must be re-enabled after settling');
+  assert.equal(submitBtn.textContent, 'Kaydet', 'Kaydet must restore its original label after settling');
+});
+
+test('createAdminProductFormModal keeps the modal open, preserves entered values, and shows a friendly Turkish message when async onSave rejects', async () => {
+  let closed = false;
+  const modal = createAdminProductFormModal({
+    categories: [{ id: 'cat-1', name: 'Giyim' }],
+    onSave: () => Promise.reject({
+      status: 500,
+      message: 'Internal Server Error',
+      body: { message: 'System.InvalidOperationException: Npgsql connection failed' },
+    }),
+    onClose: () => { closed = true; },
+  });
+
+  fillValidProductForm(modal);
+
+  const submitBtn = modal.element.querySelectorAll('.admin-modal__footer button')[1];
+  submitBtn.dispatchEvent({ type: 'click' });
+
+  // Let the rejected promise's catch/finally run.
+  await Promise.resolve();
+  await Promise.resolve();
+  await Promise.resolve();
+
+  assert.equal(closed, false, 'Modal must not close when the save fails');
+
+  const errorBox = modal.element.querySelector('.admin-form-error-box');
+  assert.equal(errorBox.style.display, 'block', 'Error box must be visible after a failed save');
+  assert.equal(
+    errorBox.textContent,
+    'Ürün kaydedilirken bir sorun oluştu.\nLütfen biraz sonra tekrar deneyin.',
+    'A 500 error must show the generic Turkish message, never the raw exception text',
+  );
+  assert.ok(!errorBox.textContent.includes('InvalidOperationException'), 'Technical exception details must never reach the UI');
+  assert.ok(!errorBox.textContent.includes('Npgsql'), 'Technical exception details must never reach the UI');
+
+  assert.equal(modal.element.querySelector('#prod-modal-name').value, 'Async Ürün', 'Entered values must survive a failed save');
+  assert.equal(modal.element.querySelector('#prod-modal-sku').value, 'ASYNC-01', 'Entered values must survive a failed save');
+
+  assert.equal(submitBtn.disabled, false, 'Kaydet must be re-enabled so the user can retry');
+  assert.equal(submitBtn.textContent, 'Kaydet', 'Kaydet must restore its original label after a failed save');
+
+  modal.close();
+});
+
+test('createAdminProductFormModal maps backend error shapes to friendly Turkish messages without leaking technical details', async () => {
+  const cases = [
+    {
+      error: { status: 0, code: 'NETWORK_ERROR', message: 'Failed to fetch' },
+      expected: 'Ürün kaydedilirken bir sorun oluştu.\nLütfen biraz sonra tekrar deneyin.',
+    },
+    {
+      error: {
+        status: 400,
+        body: { errors: [{ field: 'UrunAd', message: 'Ürün adı boş bırakılamaz.' }, { field: 'Fiyat', message: "Fiyat 0'dan küçük olamaz." }] },
+      },
+      expected: "Ürün eklenemedi:\n\n• Ürün adı boş bırakılamaz.\n• Fiyat 0'dan küçük olamaz.",
+    },
+    {
+      error: { status: 403, body: {} },
+      expected: 'Bu işlemi gerçekleştirmek için yönetici yetkiniz bulunmuyor.',
+    },
+    {
+      error: { status: 409, body: { message: 'Bu stok kodu başka bir ürün tarafından kullanılıyor.' } },
+      expected: 'Bu stok kodu başka bir ürün tarafından kullanılıyor.',
+    },
+  ];
+
+  for (const { error, expected } of cases) {
+    const modal = createAdminProductFormModal({
+      categories: [{ id: 'cat-1', name: 'Giyim' }],
+      onSave: () => Promise.reject(error),
+    });
+
+    fillValidProductForm(modal);
+    const submitBtn = modal.element.querySelectorAll('.admin-modal__footer button')[1];
+    submitBtn.dispatchEvent({ type: 'click' });
+
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    const errorBox = modal.element.querySelector('.admin-form-error-box');
+    assert.equal(errorBox.textContent, expected, `Unexpected message for status ${error.status}`);
+
+    modal.close();
+  }
+});
+
+test('createAdminProductFormModal red-border-highlights the specific empty required field on client-side validation', () => {
+  const modal = createAdminProductFormModal({ categories: [{ id: 'cat-1', name: 'Giyim' }] });
+
+  const nameInput = modal.element.querySelector('#prod-modal-name');
+  const brandInput = modal.element.querySelector('#prod-modal-brand');
+  const skuInput = modal.element.querySelector('#prod-modal-sku');
+  // Marka defaults to 'Genel' on a new product, so it starts valid; blank it
+  // to check that only fields that are actually invalid get highlighted.
+  brandInput.value = '';
+
+  const submitBtn = modal.element.querySelectorAll('.admin-modal__footer button')[1];
+  submitBtn.dispatchEvent({ type: 'click' });
+
+  assert.ok(nameInput.classList.contains('admin-form-input--invalid'), 'Empty Ürün Adı must be highlighted');
+  assert.equal(modal.element.querySelector('#prod-modal-name-error').textContent, 'Ürün adı zorunludur.');
+  assert.ok(brandInput.classList.contains('admin-form-input--invalid'), 'Emptied Marka must be highlighted');
+  assert.ok(skuInput.classList.contains('admin-form-input--invalid'), 'Empty SKU must be highlighted');
+
+  // Fixing just the name must clear only that field's highlight, not the others.
+  nameInput.value = 'Yeni Ürün';
+  nameInput.dispatchEvent({ type: 'input' });
+  assert.ok(!nameInput.classList.contains('admin-form-input--invalid'), 'Corrected Ürün Adı must drop its highlight immediately');
+  assert.equal(modal.element.querySelector('#prod-modal-name-error').textContent, '');
+  assert.ok(brandInput.classList.contains('admin-form-input--invalid'), 'Untouched Marka must remain highlighted');
+
+  modal.close();
+});
+
+test('createAdminProductFormModal red-border-highlights the exact field named in a 400 backend validation error', async () => {
+  const modal = createAdminProductFormModal({
+    categories: [{ id: 'cat-1', name: 'Giyim' }],
+    onSave: () => Promise.reject({
+      status: 400,
+      body: { errors: [{ field: 'StokKod', message: 'Bu stok kodu zaten kayıtlı.' }] },
+    }),
+  });
+
+  fillValidProductForm(modal);
+  const submitBtn = modal.element.querySelectorAll('.admin-modal__footer button')[1];
+  submitBtn.dispatchEvent({ type: 'click' });
+
+  await Promise.resolve();
+  await Promise.resolve();
+  await Promise.resolve();
+
+  const skuInput = modal.element.querySelector('#prod-modal-sku');
+  const nameInput = modal.element.querySelector('#prod-modal-name');
+  assert.ok(skuInput.classList.contains('admin-form-input--invalid'), 'SKU must be highlighted for a StokKod backend error');
+  assert.equal(modal.element.querySelector('#prod-modal-sku-error').textContent, 'Bu stok kodu zaten kayıtlı.');
+  assert.ok(!nameInput.classList.contains('admin-form-input--invalid'), 'Unrelated fields must not be marked invalid for a field-specific backend error');
+
+  modal.close();
+});
+
+test('createAdminProductFormModal never marks fields invalid for a network/server error', async () => {
+  const modal = createAdminProductFormModal({
+    categories: [{ id: 'cat-1', name: 'Giyim' }],
+    onSave: () => Promise.reject({ status: 500, message: 'Internal Server Error' }),
+  });
+
+  fillValidProductForm(modal);
+  const submitBtn = modal.element.querySelectorAll('.admin-modal__footer button')[1];
+  submitBtn.dispatchEvent({ type: 'click' });
+
+  await Promise.resolve();
+  await Promise.resolve();
+  await Promise.resolve();
+
+  const anyFieldInvalid = [...modal.element.querySelectorAll('.admin-form-input')]
+    .some((el) => el.classList.contains('admin-form-input--invalid'));
+  assert.equal(anyFieldInvalid, false, 'A 500/network failure must only show the general error box, never highlight random fields');
+
+  modal.close();
+});
+
 test('createAdminProductDetailModal renders multi-image gallery thumbnails and handles clicks', () => {
   const product = {
     id: 'p-multi',
